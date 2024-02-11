@@ -32,7 +32,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let profileViewController = TestCatalogViewController(
+        let profileViewController = ProfileViewController(
                 servicesAssembly: servicesAssembly
         )
 
