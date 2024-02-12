@@ -4,9 +4,10 @@
 
 import UIKit
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, UITextViewDelegate {
 
     let servicesAssembly: ServicesAssembly
+    private var profile: Profile = .standard
 
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
@@ -40,7 +41,7 @@ final class ProfileViewController: UIViewController {
 
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Joaquin Phoenix"
+        label.text = profile.name
         label.font = .headline3
         label.textColor = UIColor { traits in
             traits.userInterfaceStyle == .dark
@@ -54,7 +55,7 @@ final class ProfileViewController: UIViewController {
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Дизайнер из Казани, люблю цифровое искусство  и бейглы. В моей коллекции уже 100+ NFT,  и еще больше — на моём сайте. Открыт к коллаборациям."
+        label.text = profile.description
         label.font = .caption2
         label.textColor = UIColor { traits in
             traits.userInterfaceStyle == .dark
@@ -67,13 +68,46 @@ final class ProfileViewController: UIViewController {
         return label
     }()
 
-    private lazy var websiteLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Joaquin Phoenix.com"
-        label.font = .systemFont(ofSize: 20, weight: .regular)
-        label.accessibilityIdentifier = "websiteLabel"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var websiteTextView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.font = .systemFont(ofSize: 20, weight: .regular)
+        textView.accessibilityIdentifier = "websiteTextView"
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.delegate = self
+        textView.isUserInteractionEnabled = true
+
+        if let url = URL(string: profile.website.absoluteString) {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .link: url,
+                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+            ]
+
+            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
+                    attributes: attributes)
+            textView.attributedText = attributedString
+        } else {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+            ]
+
+            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
+                    attributes: attributes)
+            textView.attributedText = attributedString
+        }
+
+        textView.linkTextAttributes = [
+            .foregroundColor: UIColor { traits in
+                traits.userInterfaceStyle == .dark
+                        ? .textOnPrimary
+                        : .textPrimary
+            },
+        ]
+
+        return textView
     }()
 
     private lazy var tableView: UITableView = {
@@ -98,7 +132,7 @@ final class ProfileViewController: UIViewController {
         setupAvatarImage(safeArea: view.safeAreaLayoutGuide)
         setupNameLabel(safeArea: view.safeAreaLayoutGuide)
         setupDescriptionLabel(safeArea: view.safeAreaLayoutGuide)
-        setupWebsiteLabel(safeArea: view.safeAreaLayoutGuide)
+        setupWebsiteTextView(safeArea: view.safeAreaLayoutGuide)
         setupTableView(safeArea: view.safeAreaLayoutGuide)
     }
 
@@ -131,18 +165,18 @@ final class ProfileViewController: UIViewController {
         descriptionLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 20).isActive = true
     }
 
-    private func setupWebsiteLabel(safeArea: UILayoutGuide) {
-        view.addSubview(websiteLabel)
-        websiteLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
-        websiteLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -18).isActive = true
-        websiteLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 12).isActive = true
+    private func setupWebsiteTextView(safeArea: UILayoutGuide) {
+        view.addSubview(websiteTextView)
+        websiteTextView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
+        websiteTextView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -18).isActive = true
+        websiteTextView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 12).isActive = true
     }
 
     private func setupTableView(safeArea: UILayoutGuide) {
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: -4).isActive = true
         tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 4).isActive = true
-        tableView.topAnchor.constraint(equalTo: websiteLabel.bottomAnchor, constant: 40).isActive = true
+        tableView.topAnchor.constraint(equalTo: websiteTextView.bottomAnchor, constant: 40).isActive = true
         tableView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
     }
