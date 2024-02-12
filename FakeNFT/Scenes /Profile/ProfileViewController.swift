@@ -7,6 +7,7 @@ import UIKit
 final class ProfileViewController: UIViewController, UITextViewDelegate {
 
     let servicesAssembly: ServicesAssembly
+    private let profileHelper = ProfileHelper()
     private var profile: Profile = .standard
 
     init(servicesAssembly: ServicesAssembly) {
