@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import SafariServices
 
 public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get }
@@ -81,17 +82,13 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         textView.isScrollEnabled = false
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
-        textView.font = .systemFont(ofSize: 20, weight: .regular)
+        textView.font = .caption1
         textView.accessibilityIdentifier = "websiteTextView"
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.delegate = self
         textView.isUserInteractionEnabled = true
         textView.linkTextAttributes = [
-            .foregroundColor: UIColor { traits in
-                traits.userInterfaceStyle == .dark
-                        ? .textOnPrimary
-                        : .textPrimary
-            },
+            .foregroundColor: UIColor.blue,
         ]
 
         return textView
@@ -192,7 +189,7 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         if let url = URL(string: url) {
             let attributes: [NSAttributedString.Key: Any] = [
                 .link: url,
-                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+                .font: UIFont.caption1
             ]
 
             let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
@@ -200,7 +197,7 @@ extension ProfileViewController: ProfileViewControllerProtocol {
             websiteTextView.attributedText = attributedString
         } else {
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+                .font: UIFont.caption1
             ]
 
             let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
@@ -210,9 +207,11 @@ extension ProfileViewController: ProfileViewControllerProtocol {
     }
 
     func updateProfileDetails(profile: Profile) {
+        self.profile = profile
         nameLabel.text = profile.name
         descriptionLabel.text = profile.description
         updateProfileWebsite(profile.website.absoluteString)
+        tableView.reloadData()
     }
 
     func updateProfileAvatar(avatar: UIImage) {
@@ -228,17 +227,33 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ProfileDetailsTableViewCell = tableView.dequeueReusableCell()
-
-        cell.textLabel?.text = "Ячейка номер \(indexPath.row)"
-        cell.textLabel?.font = .headline3
-
-        let customDisclosure = UIImageView(image: UIImage(systemName: "chevron.right"))
-        customDisclosure.tintColor = UIColor { traits in
-            traits.userInterfaceStyle == .dark
-                    ? .textOnPrimary
-                    : .textPrimary
+        if indexPath.row == 0 {
+            cell.configureCell(title: "Мои NFT", subtitle: profile.nfts.count)
+        } else if indexPath.row == 1 {
+            cell.configureCell(title: "Избранные NFT", subtitle: profile.likes.count)
+        } else {
+            cell.configureCell(title: "О разработчике", subtitle: nil)
         }
-        cell.accessoryView = customDisclosure
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.row == 0 {
+            let profileNFTViewController = TestCatalogViewController( //TODO
+                    servicesAssembly: servicesAssembly
+            )
+            present(profileNFTViewController, animated: true)
+        } else if indexPath.row == 1 {
+            let profileFavoritesViewController = TestCatalogViewController( //TODO
+                    servicesAssembly: servicesAssembly
+            )
+            present(profileFavoritesViewController, animated: true)
+        } else {
+            if let url = URL(string: profile.website.absoluteString) {
+                let safariViewController = SFSafariViewController(url: url)
+                present(safariViewController, animated: true)
+            }
+        }
     }
 }
