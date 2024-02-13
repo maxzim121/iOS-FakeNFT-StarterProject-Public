@@ -44,7 +44,7 @@ final class TabBarController: UITabBarController {
                 servicesAssembly: servicesAssembly
         )
 
-        let statisticsController = TestCatalogViewController(
+        let statisticsController = StatisticsViewController(
                 servicesAssembly: servicesAssembly
         )
 
