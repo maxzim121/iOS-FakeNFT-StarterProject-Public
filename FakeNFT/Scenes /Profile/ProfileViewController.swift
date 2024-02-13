@@ -4,8 +4,16 @@
 
 import UIKit
 
-final class ProfileViewController: UIViewController, UITextViewDelegate {
+public protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfilePresenterProtocol? { get }
+    func updateProfileDetails(profile: Profile)
+    var avatarImageView: UIImageView { get }
+    func updateProfileAvatar(avatar: UIImage)
+    func updateProfileWebsite(_ url: String)
+}
 
+final class ProfileViewController: UIViewController, UITextViewDelegate {
+    var presenter: ProfilePresenterProtocol?
     let servicesAssembly: ServicesAssembly
     private let profileHelper = ProfileHelper()
     private var profile: Profile = .standard
@@ -29,7 +37,7 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         return button
     }()
 
-    private lazy var avatarImageView: UIImageView = {
+    internal lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "ProfileImage")
         imageView.contentMode = .scaleAspectFill
@@ -42,7 +50,6 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
 
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = profile.name
         label.font = .headline3
         label.textColor = UIColor { traits in
             traits.userInterfaceStyle == .dark
@@ -56,7 +63,6 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = profile.description
         label.font = .caption2
         label.textColor = UIColor { traits in
             traits.userInterfaceStyle == .dark
@@ -80,26 +86,6 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.delegate = self
         textView.isUserInteractionEnabled = true
-
-        if let url = URL(string: profile.website.absoluteString) {
-            let attributes: [NSAttributedString.Key: Any] = [
-                .link: url,
-                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
-            ]
-
-            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
-                    attributes: attributes)
-            textView.attributedText = attributedString
-        } else {
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
-            ]
-
-            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
-                    attributes: attributes)
-            textView.attributedText = attributedString
-        }
-
         textView.linkTextAttributes = [
             .foregroundColor: UIColor { traits in
                 traits.userInterfaceStyle == .dark
@@ -126,6 +112,16 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupViews()
+
+        if presenter == nil {
+            presenter = ProfilePresenter(
+//                    profileService: profileService, TODO
+                    profileHelper: profileHelper
+            )
+        }
+
+        presenter?.view = self
+        presenter?.viewDidLoad()
     }
 
     private func setupViews() {
@@ -182,11 +178,45 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
     }
 
-
     @objc private func editButtonTapped() {
+        //TODO
 //        let editProfileViewController = EditProfileViewController(delegate: self)
 //        let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
 //        present(navigationViewController, animated: true)
+    }
+}
+
+
+extension ProfileViewController: ProfileViewControllerProtocol {
+    func updateProfileWebsite(_ url: String) {
+        if let url = URL(string: url) {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .link: url,
+                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+            ]
+
+            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
+                    attributes: attributes)
+            websiteTextView.attributedText = attributedString
+        } else {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 20, weight: .regular)
+            ]
+
+            let attributedString = NSMutableAttributedString(string: profile.website.absoluteString,
+                    attributes: attributes)
+            websiteTextView.attributedText = attributedString
+        }
+    }
+
+    func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.description
+        updateProfileWebsite(profile.website.absoluteString)
+    }
+
+    func updateProfileAvatar(avatar: UIImage) {
+        avatarImageView.image = avatar
     }
 }
 

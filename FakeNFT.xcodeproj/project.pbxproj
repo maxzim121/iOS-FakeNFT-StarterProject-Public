@@ -25,6 +25,7 @@
 		0CFCB74E2A7817DC0009A829 /* NftStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB74D2A7817DC0009A829 /* NftStorage.swift */; };
 		36D7D0AA00947F41A70DFEDC /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D7E7C2C5138A5921D9A2 /* Profile.swift */; };
 		36D7D2C8B311076CD8B504BE /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D3A2B6D9EC7427B74D1D /* ProfileViewController.swift */; };
+		36D7D2CE3211D76A5B412DBF /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DA30687720E7E798800E /* ProfilePresenter.swift */; };
 		36D7D85581126CD2D7B3AF75 /* UserProfileConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D1CD48C2F15B767306ED /* UserProfileConstants.swift */; };
 		36D7DA485021B361B607976A /* ProfileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DF04E92964EC814FE1D8 /* ProfileHelper.swift */; };
 		36D7DA6021BCECC7285CFE32 /* ProfileDecomposition.md in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D38FE6532421CBA89B9C /* ProfileDecomposition.md */; };
@@ -94,6 +95,7 @@
 		36D7D38FE6532421CBA89B9C /* ProfileDecomposition.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = ProfileDecomposition.md; sourceTree = "<group>"; };
 		36D7D3A2B6D9EC7427B74D1D /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		36D7D7E7C2C5138A5921D9A2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		36D7DA30687720E7E798800E /* ProfilePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
 		36D7DA87266820EBFA4FE3D0 /* ProfileDetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		36D7DF04E92964EC814FE1D8 /* ProfileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHelper.swift; sourceTree = "<group>"; };
 		36D7DF96149FC023FF0D36BE /* ProfileRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileRequest.swift; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 			children = (
 				36D7D3A2B6D9EC7427B74D1D /* ProfileViewController.swift */,
 				36D7DA87266820EBFA4FE3D0 /* ProfileDetailsTableViewCell.swift */,
+				36D7DA30687720E7E798800E /* ProfilePresenter.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -607,6 +610,7 @@
 				36D7DE6223B9DB14E06E027B /* ProfileResponse.swift in Sources */,
 				36D7DE1CCFE332A0B4D0F224 /* ProfileRequest.swift in Sources */,
 				36D7DA485021B361B607976A /* ProfileHelper.swift in Sources */,
+				36D7D2CE3211D76A5B412DBF /* ProfilePresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
