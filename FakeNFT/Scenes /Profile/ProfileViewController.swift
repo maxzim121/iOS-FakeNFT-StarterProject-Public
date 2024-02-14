@@ -13,6 +13,10 @@ public protocol ProfileViewControllerProtocol: AnyObject {
     func updateProfileWebsite(_ url: String)
 }
 
+private enum Constants {
+    static let profileId = "1"
+}
+
 final class ProfileViewController: UIViewController, UITextViewDelegate {
     var presenter: ProfilePresenterProtocol?
     let servicesAssembly: ServicesAssembly
@@ -111,9 +115,11 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         setupViews()
 
         if presenter == nil {
+            let profileInput = ProfileDetailInput(profileId: Constants.profileId)
             presenter = ProfilePresenter(
-//                    profileService: profileService, TODO
-                    profileHelper: profileHelper
+                    input: profileInput,
+                    service: servicesAssembly.profileService,
+                    helper: profileHelper
             )
         }
 
