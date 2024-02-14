@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct Profile {
+public struct Profile: Codable {
     let name: String
     let avatar: URL
     let description: String
