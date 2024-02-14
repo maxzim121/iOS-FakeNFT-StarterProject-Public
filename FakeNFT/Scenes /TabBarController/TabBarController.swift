@@ -53,7 +53,8 @@ final class TabBarController: UITabBarController {
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
-        viewControllers = [profileViewController, catalogController, basketController, statisticsController]
+        let statisticsNavigationController = UINavigationController(rootViewController: statisticsController)
+        viewControllers = [profileViewController, catalogController, basketController, statisticsNavigationController]
 
         view.backgroundColor = .systemBackground
     }
