@@ -11,8 +11,8 @@ public protocol ProfilePresenterProtocol {
 
 final class ProfilePresenter: ProfilePresenterProtocol {
     weak var view: ProfileViewControllerProtocol?
-    let profileService: ProfileService
-    let profileHelper: ProfileHelperProtocol
+    private let profileService: ProfileService
+    private let profileHelper: ProfileHelperProtocol
     private let input: ProfileDetailInput
 
     init(input: ProfileDetailInput, service: ProfileService, helper: ProfileHelperProtocol) {

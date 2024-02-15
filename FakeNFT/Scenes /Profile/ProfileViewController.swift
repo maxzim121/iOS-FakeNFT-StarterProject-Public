@@ -8,7 +8,6 @@ import SafariServices
 public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get }
     func updateProfileDetails(profile: Profile)
-    var avatarImageView: UIImageView { get }
     func updateProfileAvatar(avatar: UIImage)
     func updateProfileWebsite(_ url: String)
 }
@@ -42,7 +41,7 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         return button
     }()
 
-    internal lazy var avatarImageView: UIImageView = {
+    lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "ProfileImage")
         imageView.contentMode = .scaleAspectFill
@@ -92,7 +91,7 @@ final class ProfileViewController: UIViewController, UITextViewDelegate {
         textView.delegate = self
         textView.isUserInteractionEnabled = true
         textView.linkTextAttributes = [
-            .foregroundColor: UIColor.blue,
+            .foregroundColor: UIColor.yaBlueUniversal,
         ]
 
         return textView
@@ -233,11 +232,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ProfileDetailsTableViewCell = tableView.dequeueReusableCell()
-        if indexPath.row == 0 {
+        switch indexPath.row {
+        case 0:
             cell.configureCell(title: "Мои NFT", subtitle: profile.nfts.count)
-        } else if indexPath.row == 1 {
+        case 1:
             cell.configureCell(title: "Избранные NFT", subtitle: profile.likes.count)
-        } else {
+        default:
             cell.configureCell(title: "О разработчике", subtitle: nil)
         }
         return cell
@@ -245,17 +245,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
+        switch indexPath.row {
+        case 0:
             let profileNFTViewController = TestCatalogViewController( //TODO
                     servicesAssembly: servicesAssembly
             )
             present(profileNFTViewController, animated: true)
-        } else if indexPath.row == 1 {
+        case 1:
             let profileFavoritesViewController = TestCatalogViewController( //TODO
                     servicesAssembly: servicesAssembly
             )
             present(profileFavoritesViewController, animated: true)
-        } else {
+        default:
             if let url = URL(string: profile.website.absoluteString) {
                 let safariViewController = SFSafariViewController(url: url)
                 present(safariViewController, animated: true)
