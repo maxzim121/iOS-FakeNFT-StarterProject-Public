@@ -22,8 +22,6 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
 
     func viewDidLoad() {
-        setupProfileDetails()
-        setupProfileImage()
         fetchProfile()
     }
 
@@ -33,6 +31,12 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
 
     private func fetchProfile() {
+        guard let imageView = view?.avatarImageView else {
+            return
+        }
+
+        imageView.kf.indicatorType = .activity
+        imageView.kf.indicator?.startAnimatingView()
         profileService.fetchProfile(id: input.profileId) { [weak self] result in
             switch result {
             case .success(let profile):
@@ -42,51 +46,31 @@ final class ProfilePresenter: ProfilePresenterProtocol {
                 }
             case .failure(let error):
                 print("Error fetching profile: \(error)")
+                imageView.kf.indicator?.stopAnimatingView()
             }
         }
     }
 
     private func updateAvatar(with url: URL) {
-        profileHelper.fetchImage(url: url, options: nil) { [weak self] result in
-            guard let self = self else {
-                return
-            }
-            switch result {
-            case .success(let avatarImage):
-                DispatchQueue.main.async {
-                    self.view?.updateProfileAvatar(avatar: avatarImage)
-                }
-            case .failure(let error):
-                print("Error updating avatar: \(error)")
-                if let placeholderImage = UIImage(named: "ProfileImage") {
-                    DispatchQueue.main.async {
-                        self.view?.updateProfileAvatar(avatar: placeholderImage)
-                    }
-                }
-            }
-        }
-    }
-
-    private func setupProfileImage() {
-        let profileImageURL = UserProfileConstants.defaultAvatar
-        guard
-                let url = URL(string: profileImageURL)
-        else {
+        guard let imageView = view?.avatarImageView else {
             return
         }
-        profileHelper.fetchImage(url: url, options: nil) { [weak self] result in
-            guard let self else {
-                return
-            }
+
+        imageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "ProfileImagePlaceholder"),
+                options: [
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ]) { result in
             switch result {
-            case .success(let avatarImage):
-                print("updateAvatar to profileImageURL \(url)")
-                self.view?.updateProfileAvatar(avatar: avatarImage)
-            case .failure(_):
-                print("error updating avatar to profileImageURL \(url)")
-                if let placeholderImage = UIImage(named: "ProfileImagePlaceholder") {
-                    self.view?.updateProfileAvatar(avatar: placeholderImage)
-                }
+            case .success(_):
+                print("Avatar image successfully set")
+                imageView.kf.indicator?.stopAnimatingView()
+            case .failure(let error):
+                print("Error setting avatar image: \(error.localizedDescription)")
+                imageView.image = UIImage(named: "ProfileImagePlaceholder")
+                imageView.kf.indicator?.stopAnimatingView()
             }
         }
     }

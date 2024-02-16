@@ -8,6 +8,7 @@ public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get }
     func updateProfileDetails(profile: Profile)
     func updateProfileAvatar(avatar: UIImage)
+    var avatarImageView: UIImageView { get }
     func updateProfileWebsite(_ url: String)
 }
 
