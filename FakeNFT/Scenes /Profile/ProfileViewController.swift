@@ -3,7 +3,6 @@
 //
 
 import UIKit
-import SafariServices
 
 public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get }
@@ -16,7 +15,7 @@ private enum Constants {
     static let profileId = "1"
 }
 
-final class ProfileViewController: UIViewController, UITextViewDelegate {
+final class ProfileViewController: UIViewController {
     var presenter: ProfilePresenterProtocol?
     let servicesAssembly: ServicesAssembly
     private let profileHelper = ProfileHelper()
@@ -225,6 +224,28 @@ extension ProfileViewController: ProfileViewControllerProtocol {
 }
 
 
+extension ProfileViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        let webInput = WebPresenterInput(url: URL)
+        let webViewController = build(with: webInput)
+        present(webViewController, animated: true)
+        return false
+    }
+}
+
+
+extension ProfileViewController {
+    func build(with input: WebPresenterInput) -> UIViewController {
+        let presenter = WebPresenterImpl(input: input)
+        let webViewController = WebViewController(presenter: presenter)
+        presenter.view = webViewController
+        let navigationController = UINavigationController(rootViewController: webViewController)
+        navigationController.navigationBar.tintColor = UIColor.closeButton
+        return navigationController
+    }
+}
+
+
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         3
@@ -257,9 +278,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             )
             present(profileFavoritesViewController, animated: true)
         default:
-            if let url = URL(string: profile.website.absoluteString) {
-                let safariViewController = SFSafariViewController(url: url)
-                present(safariViewController, animated: true)
+            if let url = URL(string: Profile.standard.website.absoluteString) {
+                let urlInput = WebPresenterInput(url: url)
+                print(url)
+                let webViewController = build(with: urlInput)
+                present(webViewController, animated: true)
             }
         }
     }
