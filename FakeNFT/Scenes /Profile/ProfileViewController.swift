@@ -251,6 +251,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         3
     }
 
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        54
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ProfileDetailsTableViewCell = tableView.dequeueReusableCell()
         switch indexPath.row {
