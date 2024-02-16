@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
 
     lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "ProfileImage")
+        imageView.image = UIImage(named: "ProfileImagePlaceholder")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 35

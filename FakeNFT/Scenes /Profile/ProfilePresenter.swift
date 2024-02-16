@@ -84,7 +84,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
                 self.view?.updateProfileAvatar(avatar: avatarImage)
             case .failure(_):
                 print("error updating avatar to profileImageURL \(url)")
-                if let placeholderImage = UIImage(named: "ProfileImage") {
+                if let placeholderImage = UIImage(named: "ProfileImagePlaceholder") {
                     self.view?.updateProfileAvatar(avatar: placeholderImage)
                 }
             }
