@@ -4,52 +4,52 @@ import UIKit
 final class NFTCollectionViewCell: UICollectionViewCell {
     
     lazy var nftImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.frame = CGRect(x: 0, y: 0, width: 108, height: 108)
-            imageView.layer.cornerRadius = 12
-            imageView.contentMode = .scaleAspectFill
-            imageView.layer.masksToBounds = true
-
-            return imageView
-        }()
-
+        let imageView = UIImageView()
+        imageView.frame = CGRect(x: 0, y: 0, width: 108, height: 108)
+        imageView.layer.cornerRadius = 12
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
+        
+        return imageView
+    }()
+    
     lazy var likeButton: UIButton = {
-            let button = UIButton(type: .custom)
-            
-
-            return button
-        }()
-
+        let button = UIButton(type: .custom)
+        
+        
+        return button
+    }()
+    
     lazy var starsImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFill
-
-            return imageView
-        }()
-
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        
+        return imageView
+    }()
+    
     lazy var nameLabel: UILabel = {
-            let label = UILabel()
-            label.textColor = .textPrimary
-            label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-
-            return label
-        }()
-
+        let label = UILabel()
+        label.textColor = .textPrimary
+        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        
+        return label
+    }()
+    
     lazy var priceLabel: UILabel = {
-            let label = UILabel()
-            label.textColor = .textPrimary
-            label.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-
-            return label
-        }()
-
+        let label = UILabel()
+        label.textColor = .textPrimary
+        label.font = UIFont.systemFont(ofSize: 10, weight: .medium)
+        
+        return label
+    }()
+    
     lazy var cartButton: UIButton = {
-            let button = UIButton(type: .custom)
-            button.tintColor = .black
-            
-
-            return button
-        }()
+        let button = UIButton(type: .custom)
+        button.tintColor = .black
+        
+        
+        return button
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -76,20 +76,20 @@ final class NFTCollectionViewCell: UICollectionViewCell {
             likeButton.widthAnchor.constraint(equalToConstant: 40),
             likeButton.topAnchor.constraint(equalTo: contentView.topAnchor),
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-
+            
             starsImageView.heightAnchor.constraint(equalToConstant: 12),
             starsImageView.widthAnchor.constraint(equalToConstant: 68),
             starsImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             starsImageView.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 8),
-
+            
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             nameLabel.topAnchor.constraint(equalTo: starsImageView.bottomAnchor, constant: 5),
             nameLabel.trailingAnchor.constraint(equalTo: cartButton.leadingAnchor),
-
+            
             priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             priceLabel.trailingAnchor.constraint(equalTo: cartButton.leadingAnchor),
-
+            
             cartButton.heightAnchor.constraint(equalToConstant: 40),
             cartButton.widthAnchor.constraint(equalToConstant: 40),
             cartButton.topAnchor.constraint(equalTo: starsImageView.bottomAnchor, constant: 4),

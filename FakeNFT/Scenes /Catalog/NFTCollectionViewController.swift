@@ -20,7 +20,7 @@ final class NFTCollectionViewController: UIViewController {
         scrollView.alwaysBounceVertical = true
         return scrollView
     }()
-
+    
     lazy var catalogImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -29,7 +29,7 @@ final class NFTCollectionViewController: UIViewController {
         imageView.layer.masksToBounds = true
         return imageView
     }()
-
+    
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         let image = UIImage(named: "Backward")
@@ -49,23 +49,23 @@ final class NFTCollectionViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         return label
     }()
-
+    
     private lazy var authorLabel: UILabel = {
         let label = UILabel()
         label.text = "Автор коллекции:"
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         return label
-        }()
-
+    }()
+    
     lazy var authorNameButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.setTitleColor(.systemBlue, for: .normal)
         button.backgroundColor = .clear
         return button
-        }()
-
+    }()
+    
     lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
@@ -74,8 +74,8 @@ final class NFTCollectionViewController: UIViewController {
         label.lineBreakMode = .byWordWrapping
         label.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 32
         return label
-        }()
-
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -139,11 +139,11 @@ final class NFTCollectionViewController: UIViewController {
         scrollView.addSubview(descriptionLabel)
         scrollView.addSubview(collectionView)
         [scrollView, catalogImageView, catalogLabel, backButton,
-            authorLabel, authorNameButton, descriptionLabel, collectionView].forEach {
+         authorLabel, authorNameButton, descriptionLabel, collectionView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-
+    
     func applyConstraints() {
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -156,26 +156,26 @@ final class NFTCollectionViewController: UIViewController {
             catalogImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             catalogImageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             catalogImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-
+            
             backButton.heightAnchor.constraint(equalToConstant: 24),
             backButton.widthAnchor.constraint(equalToConstant: 24),
             backButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 9),
             backButton.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 55),
-
+            
             catalogLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             catalogLabel.topAnchor.constraint(equalTo: catalogImageView.bottomAnchor, constant: 16),
             catalogLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
-
+            
             authorLabel.leadingAnchor.constraint(equalTo: catalogLabel.leadingAnchor),
             authorLabel.topAnchor.constraint(equalTo: catalogLabel.bottomAnchor, constant: 13),
-
+            
             authorNameButton.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 4),
             authorNameButton.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
-
+            
             descriptionLabel.leadingAnchor.constraint(equalTo: catalogLabel.leadingAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 5),
             descriptionLabel.trailingAnchor.constraint(equalTo: catalogLabel.trailingAnchor),
-
+            
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -227,7 +227,7 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
         let widthCell = (collectionView.bounds.width - indentation) / 3
         return CGSize(width: widthCell, height: 192)
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -235,7 +235,7 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 10
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -243,6 +243,6 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 8
     }
-
+    
 }
 

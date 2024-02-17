@@ -5,8 +5,31 @@ final class CatalogViewController: UIViewController {
     
     
     let servicesAssembly: ServicesAssembly
-    var sortButton: UIButton = UIButton()
-    var nftTable: UITableView = UITableView()
+    
+    private lazy var sortButton: UIButton = {
+        let button = UIButton(type: .custom)
+        let image = UIImage(named: "CatalogSortButton")?.withRenderingMode(.alwaysTemplate)
+        button.setImage(image, for: .normal)
+        button.tintColor = .black
+        button.addTarget(
+            self,
+            action: #selector(didTapSortingButton),
+            for: .touchUpInside
+        )
+        
+        return button
+    }()
+    
+    private lazy var nftTable: UITableView = {
+        let tableView = UITableView()
+        tableView.register(NFTTableViewCell.self, forCellReuseIdentifier: "NFTTableViewCell")
+        tableView.separatorStyle = .none
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        return tableView
+    }()
+    
     var presenter: CatalogViewPresenterProtocol?
     
     init(servicesAssembly: ServicesAssembly) {
@@ -32,9 +55,7 @@ final class CatalogViewController: UIViewController {
     
     private func configureSortButton() {
         view.addSubview(sortButton)
-        sortButton.setImage(UIImage(named: "CatalogSortButton"), for: .normal)
         sortButton.translatesAutoresizingMaskIntoConstraints = false
-        sortButton.addTarget(self, action: #selector(didTapSortingButton), for: .touchUpInside)
         NSLayoutConstraint.activate([
             sortButton.widthAnchor.constraint(equalToConstant: 42),
             sortButton.heightAnchor.constraint(equalToConstant: 42),
@@ -44,14 +65,8 @@ final class CatalogViewController: UIViewController {
     }
     
     private func configureNftTable() {
-        nftTable.delegate = self
-        nftTable.dataSource = self
         view.addSubview(nftTable)
-        nftTable.separatorStyle = .none
         nftTable.translatesAutoresizingMaskIntoConstraints = false
-        nftTable.isScrollEnabled = true
-        nftTable.register(NFTTableViewCell.self, forCellReuseIdentifier: "NFTTableViewCell")
-        
         NSLayoutConstraint.activate([
             nftTable.topAnchor.constraint(equalTo: sortButton.bottomAnchor, constant: 20),
             nftTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -61,30 +76,30 @@ final class CatalogViewController: UIViewController {
     }
     
     private func showSortingAlert() {
-            let alertController = UIAlertController(
-                title: "Сортировка",
-                message: nil,
-                preferredStyle: .actionSheet
-            )
-
-            let sortName = UIAlertAction(
-                title: "По названию",
-                style: .default
-            )
-
-            let sortQuantity = UIAlertAction(
-                title: "По количеству NFT",
-                style: .default
-            )
-
-            let cancelAction = UIAlertAction(title: "Закрыть", style: .cancel, handler: nil)
-
-            [sortName, sortQuantity, cancelAction].forEach {
-                alertController.addAction($0)
-            }
-
-            self.present(alertController, animated: true, completion: nil)
+        let alertController = UIAlertController(
+            title: "Сортировка",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let sortName = UIAlertAction(
+            title: "По названию",
+            style: .default
+        )
+        
+        let sortQuantity = UIAlertAction(
+            title: "По количеству NFT",
+            style: .default
+        )
+        
+        let cancelAction = UIAlertAction(title: "Закрыть", style: .cancel, handler: nil)
+        
+        [sortName, sortQuantity, cancelAction].forEach {
+            alertController.addAction($0)
         }
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
     
     @objc private func didTapSortingButton() {
         showSortingAlert()
