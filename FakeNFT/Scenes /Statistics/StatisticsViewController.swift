@@ -49,7 +49,7 @@ final class StatisticsViewController: UIViewController {
 }
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        103
+        10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,10 +58,14 @@ extension StatisticsViewController: UITableViewDataSource {
             print("Did not produce the desired cell")
             return UITableViewCell()
         }
+        cell.separatorInset = UIEdgeInsets(top: 0, left: tableView.bounds.size.width, bottom: 0, right: 0)
         return cell
     }
 }
 
 extension StatisticsViewController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        88
+    }
 }

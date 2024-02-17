@@ -4,7 +4,9 @@ final class StatisticsCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsViewCell"
     
     private var task: URLSessionDataTask?
+    
     private var userAvatarStub = UIImage(named: "userAvatarStub")
+    
     private lazy var grayField: UIView = {
        let grayField = UIView()
         grayField.translatesAutoresizingMaskIntoConstraints = false
@@ -28,7 +30,8 @@ final class StatisticsCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
-        label.textColor = .segmentActive
+        label.textColor = .yaBlackLight
+        label.text = "Alex"
         return label
     }()
     
@@ -36,7 +39,8 @@ final class StatisticsCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
-        label.textColor = .segmentActive
+        label.textColor = .yaBlackLight
+        label.text = "100"
         return label
     }()
     
@@ -45,8 +49,8 @@ final class StatisticsCell: UITableViewCell {
         userRating.translatesAutoresizingMaskIntoConstraints = false
         userRating.font = .caption1
         userRating.textAlignment = .center
-        userRating.textColor = .segmentActive
-        //userRating.text = "1"
+        userRating.textColor = .yaBlackLight
+        userRating.text = "1"
         return userRating
     }()
     
@@ -71,6 +75,9 @@ final class StatisticsCell: UITableViewCell {
     private func setupUI() {
         contentView.addSubview(userRating)
         contentView.addSubview(grayField)
+        contentView.addSubview(avatarView)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(nftCountLabel)
     }
     
     private func setupLayout() {
@@ -79,7 +86,22 @@ final class StatisticsCell: UITableViewCell {
             userRating.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             userRating.trailingAnchor.constraint(lessThanOrEqualTo: grayField.leadingAnchor),
             
-            //grayField.leadingAnchor.constraint(equalTo: number.trailingAnchor, constant: 8)
+            grayField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            grayField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            grayField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35),
+            grayField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            avatarView.heightAnchor.constraint(equalToConstant: 28),
+            avatarView.widthAnchor.constraint(equalToConstant: 28),
+            avatarView.topAnchor.constraint(equalTo: grayField.topAnchor, constant: 26),
+            avatarView.leadingAnchor.constraint(equalTo: grayField.leadingAnchor, constant: 16),
+            
+            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            nameLabel.topAnchor.constraint(equalTo: grayField.topAnchor, constant: 26),
+            nameLabel.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: 8),
+            
+            nftCountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            nftCountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
             ])
     }
 }
