@@ -16,6 +16,37 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
 
+    private lazy var editImageButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Сменить фото", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+        button.titleLabel?.textAlignment = .center
+
+        let overlay = UIView()
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        overlay.layer.cornerRadius = 35
+        button.insertSubview(overlay, at: 0)
+
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            overlay.heightAnchor.constraint(equalTo: button.heightAnchor),
+            overlay.widthAnchor.constraint(equalTo: button.widthAnchor),
+            overlay.centerXAnchor.constraint(equalTo: button.centerXAnchor),
+            overlay.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        overlay.isUserInteractionEnabled = false
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 35
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(editImageTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "ProfileImage")
@@ -145,6 +176,7 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     private func setupViews() {
         setupCloseButton(safeArea: view.safeAreaLayoutGuide)
         setupAvatarImage(safeArea: view.safeAreaLayoutGuide)
+        setupEditButton(safeArea: view.safeAreaLayoutGuide)
         setupNameLabel(safeArea: view.safeAreaLayoutGuide)
         setupNameTextField(safeArea: view.safeAreaLayoutGuide)
         setupDescriptionLabel(safeArea: view.safeAreaLayoutGuide)
@@ -168,6 +200,14 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         avatarImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         avatarImageView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 22).isActive = true
         avatarImageView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
+    }
+
+    private func setupEditButton(safeArea: UILayoutGuide) {
+        view.addSubview(editImageButton)
+        editImageButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        editImageButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        editImageButton.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 22).isActive = true
+        editImageButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
 
     private func setupNameLabel(safeArea: UILayoutGuide) {
@@ -223,6 +263,21 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     @objc
     private func close() {
         dismiss(animated: true)
+    }
+
+    @objc private func editImageTapped() {
+        let alertController = UIAlertController(title: "Загрузить изображение", message: nil, preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = "Введите URL изображения"
+        }
+        let confirmAction = UIAlertAction(title: "Изменить", style: .default) { [weak self, weak alertController] _ in
+            guard let urlString = alertController?.textFields?.first?.text else { return }
+//            self?.profile.avatar = URL(string: urlString)
+        }
+        alertController.addAction(confirmAction)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true)
     }
 
     @objc private func textFieldDidChange(_ textField: UITextField) {
