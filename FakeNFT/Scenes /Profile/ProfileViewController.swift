@@ -181,10 +181,10 @@ final class ProfileViewController: UIViewController {
     }
 
     @objc private func editButtonTapped() {
-        //TODO
 //        let editProfileViewController = EditProfileViewController(delegate: self)
-//        let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
-//        present(navigationViewController, animated: true)
+        let editProfileViewController: UIViewController = EditProfileViewController()
+        let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
+        present(navigationViewController, animated: true)
     }
 }
 
