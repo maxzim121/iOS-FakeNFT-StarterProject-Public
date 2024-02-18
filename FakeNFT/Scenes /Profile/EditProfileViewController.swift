@@ -5,6 +5,10 @@
 import UIKit
 
 final class EditProfileViewController: UIViewController, UITextFieldDelegate {
+    private var profile: ProfileRequest
+    private let inputProfile: Profile
+    private var avatar: UIImage
+    private var presenter: ProfilePresenterProtocol
 
     private lazy var closeButton: UIButton = {
         let button = UIButton()
@@ -159,6 +163,19 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
 
     // MARK: - Init
 
+    required init(presenter: ProfilePresenterProtocol, profile: Profile, avatar: UIImage) {
+        self.presenter = presenter
+        self.profile = ProfileRequest(from: profile)
+        self.avatar = avatar
+        inputProfile = profile
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+
     // MARK: - Functions
 
     override func viewDidLoad() {
@@ -168,7 +185,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         setupViews()
         nameTextField.delegate = self
         websiteTextField.delegate = self
-//        presenter.viewDidLoad()
     }
 
     // MARK: - private functions
@@ -183,6 +199,8 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         setupDescriptionTextLabel(safeArea: view.safeAreaLayoutGuide)
         setupWebsiteLabel(safeArea: view.safeAreaLayoutGuide)
         setupWebsiteTextField(safeArea: view.safeAreaLayoutGuide)
+        setupProfileDetails()
+        setupProfileAvatar()
         setupActivityIndicator()
     }
 
@@ -260,8 +278,27 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         activityIndicator.constraintCenters(to: view)
     }
 
+    private func updateProfileRequest() {
+        profile.name = nameTextField.text ?? inputProfile.name
+        profile.description = descriptionTextView.text ?? inputProfile.description
+        profile.website = websiteTextField.text ?? inputProfile.website.absoluteString
+        profile.likes = inputProfile.likes
+    }
+
+    private func setupProfileDetails() {
+        nameTextField.text = inputProfile.name
+        descriptionTextView.text = inputProfile.description
+        websiteTextField.text = inputProfile.website.absoluteString
+    }
+
+    func setupProfileAvatar() {
+        avatarImageView.image = avatar
+    }
+
     @objc
     private func close() {
+        updateProfileRequest()
+        presenter.setupProfileDetails(profile: profile)
         dismiss(animated: true)
     }
 
@@ -271,9 +308,15 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
             textField.placeholder = "Введите URL изображения"
         }
         let confirmAction = UIAlertAction(title: "Изменить", style: .default) { [weak self, weak alertController] _ in
-            guard let urlString = alertController?.textFields?.first?.text else { return }
-//            self?.profile.avatar = URL(string: urlString)
+            guard let urlString = alertController?.textFields?.first?.text else {
+                return
+            }
+            if let url = URL(string: urlString) { [self]
+                self?.presenter.updateAvatar(with: url)
+            }
+            self?.profile.avatar = urlString
         }
+
         alertController.addAction(confirmAction)
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)

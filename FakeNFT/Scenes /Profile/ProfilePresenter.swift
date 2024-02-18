@@ -6,7 +6,10 @@ import UIKit
 
 public protocol ProfilePresenterProtocol {
     var view: ProfileViewControllerProtocol? { get set }
+    var isProfileLoaded: Bool { get set }
     func viewDidLoad()
+    func setupProfileDetails(profile: ProfileRequest)
+    func updateAvatar(with url: URL)
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
@@ -14,6 +17,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     private let profileService: ProfileService
     private let profileHelper: ProfileHelperProtocol
     private let input: ProfileDetailInput
+    var isProfileLoaded = false
 
     init(input: ProfileDetailInput, service: ProfileService, helper: ProfileHelperProtocol) {
         self.input = input
@@ -25,8 +29,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         fetchProfile()
     }
 
-    private func setupProfileDetails() {
-        let profile: Profile = .standard
+    func setupProfileDetails(profile: ProfileRequest) {
         view?.updateProfileDetails(profile: profile)
     }
 
@@ -41,17 +44,19 @@ final class ProfilePresenter: ProfilePresenterProtocol {
             switch result {
             case .success(let profile):
                 DispatchQueue.main.async {
+                    self?.isProfileLoaded = true
                     self?.view?.updateProfileDetails(profile: profile)
                     self?.updateAvatar(with: profile.avatar)
                 }
             case .failure(let error):
                 print("Error fetching profile: \(error)")
+                self?.isProfileLoaded = false
                 imageView.kf.indicator?.stopAnimatingView()
             }
         }
     }
 
-    private func updateAvatar(with url: URL) {
+    func updateAvatar(with url: URL) {
         guard let imageView = view?.avatarImageView else {
             return
         }

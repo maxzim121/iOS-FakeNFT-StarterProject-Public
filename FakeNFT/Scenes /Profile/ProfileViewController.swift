@@ -7,6 +7,7 @@ import UIKit
 public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get }
     func updateProfileDetails(profile: Profile)
+    func updateProfileDetails(profile: ProfileRequest)
     func updateProfileAvatar(avatar: UIImage)
     var avatarImageView: UIImageView { get }
     func updateProfileWebsite(_ url: String)
@@ -181,10 +182,23 @@ final class ProfileViewController: UIViewController {
     }
 
     @objc private func editButtonTapped() {
-//        let editProfileViewController = EditProfileViewController(delegate: self)
-        let editProfileViewController: UIViewController = EditProfileViewController()
-        let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
-        present(navigationViewController, animated: true)
+        guard let presenter = presenter as? ProfilePresenterProtocol else {
+            print("Presenter or profile is nil")
+            return
+        }
+        if !presenter.isProfileLoaded {
+            let errorModel = makeErrorModel()
+            showError(errorModel)
+        } else {
+            let defaultImage = UIImage(named: "ProfileImage") ?? UIImage()
+            let editProfileViewController: UIViewController = EditProfileViewController(
+                    presenter: presenter,
+                    profile: profile,
+                    avatar: avatarImageView.image ?? defaultImage
+            )
+            let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
+            present(navigationViewController, animated: true)
+        }
     }
 }
 
@@ -219,8 +233,25 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         tableView.reloadData()
     }
 
+    func updateProfileDetails(profile: ProfileRequest) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.description
+        updateProfileWebsite(profile.website)
+    }
+
     func updateProfileAvatar(avatar: UIImage) {
         avatarImageView.image = avatar
+    }
+}
+
+
+extension ProfileViewController: ErrorView {
+    private func makeErrorModel() -> ErrorModel {
+        ErrorModel(
+                message: "Пожалуйста, подождите, пока загрузится профиль.",
+                actionText: NSLocalizedString("Error.cancel", comment: ""),
+                action: {}
+        )
     }
 }
 
@@ -273,12 +304,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
-            let profileNFTViewController = TestCatalogViewController( //TODO
+            let profileNFTViewController = TestCatalogViewController(//TODO
                     servicesAssembly: servicesAssembly
             )
             present(profileNFTViewController, animated: true)
         case 1:
-            let profileFavoritesViewController = TestCatalogViewController( //TODO
+            let profileFavoritesViewController = TestCatalogViewController(//TODO
                     servicesAssembly: servicesAssembly
             )
             present(profileFavoritesViewController, animated: true)
