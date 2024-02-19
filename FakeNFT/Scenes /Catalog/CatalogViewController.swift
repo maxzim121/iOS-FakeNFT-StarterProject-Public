@@ -127,8 +127,10 @@ extension CatalogViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let presenter = presenter else { return UITableViewCell()}
-        return presenter.configureCell(table: nftTable)
+        guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
+        cell.nftImageView.image = presenter?.cellImage()
+        cell.nftNameAndNumber.text = presenter?.cellName()
+        return cell
     }
     
     

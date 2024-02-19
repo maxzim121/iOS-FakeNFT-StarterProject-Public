@@ -2,7 +2,8 @@ import UIKit
 import Foundation
 
 protocol CatalogViewPresenterProtocol: AnyObject {
-    func configureCell(table: UITableView) -> UITableViewCell
+    func cellName() -> String
+    func cellImage() -> UIImage
     
 }
 
@@ -12,11 +13,14 @@ final class CatalogViewPresenter {
 
 extension CatalogViewPresenter: CatalogViewPresenterProtocol {
     
-    func configureCell(table: UITableView) -> UITableViewCell {
-        guard let cell = table.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
-        cell.nftNameAndNumber.text = "Peach (11)"
-        cell.nftImageView.image = UIImage(named: "MockCoverCollection")
-        return cell
+    func cellName() -> String {
+        let cellName: String = "Peach (11)"
+        return cellName
+    }
+    
+    func cellImage() -> UIImage {
+        guard let image = UIImage(named: "MockCoverCollection") else { return  UIImage()}
+        return image
     }
     
 }
