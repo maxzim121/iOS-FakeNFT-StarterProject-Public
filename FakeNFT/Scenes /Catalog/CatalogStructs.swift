@@ -1,14 +1,14 @@
 import Foundation
 import UIKit
 
-struct NFTScreenElements {
+struct NFTScreenModel {
     var catalogImage: UIImage
     var labelText: String
     var authorName: String
     var descriptionText: String
 }
 
-struct NFTCellElements {
+struct NFTCellModel {
     var nftImage: UIImage
     var nameLabel: String
     var priceLabel: String

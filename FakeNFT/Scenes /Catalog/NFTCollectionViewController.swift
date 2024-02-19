@@ -181,11 +181,11 @@ final class NFTCollectionViewController: UIViewController {
     }
     
     func configureScreen() {
-        let screenElements = presenter?.sendScreenElements()
-        catalogImageView.image = screenElements?.catalogImage
-        catalogLabel.text = screenElements?.labelText
-        authorNameButton.setTitle(screenElements?.authorName, for: .normal)
-        descriptionLabel.text = screenElements?.descriptionText
+        let screenModel = presenter?.getScreenModel()
+        catalogImageView.image = screenModel?.catalogImage
+        catalogLabel.text = screenModel?.labelText
+        authorNameButton.setTitle(screenModel?.authorName, for: .normal)
+        descriptionLabel.text = screenModel?.descriptionText
     }
     
     func updateScrollViewContentSize() {
@@ -215,13 +215,13 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
-        let cellElements = presenter?.sendCellElements()
-        cell.nftImageView.image = cellElements?.nftImage
-        cell.nameLabel.text = cellElements?.nameLabel
-        cell.priceLabel.text = cellElements?.priceLabel
-        cell.likeButton.setImage(cellElements?.likeImage, for: .normal)
-        cell.starsImageView.image = cellElements?.starsImage
-        cell.cartButton.setImage(cellElements?.cartImage, for: .normal)
+        let cellModel = presenter?.getCellModel()
+        cell.nftImageView.image = cellModel?.nftImage
+        cell.nameLabel.text = cellModel?.nameLabel
+        cell.priceLabel.text = cellModel?.priceLabel
+        cell.likeButton.setImage(cellModel?.likeImage, for: .normal)
+        cell.starsImageView.image = cellModel?.starsImage
+        cell.cartButton.setImage(cellModel?.cartImage, for: .normal)
         return cell
     }
     
