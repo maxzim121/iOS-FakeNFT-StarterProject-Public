@@ -2,6 +2,7 @@ import UIKit
 
 final class StatisticsViewController: UIViewController {
     private let servicesAssembly: ServicesAssembly
+    let statisticsService = StatisticsService.shared
     
     private lazy var statisticsTable: UITableView = {
         let table = UITableView()
@@ -24,8 +25,26 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .figmaWhite
         
-        setupUI()
-        setupLayout()
+        UIBlockingProgressHUD.show()
+        statisticsService.fetchUsers(){[weak self] result in
+            DispatchQueue.main.async  {
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    UIBlockingProgressHUD.dismiss()
+                    print("users info are downloaded!")
+                    self.setupUI()
+                    self.setupLayout()
+                    break
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные в json-файле", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Ок", style: .default)
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
+                }
+            }
+        }
     }
     
     private func setupUI() {
@@ -49,7 +68,8 @@ final class StatisticsViewController: UIViewController {
 }
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        //print(statisticsService.listOfUsers!.count)
+    return statisticsService.listOfUsers!.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -59,6 +79,7 @@ extension StatisticsViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.separatorInset = UIEdgeInsets(top: 0, left: tableView.bounds.size.width, bottom: 0, right: 0)
+        cell.configure(user: statisticsService.listOfUsers![indexPath.row])
         return cell
     }
 }

@@ -3,9 +3,19 @@ import UIKit
 final class StatisticsCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsViewCell"
     
+    //private var statisticsService = StatisticsService.shared
+    
     private var task: URLSessionDataTask?
     
-    private var userAvatarStub = UIImage(named: "userAvatarStub")
+    lazy var userRating: UILabel = {
+        let userRating = UILabel()
+        userRating.translatesAutoresizingMaskIntoConstraints = false
+        userRating.font = .caption1
+        userRating.textAlignment = .center
+        userRating.textColor = .yaBlackLight
+        //userRating.text = "1"
+        return userRating
+    }()
     
     private lazy var grayField: UIView = {
        let grayField = UIView()
@@ -22,16 +32,17 @@ final class StatisticsCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 14
-        imageView.image = userAvatarStub
         return imageView
     }()
+    
+    private var userAvatarStub = UIImage(named: "userAvatarStub")
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
         label.textColor = .yaBlackLight
-        label.text = "Alex"
+        //label.text = "Alex"
         return label
     }()
     
@@ -40,21 +51,9 @@ final class StatisticsCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
         label.textColor = .yaBlackLight
-        label.text = "100"
+       // label.text = "100"
         return label
     }()
-    
-    lazy var userRating: UILabel = {
-        let userRating = UILabel()
-        userRating.translatesAutoresizingMaskIntoConstraints = false
-        userRating.font = .caption1
-        userRating.textAlignment = .center
-        userRating.textColor = .yaBlackLight
-        userRating.text = "1"
-        return userRating
-    }()
-    
-    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -72,6 +71,18 @@ final class StatisticsCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(user: UserProfile){
+        userRating.text = user.rating
+        
+        let url = URL(string: user.avatar)
+        avatarView.kf.indicatorType = .activity
+        avatarView.kf.setImage(with: url, placeholder: userAvatarStub)
+        
+        nameLabel.text = user.name
+        
+        nftCountLabel.text = "\(user.nfts.count)"
+        
+    }
     private func setupUI() {
         contentView.addSubview(userRating)
         contentView.addSubview(grayField)
