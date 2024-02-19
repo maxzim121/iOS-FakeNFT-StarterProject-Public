@@ -109,12 +109,9 @@ final class NFTCollectionViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
         addSubViews()
-        presenter?.configureNftScreen(vc: self,
-                                      catalogImageView: catalogImageView,
-                                      catalogLabel: catalogLabel,
-                                      authorNameButton: authorNameButton,
-                                      descriptionLabel: descriptionLabel)
+        configureScreen()
         applyConstraints()
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -183,6 +180,14 @@ final class NFTCollectionViewController: UIViewController {
         ])
     }
     
+    func configureScreen() {
+        let screenElements = presenter?.sendScreenElements()
+        catalogImageView.image = screenElements?.catalogImage
+        catalogLabel.text = screenElements?.labelText
+        authorNameButton.setTitle(screenElements?.authorName, for: .normal)
+        descriptionLabel.text = screenElements?.descriptionText
+    }
+    
     func updateScrollViewContentSize() {
         let numberOfRows = ceil(CGFloat(numberOfNft) / numberOfCellsInRow)
         scrollView.contentSize = CGSize(
@@ -209,8 +214,15 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let presenter = presenter else { return UICollectionViewCell() }
-        return presenter.configureCell(collectionView: collectionView, indexPath: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
+        let cellElements = presenter?.sendCellElements()
+        cell.nftImageView.image = cellElements?.nftImage
+        cell.nameLabel.text = cellElements?.nameLabel
+        cell.priceLabel.text = cellElements?.priceLabel
+        cell.likeButton.setImage(cellElements?.likeImage, for: .normal)
+        cell.starsImageView.image = cellElements?.starsImage
+        cell.cartButton.setImage(cellElements?.cartImage, for: .normal)
+        return cell
     }
     
     
