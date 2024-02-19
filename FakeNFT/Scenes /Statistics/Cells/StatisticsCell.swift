@@ -72,7 +72,7 @@ final class StatisticsCell: UITableViewCell {
     }
     
     func configure(user: UserProfile){
-        userRating.text = user.rating
+        userRating.text = "\(user.rating)"
         
         let url = URL(string: user.avatar)
         avatarView.kf.indicatorType = .activity

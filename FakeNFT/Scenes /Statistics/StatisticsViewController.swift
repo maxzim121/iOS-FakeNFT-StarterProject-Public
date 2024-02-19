@@ -69,7 +69,7 @@ final class StatisticsViewController: UIViewController {
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //print(statisticsService.listOfUsers!.count)
-    return statisticsService.listOfUsers!.count
+    return statisticsService.listOfUsers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,7 +79,7 @@ extension StatisticsViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.separatorInset = UIEdgeInsets(top: 0, left: tableView.bounds.size.width, bottom: 0, right: 0)
-        cell.configure(user: statisticsService.listOfUsers![indexPath.row])
+        cell.configure(user: statisticsService.listOfUsers[indexPath.row])
         return cell
     }
 }

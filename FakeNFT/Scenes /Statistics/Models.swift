@@ -7,12 +7,22 @@
 
 import Foundation
 
-struct UserProfile: Codable {
+struct UserProfileServer: Codable {
     let name: String
     let avatar: String
     let description: String
     let website: String
     let nfts: [String]
     let rating: String
+    let id: String
+}
+
+struct UserProfile {
+    let name: String
+    let avatar: String
+    let description: String
+    let website: String
+    let nfts: [String]
+    let rating: Int
     let id: String
 }
