@@ -2,10 +2,12 @@ import UIKit
 
 final class StatisticsViewController: UIViewController {
     private let servicesAssembly: ServicesAssembly
-    let statisticsService = StatisticsService.shared
+    
+    private let statisticsService = StatisticsService.shared
     
     private lazy var statisticsTable: UITableView = {
         let table = UITableView()
+        table.showsVerticalScrollIndicator = false
         table.dataSource = self
         table.delegate = self
         table.register(StatisticsCell.self, forCellReuseIdentifier: StatisticsCell.reuseIdentifier)
@@ -26,13 +28,12 @@ final class StatisticsViewController: UIViewController {
         view.backgroundColor = .figmaWhite
         
         UIBlockingProgressHUD.show()
-        statisticsService.fetchUsers(){[weak self] result in
+        statisticsService.fetchUsers() { [weak self] result in
             DispatchQueue.main.async  {
                 guard let self = self else { return }
                 switch result {
                 case .success:
                     UIBlockingProgressHUD.dismiss()
-                    print("users info are downloaded!")
                     self.setupUI()
                     self.setupLayout()
                     break
@@ -55,20 +56,20 @@ final class StatisticsViewController: UIViewController {
     
     @objc
     private func didTapSort() {
-        print("didTapSort")
+        //TODO: screen with 2 variants of sorting
+        
     }
     private func setupLayout() {
         NSLayoutConstraint.activate([
             statisticsTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             statisticsTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            statisticsTable.topAnchor.constraint(equalTo: view.topAnchor, constant: 108),
-            statisticsTable.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            statisticsTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            statisticsTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
             ])
     }
 }
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //print(statisticsService.listOfUsers!.count)
     return statisticsService.listOfUsers.count
     }
     
@@ -88,5 +89,10 @@ extension StatisticsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         88
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //TODO: screen with more information about the user
+        
     }
 }

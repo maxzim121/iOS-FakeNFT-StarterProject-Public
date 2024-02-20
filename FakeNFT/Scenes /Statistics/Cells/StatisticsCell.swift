@@ -2,24 +2,19 @@ import UIKit
 
 final class StatisticsCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsViewCell"
-    
-    //private var statisticsService = StatisticsService.shared
-    
+        
     private var task: URLSessionDataTask?
     
-    lazy var userRating: UILabel = {
+    private lazy var userRating: UILabel = {
         let userRating = UILabel()
-        userRating.translatesAutoresizingMaskIntoConstraints = false
         userRating.font = .caption1
         userRating.textAlignment = .center
         userRating.textColor = .yaBlackLight
-        //userRating.text = "1"
         return userRating
     }()
     
     private lazy var grayField: UIView = {
        let grayField = UIView()
-        grayField.translatesAutoresizingMaskIntoConstraints = false
         grayField.backgroundColor = .segmentInactive
         grayField.layer.masksToBounds = true
         grayField.layer.cornerRadius = 12
@@ -28,7 +23,6 @@ final class StatisticsCell: UITableViewCell {
     
     private lazy var avatarView: UIImageView = {
         let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 14
@@ -39,19 +33,17 @@ final class StatisticsCell: UITableViewCell {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
         label.textColor = .yaBlackLight
-        //label.text = "Alex"
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
         return label
     }()
     
     private lazy var nftCountLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
         label.textColor = .yaBlackLight
-       // label.text = "100"
         return label
     }()
     
@@ -84,18 +76,22 @@ final class StatisticsCell: UITableViewCell {
         
     }
     private func setupUI() {
-        contentView.addSubview(userRating)
-        contentView.addSubview(grayField)
-        contentView.addSubview(avatarView)
-        contentView.addSubview(nameLabel)
-        contentView.addSubview(nftCountLabel)
+        [userRating,
+         grayField,
+         avatarView,
+         nameLabel,
+         nftCountLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }
     }
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
+            userRating.heightAnchor.constraint(equalToConstant: 20),
+            userRating.widthAnchor.constraint(equalToConstant: 27),
             userRating.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            userRating.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            userRating.trailingAnchor.constraint(lessThanOrEqualTo: grayField.leadingAnchor),
+            userRating.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             grayField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             grayField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
@@ -107,12 +103,13 @@ final class StatisticsCell: UITableViewCell {
             avatarView.topAnchor.constraint(equalTo: grayField.topAnchor, constant: 26),
             avatarView.leadingAnchor.constraint(equalTo: grayField.leadingAnchor, constant: 16),
             
+            nameLabel.widthAnchor.constraint(equalToConstant: 186),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             nameLabel.topAnchor.constraint(equalTo: grayField.topAnchor, constant: 26),
             nameLabel.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: 8),
             
             nftCountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nftCountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
-            ])
+            nftCountLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16)
+        ])
     }
 }
