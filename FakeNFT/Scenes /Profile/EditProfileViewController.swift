@@ -299,6 +299,7 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     private func close() {
         updateProfileRequest()
         presenter.setupProfileDetails(profile: profile)
+        presenter.updateProfile(profileData: profile)
         dismiss(animated: true)
     }
 

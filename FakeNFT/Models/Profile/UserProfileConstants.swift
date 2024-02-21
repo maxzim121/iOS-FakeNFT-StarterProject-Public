@@ -9,7 +9,7 @@ enum UserProfileConstants {
     static let defaultAvatar = "https://code.s3.yandex.net/landings-v2-ios-developer/space.PNG"
     static let defaultDescription = "Дизайнер из Казани, люблю цифровое искусство  и бейглы. В моей коллекции уже 100+ NFT,  и еще больше — на моём сайте. Открыт к коллаборациям."
     static let defaultWebsite = "https://practicum.yandex.ru/ios-developer"
-    static let defaultNFTs = "123,456"
-    static let defaultLikes = "1,3,5,6"
+    static let defaultNFTs = "db196ee3-07ef-44e7-8ff5-16548fc6f434,2c9d09f6-25ac-4d6f-8d6a-175c4de2b42f"
+    static let defaultLikes = "db196ee3-07ef-44e7-8ff5-16548fc6f434"
     static let defaultID = "1"
 }

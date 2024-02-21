@@ -4,7 +4,7 @@
 
 import UIKit
 
-public protocol ProfileViewControllerProtocol: AnyObject {
+protocol ProfileViewControllerProtocol: AnyObject, ErrorView {
     var presenter: ProfilePresenterProtocol? { get }
     func updateProfileDetails(profile: Profile)
     func updateProfileDetails(profile: ProfileRequest)
