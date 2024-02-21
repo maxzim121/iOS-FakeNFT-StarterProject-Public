@@ -304,7 +304,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
-            let profileNFTViewController = TestCatalogViewController(//TODO
+            let profileNFTViewController = ProfileNFTViewController(
                     servicesAssembly: servicesAssembly
             )
             present(profileNFTViewController, animated: true)
