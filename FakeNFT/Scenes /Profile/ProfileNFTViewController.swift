@@ -261,15 +261,17 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let nft = visibleNFTs[indexPath.item]
         switch viewType {
         case .showNFTs:
+            let isLiked = profile.likes.contains(nft.id)
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyNFTCell.identifier, for: indexPath) as! MyNFTCell
-            cell.configure(with: visibleNFTs[indexPath.item])
+            cell.configure(with: nft, isLiked: isLiked)
             return cell
         case .showFavoriteNFTs:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyNFTCell.identifier, for: indexPath) as! MyNFTCell
             //let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier, for: indexPath) as! FavoriteNFTCell
-            cell.configure(with: visibleNFTs[indexPath.item])
+            cell.configure(with: nft, isLiked: true)
             return cell
         }
     }

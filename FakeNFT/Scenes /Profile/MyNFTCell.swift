@@ -17,6 +17,14 @@ final class MyNFTCell: UICollectionViewCell {
         return image
     }()
 
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyBold
@@ -95,6 +103,7 @@ final class MyNFTCell: UICollectionViewCell {
     }()
 
     // MARK: - Initialization
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -106,12 +115,14 @@ final class MyNFTCell: UICollectionViewCell {
     }
 
     // MARK: - Configuration
-    func configure(with nft: Nft) {
+
+    func configure(with nft: Nft, isLiked: Bool) {
         imageView.kf.setImage(with: nft.images[0])
         titleLabel.text = "Lilo"
         updateRatingStack(with: 4)
         subtitleLabel.text = "от John Doe"
         priceValueLabel.text = "1,78 ETH"
+        setLikeButtonState(isLiked: isLiked)
 //        titleLabel.text = nft.title
 //        updateRatingStack(with: nft.rating)
 //        subtitleLabel.text = "от \(nft.author)"
@@ -119,8 +130,9 @@ final class MyNFTCell: UICollectionViewCell {
     }
 
     // MARK: - Setup
+
     private func setupViews() {
-        [imageView, aboutStack, priceStack].forEach {
+        [imageView, aboutStack, priceStack, likeButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -132,6 +144,11 @@ final class MyNFTCell: UICollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 108),
             imageView.widthAnchor.constraint(equalToConstant: 108),
+
+            likeButton.topAnchor.constraint(equalTo: imageView.topAnchor),
+            likeButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
+            likeButton.heightAnchor.constraint(equalToConstant: 42),
+            likeButton.widthAnchor.constraint(equalToConstant: 42),
 
             aboutStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             aboutStack.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 20),
@@ -146,8 +163,10 @@ final class MyNFTCell: UICollectionViewCell {
         ])
     }
 
-    func updateRatingStack(with rating: Int) {
-        ratingStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    private func updateRatingStack(with rating: Int) {
+        ratingStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
 
         let totalStars = 5
         let activeStarImage = UIImage(systemName: "star.fill")?.withTintColor(.yaYellowUniversal, renderingMode: .alwaysOriginal)
@@ -162,5 +181,12 @@ final class MyNFTCell: UICollectionViewCell {
             starImageView.widthAnchor.constraint(equalToConstant: 12).isActive = true
             starImageView.heightAnchor.constraint(equalToConstant: 12).isActive = true
         }
+    }
+
+    private func setLikeButtonState(isLiked: Bool) {
+        let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
+        let color = isLiked ? UIColor.yaRedUniversal : UIColor.yaWhiteUniversal
+        let image = UIImage(systemName: "heart.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+        likeButton.setImage(image, for: .normal)
     }
 }
