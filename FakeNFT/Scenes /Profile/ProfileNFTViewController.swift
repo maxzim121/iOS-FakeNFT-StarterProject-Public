@@ -273,8 +273,7 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
         case .showNFTs:
             collectionView.register(MyNFTCell.self, forCellWithReuseIdentifier: MyNFTCell.identifier)
         case .showFavoriteNFTs:
-            collectionView.register(MyNFTCell.self, forCellWithReuseIdentifier: MyNFTCell.identifier)
-//            collectionView.register(FavoriteNFTCell.self, forCellWithReuseIdentifier: FavoriteNFTCell.identifier)
+            collectionView.register(FavoriteNFTCell.self, forCellWithReuseIdentifier: FavoriteNFTCell.identifier)
         }
     }
 
@@ -291,9 +290,8 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
             cell.configure(with: nft, isLiked: isLiked)
             return cell
         case .showFavoriteNFTs:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyNFTCell.identifier, for: indexPath) as! MyNFTCell
-            //let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier, for: indexPath) as! FavoriteNFTCell
-            cell.configure(with: nft, isLiked: true)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier, for: indexPath) as! FavoriteNFTCell
+            cell.configure(with: nft)
             return cell
         }
     }
@@ -313,7 +311,8 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
     private func createGridLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 168, height: 80)
-
+        let sectionInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        layout.sectionInset = sectionInsets
         return layout
     }
 }
