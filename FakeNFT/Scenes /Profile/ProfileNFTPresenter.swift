@@ -6,6 +6,7 @@ import UIKit
 
 protocol ProfileNFTPresenterProtocol {
     var view: ProfileNFTViewControllerProtocol? { get set }
+    var isNtfsLoaded: Bool { get }
     func viewDidLoad()
 }
 
@@ -63,7 +64,6 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
         dispatchGroup.notify(queue: .main) { [weak self] in
             self?.isNtfsLoaded = true
             self?.state = .succeeded
-            print(self?.nfts)
         }
     }
 
@@ -76,6 +76,8 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
             loadNfts(ids: input.ids)
         case .succeeded:
             view?.hideLoading()
+            view?.visibleNFTs = nfts
+            view?.reloadPlaceholders()
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()

@@ -46,6 +46,7 @@
 		36D7DCFFC766B0773495B05F /* PlaceholderTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DCD24779C44CA4871DDD /* PlaceholderTypes.swift */; };
 		36D7DE1CCFE332A0B4D0F224 /* ProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DF96149FC023FF0D36BE /* ProfileRequest.swift */; };
 		36D7DE6223B9DB14E06E027B /* ProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D3501B17C873E38ED15B /* ProfileResponse.swift */; };
+		36D7DE9456882F5B5A5CD6B6 /* MyNFTCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D115B55BED605280FDD1 /* MyNFTCell.swift */; };
 		36D7DF6DA566424F0289C33C /* UpdateProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DDCF21FC0E1DA0B328E7 /* UpdateProfileRequest.swift */; };
 		3F478ECF29DB474E00F6D39E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F478ECE29DB474E00F6D39E /* Colors.swift */; };
 		3F478ED129DB476500F6D39E /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F478ED029DB476500F6D39E /* Fonts.swift */; };
@@ -108,6 +109,7 @@
 		1F3A77D12B7B7ECD0082CC69 /* StatisticsDecomposition.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = StatisticsDecomposition.md; sourceTree = "<group>"; };
 		36D7D021FC888A44075B58AC /* ProfileDetailInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDetailInput.swift; sourceTree = "<group>"; };
 		36D7D05E124422B750741CFF /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		36D7D115B55BED605280FDD1 /* MyNFTCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyNFTCell.swift; sourceTree = "<group>"; };
 		36D7D1CD48C2F15B767306ED /* UserProfileConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileConstants.swift; sourceTree = "<group>"; };
 		36D7D260651F9E92C6FF8F3F /* ProfileNFTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNFTViewController.swift; sourceTree = "<group>"; };
 		36D7D28EC56E53234AFE8CB9 /* ProfileNFTPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNFTPresenter.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 				36D7D28EC56E53234AFE8CB9 /* ProfileNFTPresenter.swift */,
 				36D7D378C4D6975E452569C6 /* NftInput.swift */,
 				36D7DC77E06F42C39A70D4F7 /* NFTViewTypes.swift */,
+				36D7D115B55BED605280FDD1 /* MyNFTCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -673,6 +676,7 @@
 				36D7DAA11FDC33D4D567D2D3 /* ProfileNFTPresenter.swift in Sources */,
 				36D7D8812E24A8E0587B7B9F /* NftInput.swift in Sources */,
 				36D7DB1FCFD72691193E7F2C /* NFTViewTypes.swift in Sources */,
+				36D7DE9456882F5B5A5CD6B6 /* MyNFTCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
