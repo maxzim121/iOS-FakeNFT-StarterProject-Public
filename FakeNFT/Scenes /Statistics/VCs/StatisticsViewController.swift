@@ -50,18 +50,20 @@ final class StatisticsViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(statisticsTable)
+        //setting the navigation bar
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        backButton.tintColor = .yaBlackLight
+        navigationItem.backBarButtonItem = backButton
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "sortButton"), style: .done, target: self, action: #selector(didTapSort))
     }
     
     @objc
     private func didTapSort() {
-        //TODO: screen with 2 variants of sorting
         let controller = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
         controller.addAction(.init(title: "По имени" , style: .default) { _ in
-            //задать значение флага (sort=1) в UserDefaults
             UserDefaults.standard.set(1, forKey: "sortBy")
-            //выполнить сортировку в соответствии со значением флага
             self.statisticsService.doSort()
             self.statisticsTable.reloadData()
         })
@@ -106,7 +108,9 @@ extension StatisticsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //TODO: screen with more information about the user
-        
+        let viewController = StatisticsUserPageViewController(user: statisticsService.listOfUsers[indexPath.row])
+        viewController.modalPresentationStyle = .fullScreen
+        viewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

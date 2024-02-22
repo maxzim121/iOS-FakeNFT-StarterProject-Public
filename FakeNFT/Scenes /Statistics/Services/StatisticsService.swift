@@ -71,12 +71,14 @@ extension StatisticsService {
             self.listOfUsers.append(user_i)
         }
     }
-    //sort users in according the rating in descending order
+    
     func doSort() {
         if UserDefaults.standard.integer(forKey: "sortBy") == 0 {
             //we get "0" even if the value for key is not defined
+            //check this behaviour:
+            //print(UserDefaults.standard.integer(forKey: "sortBy")) (checked, that it returns 0 on 21Feb2024)
+            
             //sort users according the rating in descending order
-            //print(UserDefaults.standard.integer(forKey: "sortBy"))=0 - checked
             listOfUsers.sort {
                 $0.rating > $1.rating
             }
