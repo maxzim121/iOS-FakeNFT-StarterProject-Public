@@ -305,12 +305,16 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.row {
         case 0:
             let profileNFTViewController = ProfileNFTViewController(
-                    servicesAssembly: servicesAssembly
+                    profile: profile,
+                    servicesAssembly: servicesAssembly,
+                    viewType : .showNFTs
             )
             present(profileNFTViewController, animated: true)
         case 1:
-            let profileFavoritesViewController = TestCatalogViewController(//TODO
-                    servicesAssembly: servicesAssembly
+            let profileFavoritesViewController = ProfileNFTViewController(
+                    profile: profile,
+                    servicesAssembly: servicesAssembly,
+                    viewType : .showFavoriteNFTs
             )
             present(profileFavoritesViewController, animated: true)
         default:

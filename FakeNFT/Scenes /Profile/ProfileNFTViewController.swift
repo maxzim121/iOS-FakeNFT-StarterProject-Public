@@ -4,15 +4,12 @@
 
 import UIKit
 
-protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView {
+protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     var presenter: ProfileNFTPresenterProtocol? { get }
 }
 
-private enum Constants {
-    static let profileId = "1"
-}
-
 final class ProfileNFTViewController: UIViewController, ProfileNFTViewControllerProtocol {
+    lazy var activityIndicator = UIActivityIndicatorView()
     var presenter: ProfileNFTPresenterProtocol?
 
     let servicesAssembly: ServicesAssembly
@@ -20,6 +17,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
     private var profile: Profile = .standard
     private let placeholderView = PlaceholderView()
     var visibleNFTs: [String] = []
+    private var viewType: NFTViewTypes = .showNFTs
 
     private let headerView: UIView = {
         let view = UIView()
@@ -63,8 +61,10 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         return button
     }()
 
-    init(servicesAssembly: ServicesAssembly) {
+    init(profile: Profile, servicesAssembly: ServicesAssembly, viewType: NFTViewTypes) {
+        self.profile = profile
         self.servicesAssembly = servicesAssembly
+        self.viewType = viewType
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -79,10 +79,11 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         setupConstraints()
 
         if presenter == nil {
-            let profileInput = ProfileDetailInput(profileId: Constants.profileId)
+            let nftInput = NftInput(ids: profile.nfts)
             presenter = ProfileNFTPresenter(
-                    input: profileInput,
-                    service: servicesAssembly.profileService,
+                    input: nftInput,
+                    profileService: servicesAssembly.profileService,
+                    nftService: servicesAssembly.nftService,
                     helper: profileHelper
             )
         }
@@ -93,6 +94,8 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
     }
 
     private func addElements() {
+        view.addSubview(activityIndicator)
+        activityIndicator.constraintCenters(to: view)
         view.addSubview(headerView)
         view.addSubview(placeholderView)
 
@@ -178,6 +181,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         if visibleNFTs.isEmpty {
             placeholderView.isHidden = false
             sortButton.isHidden = true
+            titleHeader.isHidden = true
             switch type {
             case .noNFTs:
                 placeholderView.configure(with: "У Вас ещё нет NFT")
@@ -187,6 +191,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         } else {
             placeholderView.isHidden = true
             sortButton.isHidden = false
+            titleHeader.isHidden = false
         }
     }
 
