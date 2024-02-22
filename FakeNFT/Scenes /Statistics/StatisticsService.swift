@@ -72,9 +72,21 @@ extension StatisticsService {
         }
     }
     //sort users in according the rating in descending order
-    private func doSort() {
-        listOfUsers.sort {
-            $0.rating > $1.rating
+    func doSort() {
+        if UserDefaults.standard.integer(forKey: "sortBy") == 0 {
+            //we get "0" even if the value for key is not defined
+            //sort users according the rating in descending order
+            //print(UserDefaults.standard.integer(forKey: "sortBy"))=0 - checked
+            listOfUsers.sort {
+                $0.rating > $1.rating
+            }
+        } else if UserDefaults.standard.integer(forKey: "sortBy") == 1 {
+            //sort users according the name in increasing order
+            listOfUsers.sort {
+                $0.name < $1.name
+            }
+        } else {
+            print("Set the proper value of the sorting flag.")
         }
     }
      

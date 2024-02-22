@@ -57,7 +57,21 @@ final class StatisticsViewController: UIViewController {
     @objc
     private func didTapSort() {
         //TODO: screen with 2 variants of sorting
-        
+        let controller = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        controller.addAction(.init(title: "По имени" , style: .default) { _ in
+            //задать значение флага (sort=1) в UserDefaults
+            UserDefaults.standard.set(1, forKey: "sortBy")
+            //выполнить сортировку в соответствии со значением флага
+            self.statisticsService.doSort()
+            self.statisticsTable.reloadData()
+        })
+        controller.addAction(.init(title: "По рейтингу", style: .default) {_ in
+            UserDefaults.standard.set(0, forKey: "sortBy")
+            self.statisticsService.doSort()
+            self.statisticsTable.reloadData()
+        })
+        controller.addAction(.init(title: "Закрыть", style: .cancel))
+        present(controller, animated: true)
     }
     private func setupLayout() {
         NSLayoutConstraint.activate([
