@@ -118,15 +118,11 @@ final class MyNFTCell: UICollectionViewCell {
 
     func configure(with nft: Nft, isLiked: Bool) {
         imageView.kf.setImage(with: nft.images[0])
-        titleLabel.text = "Lilo"
-        updateRatingStack(with: 4)
-        subtitleLabel.text = "от John Doe"
-        priceValueLabel.text = "1,78 ETH"
         setLikeButtonState(isLiked: isLiked)
-//        titleLabel.text = nft.title
-//        updateRatingStack(with: nft.rating)
-//        subtitleLabel.text = "от \(nft.author)"
-//        priceValueLabel.text = "\(nft.price) ETH"
+        titleLabel.text = nft.name
+        updateRatingStack(with: nft.rating)
+        subtitleLabel.text = "от \(nft.author)"
+        priceValueLabel.text = "\(nft.price) ETH"
     }
 
     // MARK: - Setup

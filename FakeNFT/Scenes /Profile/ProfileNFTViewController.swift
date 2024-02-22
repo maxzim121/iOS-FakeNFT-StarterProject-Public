@@ -8,6 +8,7 @@ protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     var presenter: ProfileNFTPresenterProtocol? { get }
     var visibleNFTs: [Nft] { get set }
     func reloadPlaceholders()
+    func reloadCollectionView()
 }
 
 final class ProfileNFTViewController: UIViewController, ProfileNFTViewControllerProtocol {
@@ -56,8 +57,8 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         let backImage = UIImage(systemName: "filemenu.and.cursorarrow", //TODO - change to common correct image
                 withConfiguration: config)?.withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
         button.setImage(backImage, for: .normal)
-        button.accessibilityIdentifier = "backButton"
-        button.addTarget(self, action: #selector(close), for: .touchUpInside)
+        button.accessibilityIdentifier = "sortButton"
+        button.addTarget(self, action: #selector(showSortingOptions), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -231,14 +232,35 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
             placeholderView.configure(with: placeholderText)
         } else {
             titleHeader.text = headerText
-            collectionView.reloadData()
+            reloadCollectionView()
         }
+    }
+
+    func reloadCollectionView() {
+        collectionView.reloadData()
     }
 
     @objc
     private func close() {
         dismiss(animated: true)
     }
+
+    @objc func showSortingOptions() {
+        let alert = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "По цене", style: .default, handler: { _ in
+            self.presenter?.sortNFTs(by: .price)
+        }))
+        alert.addAction(UIAlertAction(title: "По рейтингу", style: .default, handler: { _ in
+            self.presenter?.sortNFTs(by: .rating)
+        }))
+        alert.addAction(UIAlertAction(title: "По названию", style: .default, handler: { _ in
+            self.presenter?.sortNFTs(by: .name)
+        }))
+        alert.addAction(UIAlertAction(title: "Закрыть", style: .cancel, handler: nil))
+
+        present(alert, animated: true)
+    }
+
 }
 
 extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -287,7 +309,6 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
         layout.minimumLineSpacing = 0
         return layout
     }
-
 
     private func createGridLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()

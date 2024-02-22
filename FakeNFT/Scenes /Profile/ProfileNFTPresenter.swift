@@ -8,10 +8,17 @@ protocol ProfileNFTPresenterProtocol {
     var view: ProfileNFTViewControllerProtocol? { get set }
     var isNtfsLoaded: Bool { get }
     func viewDidLoad()
+    func sortNFTs(by option: SortOption)
 }
 
 enum ProfileNFTPresenterState {
     case initial, loading, failed(Error), succeeded
+}
+
+enum SortOption {
+    case price
+    case rating
+    case name
 }
 
 final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
@@ -99,4 +106,18 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
             self?.loadNfts(ids: self?.input.ids ?? [""])
         }
     }
+
+    func sortNFTs(by option: SortOption) {
+        switch option {
+        case .price:
+            nfts.sort { $0.price < $1.price }
+        case .rating:
+            nfts.sort { $0.rating > $1.rating }
+        case .name:
+            nfts.sort { $0.name < $1.name }
+        }
+        view?.visibleNFTs = nfts
+        view?.reloadCollectionView()
+    }
+
 }
