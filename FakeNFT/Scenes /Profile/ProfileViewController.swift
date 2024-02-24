@@ -242,6 +242,20 @@ extension ProfileViewController: ProfileViewControllerProtocol {
     func updateProfileAvatar(avatar: UIImage) {
         avatarImageView.image = avatar
     }
+
+    private func updateProfileLikes(withUpdatedLikes updatedLikes: [String]) {
+        let updatedProfile = Profile(
+                name: profile.name,
+                avatar: profile.avatar,
+                description: profile.description,
+                website: profile.website,
+                nfts: profile.nfts,
+                likes: updatedLikes,
+                id: profile.id
+        )
+        profile = updatedProfile
+        tableView.reloadData()
+    }
 }
 
 
@@ -307,15 +321,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let profileNFTViewController = ProfileNFTViewController(
                     profile: profile,
                     servicesAssembly: servicesAssembly,
-                    viewType : .showNFTs
+                    viewType: .showNFTs
             )
             present(profileNFTViewController, animated: true)
         case 1:
             let profileFavoritesViewController = ProfileNFTViewController(
                     profile: profile,
                     servicesAssembly: servicesAssembly,
-                    viewType : .showFavoriteNFTs
+                    viewType: .showFavoriteNFTs
             )
+            profileFavoritesViewController.onClose = { [weak self] updatedLikes in
+                self?.updateProfileLikes(withUpdatedLikes: updatedLikes)
+            }
             present(profileFavoritesViewController, animated: true)
         default:
             if let url = URL(string: Profile.standard.website.absoluteString) {

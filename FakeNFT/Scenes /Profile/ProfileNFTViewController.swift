@@ -9,6 +9,7 @@ protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     var visibleNFTs: [Nft] { get set }
     func reloadPlaceholders()
     func reloadCollectionView()
+    var onClose: ((_ updatedLikes: [String]) -> Void)? { get set }
 }
 
 private enum Constants {
@@ -16,6 +17,8 @@ private enum Constants {
 }
 
 final class ProfileNFTViewController: UIViewController, ProfileNFTViewControllerProtocol {
+    var onClose: ((_ updatedLikes: [String]) -> Void)?
+
     lazy var activityIndicator = UIActivityIndicatorView()
     var presenter: ProfileNFTPresenterProtocol?
 
@@ -57,10 +60,8 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
 
     private lazy var sortButton: UIButton = {
         let button = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-        let backImage = UIImage(systemName: "filemenu.and.cursorarrow", //TODO - change to common correct image
-                withConfiguration: config)?.withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
-        button.setImage(backImage, for: .normal)
+        button.tintColor = .closeButton
+        button.setImage(UIImage(named: "sort"), for: .normal)
         button.accessibilityIdentifier = "sortButton"
         button.addTarget(self, action: #selector(showSortingOptions), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -246,6 +247,11 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
 
     @objc
     private func close() {
+        let updatedLikes = visibleNFTs.map {
+            $0.id
+        }
+
+        onClose?(updatedLikes)
         dismiss(animated: true)
     }
 
