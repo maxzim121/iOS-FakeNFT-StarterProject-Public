@@ -9,6 +9,7 @@ protocol ProfileNFTPresenterProtocol {
     var isNtfsLoaded: Bool { get }
     func viewDidLoad()
     func sortNFTs(by option: SortOption)
+    func updateLikes(id: String, likes: [String])
 }
 
 enum ProfileNFTPresenterState {
@@ -120,4 +121,21 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
         view?.reloadCollectionView()
     }
 
+    func updateLikes(id: String, likes: [String]) {
+        guard isNtfsLoaded else {
+            print("Nft not loaded yet.")
+            return
+        }
+
+        profileService.updateLikes(id: id, likes: likes) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let updatedProfile):
+                    print("Profile updated successfully.")
+                case .failure(let error):
+                    print("Error updating profile: \(error)")
+                }
+            }
+        }
+    }
 }

@@ -11,6 +11,10 @@ protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func reloadCollectionView()
 }
 
+private enum Constants {
+    static let profileId = "1"
+}
+
 final class ProfileNFTViewController: UIViewController, ProfileNFTViewControllerProtocol {
     lazy var activityIndicator = UIActivityIndicatorView()
     var presenter: ProfileNFTPresenterProtocol?
@@ -111,12 +115,12 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
     }
 
     private func addElements() {
-        [headerView, placeholderView, collectionView, activityIndicator].forEach{
+        [headerView, placeholderView, collectionView, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
 
-        [backButton, titleHeader, sortButton].forEach{
+        [backButton, titleHeader, sortButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             headerView.addSubview($0)
         }
@@ -292,6 +296,9 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
         case .showFavoriteNFTs:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier, for: indexPath) as! FavoriteNFTCell
             cell.configure(with: nft)
+            cell.likeButtonTapped = { [weak self] in
+                self?.handleLikeButtonTapped(nftId: nft.id)
+            }
             return cell
         }
     }
@@ -314,5 +321,27 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
         let sectionInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout.sectionInset = sectionInsets
         return layout
+    }
+
+    private func handleLikeButtonTapped(nftId: String) {
+        guard viewType == .showFavoriteNFTs else {
+            return
+        }
+
+        if let index = visibleNFTs.firstIndex(where: { $0.id == nftId }) {
+            visibleNFTs.remove(at: index)
+            collectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
+
+            var updatedLikes = visibleNFTs.map {
+                $0.id
+            }
+            presenter?.updateLikes(id: Constants.profileId, likes: updatedLikes)
+
+            if visibleNFTs.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.reloadPlaceholders()
+                }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import UIKit
 final class FavoriteNFTCell: UICollectionViewCell {
 
     static let identifier = "FavoriteNFTCellIdentifier"
+    var likeButtonTapped: (() -> Void)?
 
     // MARK: - Subviews
     private lazy var imageView: UIImageView = {
@@ -25,6 +26,7 @@ final class FavoriteNFTCell: UICollectionViewCell {
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(likeButtonPressed), for: .touchUpInside)
         return button
     }()
 
@@ -140,5 +142,9 @@ final class FavoriteNFTCell: UICollectionViewCell {
             starImageView.widthAnchor.constraint(equalToConstant: 12).isActive = true
             starImageView.heightAnchor.constraint(equalToConstant: 12).isActive = true
         }
+    }
+
+    @objc private func likeButtonPressed() {
+        likeButtonTapped?()
     }
 }
