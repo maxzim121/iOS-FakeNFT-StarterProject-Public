@@ -63,12 +63,12 @@ final class StatisticsViewController: UIViewController {
     private func didTapSort() {
         let controller = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
         controller.addAction(.init(title: "По имени" , style: .default) { _ in
-            UserDefaults.standard.set(1, forKey: "sortBy")
+            UserDefaults.standard.set(SortBy.name.rawValue, forKey: "sortBy")
             self.statisticsService.doSort()
             self.statisticsTable.reloadData()
         })
         controller.addAction(.init(title: "По рейтингу", style: .default) {_ in
-            UserDefaults.standard.set(0, forKey: "sortBy")
+            UserDefaults.standard.set(SortBy.rating.rawValue, forKey: "sortBy")
             self.statisticsService.doSort()
             self.statisticsTable.reloadData()
         })

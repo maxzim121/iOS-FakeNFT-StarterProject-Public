@@ -6,8 +6,11 @@
 //
 
 import UIKit
+//import ProgressHUD
 
 final class NftUsersCollectionStatisticsVC: UIViewController {
+    
+    private let statisticsService = StatisticsService.shared
     
     private let userNfts: [String]
     
@@ -34,7 +37,7 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
         view.backgroundColor = .figmaWhite
         addHeader()
         
-        if userNfts.count >= 1 {
+        if !userNfts.isEmpty {
             setupUI()
             setupLayout()
         } else {
@@ -76,7 +79,25 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         //TODO: download the data on the current nft and configure the cell
-        cell.configure(number: indexPath.row)
+        UIBlockingProgressHUD.show()
+        statisticsService.fetchNftById(nftId: userNfts[indexPath.row]) { [weak self] result in
+            DispatchQueue.main.async  {
+                guard let self = self else { return }
+                switch result {
+                case .success(let nftById):
+                    UIBlockingProgressHUD.dismiss()
+                    cell.configure(infoOnNftById: nftById) //, number: nftById.rating)
+                    break
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные в json-файле", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Ок", style: .default)
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+        
         return cell
     }
 }

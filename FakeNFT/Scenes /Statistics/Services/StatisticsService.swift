@@ -18,6 +18,8 @@ final class StatisticsService {
     
     private (set) var listOfUsers: [UserProfile]=[]
     
+    //private (set) var nftById: NftByIdServer?
+    
     func fetchUsers(completion: @escaping (Result<[UserProfile], Error>) -> Void) {
         guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/users") else {return}
 
@@ -57,6 +59,44 @@ final class StatisticsService {
         }
             task?.resume()
     }
+    
+    func fetchNftById(nftId: String, completion: @escaping (Result<NftByIdServer, Error>) -> Void) {
+        guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/nft/\(nftId)") else {return}
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {return}
+            if let error = error {
+                print("get nft by id error \(error)")
+                DispatchQueue.main.async { completion(.failure(error)) }
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse,
+               response.statusCode < 200 || response.statusCode >= 300 {
+                DispatchQueue.main.async { completion(.failure(NetworkError.codeError))
+                }
+                return
+            }
+            
+            guard let data = data else { return }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let initialNftById = try decoder.decode(NftByIdServer.self, from: data)
+                DispatchQueue.main.async {
+                    //self.nftById = initialNftById
+                    self.task = nil
+                    completion(.success(initialNftById))
+                }
+            }  catch {
+                print("Failed to parse the downloaded file")
+            }
+        }
+            task?.resume()
+    }
 }
 extension StatisticsService {
     private func convert2UserProfile(from: [UserProfileServer]) {
@@ -73,7 +113,8 @@ extension StatisticsService {
     }
     
     func doSort() {
-        if UserDefaults.standard.integer(forKey: "sortBy") == 0 {
+        let setSortBy = UserDefaults.standard.integer(forKey: "sortBy")
+        if setSortBy == SortBy.rating.rawValue {
             //we get "0" even if the value for key is not defined
             //check this behaviour:
             //print(UserDefaults.standard.integer(forKey: "sortBy")) (checked, that it returns 0 on 21Feb2024)
@@ -82,7 +123,7 @@ extension StatisticsService {
             listOfUsers.sort {
                 $0.rating > $1.rating
             }
-        } else if UserDefaults.standard.integer(forKey: "sortBy") == 1 {
+        } else if setSortBy == SortBy.name.rawValue {
             //sort users according the name in increasing order
             listOfUsers.sort {
                 $0.name < $1.name
