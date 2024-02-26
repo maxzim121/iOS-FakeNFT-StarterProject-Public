@@ -6,13 +6,14 @@
 //
 
 import UIKit
-//import ProgressHUD
 
 final class NftUsersCollectionStatisticsVC: UIViewController {
     
     private let statisticsService = StatisticsService.shared
     
     private let userNfts: [String]
+    
+    private var mainProfile: MainProfile?
     
     private lazy var nftUsersCollectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -38,12 +39,27 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
         addHeader()
         
         if !userNfts.isEmpty {
-            setupUI()
-            setupLayout()
-        } else {
-            print("The user has no NFTs")
+            UIBlockingProgressHUD.show()
+            statisticsService.fetchProfile { [weak self] result in
+                DispatchQueue.main.async  {
+                    guard let self = self else { return }
+                    switch result {
+                    case .success(let mainProfile):
+                        UIBlockingProgressHUD.dismiss()
+                        self.mainProfile = mainProfile
+                        self.setupUI()
+                        self.setupLayout()
+                        break
+                    case .failure:
+                        UIBlockingProgressHUD.dismiss()
+                        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "Ок", style: .default)
+                        alert.addAction(action)
+                        self.present(alert, animated: true)
+                    }
+                }
+            }
         }
-        //print("NftUsersCollectionStatisticsVC: nft.count = \(userNfts.count)")
     }
     
     private func addHeader()  {
@@ -78,7 +94,12 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
             print("Cell of the needed type was not created")
             return UICollectionViewCell()
         }
-        //TODO: download the data on the current nft and configure the cell
+        downloadAndConfigureCell(indexPath, cell)
+        return cell
+    }
+    
+    private func downloadAndConfigureCell(_ indexPath: IndexPath, _ cell: NftUsersCollectionStatisticsViewCell) {
+        //Download the data on the current nft and configure the cell
         UIBlockingProgressHUD.show()
         statisticsService.fetchNftById(nftId: userNfts[indexPath.row]) { [weak self] result in
             DispatchQueue.main.async  {
@@ -86,19 +107,33 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
                 switch result {
                 case .success(let nftById):
                     UIBlockingProgressHUD.dismiss()
-                    cell.configure(infoOnNftById: nftById) //, number: nftById.rating)
+                    guard let mainProfile = self.mainProfile else {
+                        return
+                    }
+                    cell.delegate = self
+                    cell.configure(infoOnNftById: nftById, mainProfile.likes)
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные в json-файле", preferredStyle: .alert)
-                    let action = UIAlertAction(title: "Ок", style: .default)
-                    alert.addAction(action)
-                    self.present(alert, animated: true)
+                    self.showAlert(indexPath, cell)
                 }
             }
         }
+    }
+    
+    private func showAlert(_ indexPath: IndexPath, _ cell: NftUsersCollectionStatisticsViewCell) {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о NFT в json-файле", preferredStyle: .alert)
         
-        return cell
+        let actionRepeat = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.downloadAndConfigureCell(indexPath, cell)
+        }
+        alert.addAction(actionRepeat)
+        
+        let actionNo = UIAlertAction(title: "Не надо", style: .default)
+        alert.addAction(actionNo)
+        
+        self.present(alert, animated: true)
     }
 }
 
@@ -113,5 +148,40 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 8
+    }
+}
+
+extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDelegate {
+    func itemDidTapLike(_ item: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool) {
+        guard let index = nftUsersCollectionView.indexPath(for: item) else {
+            print("Can not get the indexPath of the tapped like")
+            return
+        }
+        
+        guard var likesArray = mainProfile?.likes else { return }
+        if likeStatus == true {
+            //user wants to dislike the tapped NFT
+            if let dislikedNftIndex = likesArray.firstIndex(of: "\(userNfts[index.row])") {
+                likesArray.remove(at: dislikedNftIndex)
+            }
+        }
+        
+        statisticsService.updateLikesArrayInMainProfile(likesArray) { [weak self] result in
+            DispatchQueue.main.async  {
+                guard let self = self else { return }
+                switch result {
+                case .success(let mainProfile):
+                    UIBlockingProgressHUD.dismiss()
+                    self.mainProfile = mainProfile
+                    break
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле в результате PUT запроса", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Ок", style: .default)
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
+                }
+            }
+        }
     }
 }

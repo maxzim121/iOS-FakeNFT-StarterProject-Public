@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol NftUsersCollectionStatisticsViewCellDelegate: AnyObject {
+    func itemDidTapLike(_ item: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool)
+}
+
 final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
     static let reuseIdentifier = "NftUsersCollectionStatisticsViewCell"
+    
+    weak var delegate: NftUsersCollectionStatisticsViewCellDelegate?
     
     private var nftImageViewStub = UIImage(named: "nftImageViewStatisticsStub")
     
@@ -51,6 +57,8 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
         label.textColor = .yaBlackLight
         return label
     }()
+    
+    private var likeStatus = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -98,17 +106,21 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
             nftPrice.widthAnchor.constraint(equalToConstant: 68),
             nftPrice.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: 4),
             nftPrice.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            //numberView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            //numberView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
     }
     
-    func configure(infoOnNftById: NftByIdServer) {
+    func configure(infoOnNftById: NftByIdServer, _ likeIds: [String]) {
         let url = URL(string: infoOnNftById.images[0])
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(with: url, placeholder: nftImageViewStub)
         
-        nftLikeButton.setImage(UIImage(named: "isLiked"), for: .normal)
+        nftLikeButton.setImage(UIImage(named: "isNotLiked"), for: .normal)
+        for likeId in likeIds {
+            if infoOnNftById.id == likeId {
+                nftLikeButton.setImage(UIImage(named: "isLiked"), for: .normal)
+                likeStatus = true
+            }
+        }
         
         if infoOnNftById.rating == 0 {
             nftStarRating.image = UIImage(named: "zeroStars")
@@ -131,6 +143,10 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
     
     @objc private func didTapNftLikeButton(){
         //TODO: Change the state of the like for the nft
-        print("didTapNftLikeButton")
+        UIBlockingProgressHUD.show()
+        delegate?.itemDidTapLike(self, likeStatus)
+        //Обновить поле 'likes' в mainProfile
+        //Обновить рисунок сердечка в соответствии с полем 'likes' 
+        
     }
 }

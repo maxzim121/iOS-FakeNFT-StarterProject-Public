@@ -39,42 +39,56 @@ final class StatisticsViewController: UIViewController {
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные в json-файле", preferredStyle: .alert)
-                    let action = UIAlertAction(title: "Ок", style: .default)
-                    alert.addAction(action)
-                    self.present(alert, animated: true)
+                    self.showAlert()
                 }
             }
         }
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о пользователях в json-файле", preferredStyle: .alert)
+        
+        let actionRepeat = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.viewDidLoad()
+        }
+        alert.addAction(actionRepeat)
+        
+        let actionNo = UIAlertAction(title: "Не надо", style: .default)
+        alert.addAction(actionNo)
+        
+        self.present(alert, animated: true)
     }
     
     private func setupUI() {
         view.addSubview(statisticsTable)
         //setting the navigation bar
         let backButton = UIBarButtonItem()
-        backButton.title = ""
         backButton.tintColor = .yaBlackLight
         navigationItem.backBarButtonItem = backButton
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "sortButton"), style: .done, target: self, action: #selector(didTapSort))
     }
     
-    @objc
-    private func didTapSort() {
+    @objc private func didTapSort() {
         let controller = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
         controller.addAction(.init(title: "По имени" , style: .default) { _ in
             UserDefaults.standard.set(SortBy.name.rawValue, forKey: "sortBy")
-            self.statisticsService.doSort()
-            self.statisticsTable.reloadData()
+            self.sortAndReload()
         })
         controller.addAction(.init(title: "По рейтингу", style: .default) {_ in
             UserDefaults.standard.set(SortBy.rating.rawValue, forKey: "sortBy")
-            self.statisticsService.doSort()
-            self.statisticsTable.reloadData()
+            self.sortAndReload()
         })
         controller.addAction(.init(title: "Закрыть", style: .cancel))
         present(controller, animated: true)
     }
+    
+    private func sortAndReload() {
+        statisticsService.doSort()
+        statisticsTable.reloadData()
+    }
+    
     private func setupLayout() {
         NSLayoutConstraint.activate([
             statisticsTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -84,7 +98,9 @@ final class StatisticsViewController: UIViewController {
             ])
     }
 }
+
 extension StatisticsViewController: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return statisticsService.listOfUsers.count
     }

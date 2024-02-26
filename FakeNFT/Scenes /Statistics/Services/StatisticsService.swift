@@ -17,9 +17,7 @@ final class StatisticsService {
     private var task: URLSessionDataTask?
     
     private (set) var listOfUsers: [UserProfile]=[]
-    
-    //private (set) var nftById: NftByIdServer?
-    
+        
     func fetchUsers(completion: @escaping (Result<[UserProfile], Error>) -> Void) {
         guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/users") else {return}
 
@@ -30,13 +28,16 @@ final class StatisticsService {
             guard let self = self else {return}
             if let error = error {
                 print("get users error \(error)")
-                DispatchQueue.main.async { completion(.failure(error)) }
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
                 return
             }
             
             if let response = response as? HTTPURLResponse,
                response.statusCode < 200 || response.statusCode >= 300 {
-                DispatchQueue.main.async { completion(.failure(NetworkError.codeError))
+                DispatchQueue.main.async { 
+                    completion(.failure(NetworkError.codeError))
                 }
                 return
             }
@@ -57,7 +58,7 @@ final class StatisticsService {
                 print("Failed to parse the downloaded file")
             }
         }
-            task?.resume()
+        task?.resume()
     }
     
     func fetchNftById(nftId: String, completion: @escaping (Result<NftByIdServer, Error>) -> Void) {
@@ -69,14 +70,17 @@ final class StatisticsService {
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else {return}
             if let error = error {
-                print("get nft by id error \(error)")
-                DispatchQueue.main.async { completion(.failure(error)) }
+                print("get nftById error \(error)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
                 return
             }
             
             if let response = response as? HTTPURLResponse,
                response.statusCode < 200 || response.statusCode >= 300 {
-                DispatchQueue.main.async { completion(.failure(NetworkError.codeError))
+                DispatchQueue.main.async { 
+                    completion(.failure(NetworkError.codeError))
                 }
                 return
             }
@@ -87,7 +91,6 @@ final class StatisticsService {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let initialNftById = try decoder.decode(NftByIdServer.self, from: data)
                 DispatchQueue.main.async {
-                    //self.nftById = initialNftById
                     self.task = nil
                     completion(.success(initialNftById))
                 }
@@ -95,7 +98,96 @@ final class StatisticsService {
                 print("Failed to parse the downloaded file")
             }
         }
-            task?.resume()
+        task?.resume()
+    }
+    
+    func fetchProfile(completion: @escaping (Result<MainProfile, Error>) -> Void) {
+        guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {return}
+            if let error = error {
+                print("get mainProfile error \(error)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse,
+               response.statusCode < 200 || response.statusCode >= 300 {
+                DispatchQueue.main.async { 
+                    completion(.failure(NetworkError.codeError))
+                }
+                return
+            }
+            
+            guard let data = data else { return }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let initialMainProfile = try decoder.decode(MainProfile.self, from: data)
+                DispatchQueue.main.async {
+                    self.task = nil
+                    completion(.success(initialMainProfile))
+                }
+            }  catch {
+                print("Failed to parse the downloaded file")
+            }
+        }
+        task?.resume()
+    }
+    
+    func updateLikesArrayInMainProfile(_ likesArray: [String], completion: @escaping (Result<MainProfile, Error>) -> Void) {
+        guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        let data = "{ \"likes\": \(likesArray)}".data(using: String.Encoding.utf8)
+        request.httpBody = data
+        //print(likesArray)
+        
+        task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {return}
+            if let error = error {
+                print("get mainProfile error \(error)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse,
+               response.statusCode < 200 || response.statusCode >= 300 {
+                DispatchQueue.main.async { 
+                    completion(.failure(NetworkError.codeError))
+                }
+                return
+            }
+            
+            guard let data = data else { return }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let initialMainProfile = try decoder.decode(MainProfile.self, from: data)
+                DispatchQueue.main.async {
+                    self.task = nil
+                    completion(.success(initialMainProfile))
+                }
+            }  catch {
+                print("Failed to parse the downloaded file")
+            }
+        }
+        task?.resume()
     }
 }
 extension StatisticsService {

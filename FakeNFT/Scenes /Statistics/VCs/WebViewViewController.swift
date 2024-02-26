@@ -31,9 +31,7 @@ final class WebViewViewController: UIViewController, WKUIDelegate {
         super.viewDidLoad()
         
         view.backgroundColor = .figmaWhite
-    
-        print("WebViewVC.viewDidLoad: User's website is \(userWebsite)")
-        
+            
         setupUI()
         setupLayout()
         makeURLloadRequest()

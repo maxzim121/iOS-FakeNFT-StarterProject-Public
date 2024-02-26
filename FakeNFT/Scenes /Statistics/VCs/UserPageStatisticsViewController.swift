@@ -92,12 +92,11 @@ final class StatisticsUserPageViewController: UIViewController {
     }
     
     private func setupUI() {
-        ///setting the navigation bar for the NEXT pages
+        //setting the navigation bar for the NEXT pages
         let backButton = UIBarButtonItem()
-        backButton.title = ""
         backButton.tintColor = .yaBlackLight
         navigationItem.backBarButtonItem = backButton
-        ///
+
         [avatarView,
          nameLabel,
          aboutLabel,
@@ -141,20 +140,14 @@ final class StatisticsUserPageViewController: UIViewController {
     }
     
     @objc private func didTapUsersSiteButton() {
-        ///TODO: open the users site
-        print("The siteButton is tapped")
         let webViewViewController = WebViewViewController(userWebsite: user.website)
         webViewViewController.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(webViewViewController, animated: true)
-        ///
     }
     
     @objc private func didTapNftCollectionButton() {
-        ////TODO: open the users NFT collection
-        print("nftCollectionButton is tapped ")
         let nftUsersCollectionStatisticsVC = NftUsersCollectionStatisticsVC(userNfts: user.nfts)
         nftUsersCollectionStatisticsVC.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(nftUsersCollectionStatisticsVC, animated: true)
-        ////
     }
 }
