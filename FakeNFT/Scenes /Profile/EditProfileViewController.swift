@@ -16,7 +16,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         button.setImage(UIImage(named: "close"), for: .normal)
         button.accessibilityIdentifier = "closeButton"
         button.addTarget(self, action: #selector(close), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
@@ -47,18 +46,16 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         button.layer.cornerRadius = 35
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(editImageTapped), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
-    lazy var avatarImageView: UIImageView = {
+    private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "ProfileImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 35
         imageView.layer.masksToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
@@ -71,7 +68,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -89,7 +85,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         textField.font = .bodyRegular
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 12
-        textField.translatesAutoresizingMaskIntoConstraints = false
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.returnKeyType = .done
         return textField
@@ -104,7 +99,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -121,7 +115,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         textView.layer.masksToBounds = true
         textView.layer.cornerRadius = 12
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
 
@@ -135,7 +128,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -153,13 +145,12 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         textField.font = .bodyRegular
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 12
-        textField.translatesAutoresizingMaskIntoConstraints = false
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.returnKeyType = .done
         return textField
     }()
 
-    lazy var activityIndicator = UIActivityIndicatorView()
+    private lazy var activityIndicator = UIActivityIndicatorView()
 
     // MARK: - Init
 
@@ -182,12 +173,30 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         view.backgroundColor = .systemBackground
+        addElements()
         setupViews()
         nameTextField.delegate = self
         websiteTextField.delegate = self
     }
 
     // MARK: - private functions
+
+    private func addElements() {
+        [closeButton,
+         avatarImageView,
+         editImageButton,
+         nameLabel,
+         nameTextField,
+         descriptionLabel,
+         descriptionTextView,
+         websiteLabel,
+         websiteTextField,
+         activityIndicator
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
+    }
 
     private func setupViews() {
         setupCloseButton(safeArea: view.safeAreaLayoutGuide)
@@ -205,7 +214,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupCloseButton(safeArea: UILayoutGuide) {
-        view.addSubview(closeButton)
         closeButton.heightAnchor.constraint(equalToConstant: 42).isActive = true
         closeButton.widthAnchor.constraint(equalToConstant: 42).isActive = true
         closeButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: -16).isActive = true
@@ -213,7 +221,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupAvatarImage(safeArea: UILayoutGuide) {
-        view.addSubview(avatarImageView)
         avatarImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         avatarImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         avatarImageView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 22).isActive = true
@@ -221,7 +228,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupEditButton(safeArea: UILayoutGuide) {
-        view.addSubview(editImageButton)
         editImageButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
         editImageButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
         editImageButton.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 22).isActive = true
@@ -229,14 +235,12 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupNameLabel(safeArea: UILayoutGuide) {
-        view.addSubview(nameLabel)
         nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 24).isActive = true
         nameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
         nameLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16).isActive = true
     }
 
     private func setupNameTextField(safeArea: UILayoutGuide) {
-        view.addSubview(nameTextField)
         nameTextField.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 60).isActive = true
         nameTextField.heightAnchor.constraint(equalToConstant: 44).isActive = true
         nameTextField.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
@@ -244,14 +248,12 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupDescriptionLabel(safeArea: UILayoutGuide) {
-        view.addSubview(descriptionLabel)
         descriptionLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 128).isActive = true
         descriptionLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16).isActive = true
     }
 
     private func setupDescriptionTextLabel(safeArea: UILayoutGuide) {
-        view.addSubview(descriptionTextView)
         descriptionTextView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 164).isActive = true
         descriptionTextView.heightAnchor.constraint(equalToConstant: 132).isActive = true
         descriptionTextView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
@@ -259,14 +261,12 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupWebsiteLabel(safeArea: UILayoutGuide) {
-        view.addSubview(websiteLabel)
         websiteLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 320).isActive = true
         websiteLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
         websiteLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16).isActive = true
     }
 
     private func setupWebsiteTextField(safeArea: UILayoutGuide) {
-        view.addSubview(websiteTextField)
         websiteTextField.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 356).isActive = true
         websiteTextField.heightAnchor.constraint(equalToConstant: 44).isActive = true
         websiteTextField.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16).isActive = true
@@ -274,7 +274,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func setupActivityIndicator() {
-        view.addSubview(activityIndicator)
         activityIndicator.constraintCenters(to: view)
     }
 

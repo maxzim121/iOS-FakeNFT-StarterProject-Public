@@ -21,7 +21,6 @@ final class MyNFTCell: UICollectionViewCell {
         let button = UIButton()
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
@@ -33,7 +32,6 @@ final class MyNFTCell: UICollectionViewCell {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -45,7 +43,6 @@ final class MyNFTCell: UICollectionViewCell {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -58,7 +55,6 @@ final class MyNFTCell: UICollectionViewCell {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -71,7 +67,6 @@ final class MyNFTCell: UICollectionViewCell {
                     ? .textOnPrimary
                     : .textPrimary
         }
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
