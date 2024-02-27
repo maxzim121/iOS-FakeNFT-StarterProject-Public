@@ -46,7 +46,8 @@ final class WebViewController: UIViewController {
 
     private func setupBackButton() {
         let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .regular)
-        let backImage = UIImage(systemName: "chevron.left", withConfiguration: config)?.withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
+        let backImage = UIImage(systemName: "chevron.left", withConfiguration: config)?
+                .withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
         let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backAction))
         navigationItem.leftBarButtonItem = backButton
 
@@ -88,7 +89,8 @@ extension WebViewController: WKNavigationDelegate {
         print("Started loading")
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         print("Decide policy for navigation action")
         decisionHandler(.allow)
     }

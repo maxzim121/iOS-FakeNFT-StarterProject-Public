@@ -11,7 +11,6 @@ protocol WebPresenter: AnyObject {
     func pageDidFailLoading(withError error: Error)
 }
 
-
 // MARK: - State
 
 enum WebPresenterState {

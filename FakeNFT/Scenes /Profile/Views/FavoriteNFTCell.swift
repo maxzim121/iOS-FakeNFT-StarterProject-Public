@@ -21,7 +21,8 @@ final class FavoriteNFTCell: UICollectionViewCell {
     private lazy var likeButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-        let image = UIImage(systemName: "heart.fill", withConfiguration: config)?.withTintColor(.yaRedUniversal, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "heart.fill", withConfiguration: config)?
+                .withTintColor(.yaRedUniversal, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
@@ -120,7 +121,7 @@ final class FavoriteNFTCell: UICollectionViewCell {
             aboutStack.widthAnchor.constraint(equalToConstant: 76),
 
             ratingStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            ratingStack.heightAnchor.constraint(equalToConstant: 12),
+            ratingStack.heightAnchor.constraint(equalToConstant: 12)
         ])
     }
 
@@ -130,8 +131,10 @@ final class FavoriteNFTCell: UICollectionViewCell {
         }
 
         let totalStars = 5
-        let activeStarImage = UIImage(systemName: "star.fill")?.withTintColor(.yaYellowUniversal, renderingMode: .alwaysOriginal)
-        let inactiveStarImage = UIImage(systemName: "star.fill")?.withTintColor(.yaGrayUniversal, renderingMode: .alwaysOriginal)
+        let activeStarImage = UIImage(systemName: "star.fill")?
+                .withTintColor(.yaYellowUniversal, renderingMode: .alwaysOriginal)
+        let inactiveStarImage = UIImage(systemName: "star.fill")?
+                .withTintColor(.yaGrayUniversal, renderingMode: .alwaysOriginal)
 
         for index in 1...totalStars {
             let starImageView = UIImageView()

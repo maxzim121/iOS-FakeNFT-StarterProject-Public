@@ -97,7 +97,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
                     .cacheOriginalImage
                 ]) { result in
             switch result {
-            case .success(_):
+            case .success:
                 print("Avatar image successfully set")
                 imageView.kf.indicator?.stopAnimatingView()
             case .failure(let error):

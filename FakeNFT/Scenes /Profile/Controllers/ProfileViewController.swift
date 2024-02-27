@@ -92,7 +92,7 @@ final class ProfileViewController: UIViewController {
         textView.delegate = self
         textView.isUserInteractionEnabled = true
         textView.linkTextAttributes = [
-            .foregroundColor: UIColor.yaBlueUniversal,
+            .foregroundColor: UIColor.yaBlueUniversal
         ]
 
         return textView
@@ -202,7 +202,6 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-
 extension ProfileViewController: ProfileViewControllerProtocol {
     func updateProfileWebsite(_ url: String) {
         if let url = URL(string: url) {
@@ -258,7 +257,6 @@ extension ProfileViewController: ProfileViewControllerProtocol {
     }
 }
 
-
 extension ProfileViewController: ErrorView {
     private func makeErrorModel() -> ErrorModel {
         ErrorModel(
@@ -269,16 +267,15 @@ extension ProfileViewController: ErrorView {
     }
 }
 
-
 extension ProfileViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange,
+                  interaction: UITextItemInteraction) -> Bool {
         let webInput = WebPresenterInput(url: URL)
         let webViewController = build(with: webInput)
         present(webViewController, animated: true)
         return false
     }
 }
-
 
 extension ProfileViewController {
     func build(with input: WebPresenterInput) -> UIViewController {
@@ -290,7 +287,6 @@ extension ProfileViewController {
         return navigationController
     }
 }
-
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

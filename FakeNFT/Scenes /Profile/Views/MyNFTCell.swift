@@ -150,7 +150,7 @@ final class MyNFTCell: UICollectionViewCell {
 
             priceStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             priceStack.leadingAnchor.constraint(equalTo: aboutStack.trailingAnchor),
-            priceStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23),
+            priceStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23)
         ])
     }
 
@@ -160,8 +160,10 @@ final class MyNFTCell: UICollectionViewCell {
         }
 
         let totalStars = 5
-        let activeStarImage = UIImage(systemName: "star.fill")?.withTintColor(.yaYellowUniversal, renderingMode: .alwaysOriginal)
-        let inactiveStarImage = UIImage(systemName: "star.fill")?.withTintColor(.yaGrayUniversal, renderingMode: .alwaysOriginal)
+        let activeStarImage = UIImage(systemName: "star.fill")?
+                .withTintColor(.yaYellowUniversal, renderingMode: .alwaysOriginal)
+        let inactiveStarImage = UIImage(systemName: "star.fill")?
+                .withTintColor(.yaGrayUniversal, renderingMode: .alwaysOriginal)
 
         for index in 1...totalStars {
             let starImageView = UIImageView()
@@ -177,7 +179,8 @@ final class MyNFTCell: UICollectionViewCell {
     private func setLikeButtonState(isLiked: Bool) {
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
         let color = isLiked ? UIColor.yaRedUniversal : UIColor.yaWhiteUniversal
-        let image = UIImage(systemName: "heart.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "heart.fill", withConfiguration: config)?
+                .withTintColor(color, renderingMode: .alwaysOriginal)
         likeButton.setImage(image, for: .normal)
     }
 }

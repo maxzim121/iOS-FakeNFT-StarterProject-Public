@@ -3,7 +3,7 @@
 //
 
 import UIKit
-
+// swiftlint:disable:next type_body_length
 final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     private var profile: ProfileRequest
     private let inputProfile: Profile
@@ -118,7 +118,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
         return textView
     }()
 
-
     private lazy var websiteLabel: UILabel = {
         let label = UILabel()
         label.text = "Сайт"
@@ -165,7 +164,6 @@ final class EditProfileViewController: UIViewController, UITextFieldDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 
     // MARK: - Functions
 

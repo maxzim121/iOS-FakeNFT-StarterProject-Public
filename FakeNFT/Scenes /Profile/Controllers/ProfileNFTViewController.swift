@@ -38,7 +38,8 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
     private lazy var backButton: UIButton = {
         let button = UIButton()
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-        let backImage = UIImage(systemName: "chevron.left", withConfiguration: config)?.withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
+        let backImage = UIImage(systemName: "chevron.left", withConfiguration: config)?
+                .withTintColor(UIColor.closeButton, renderingMode: .alwaysOriginal)
         button.setImage(backImage, for: .normal)
         button.accessibilityIdentifier = "backButton"
         button.addTarget(self, action: #selector(close), for: .touchUpInside)
@@ -126,7 +127,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
             headerView.addSubview($0)
         }
     }
-
+// swiftlint:disable:next function_body_length
     private func setupConstraints() {
         activityIndicator.constraintCenters(to: view)
 
@@ -215,7 +216,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
             placeholderView.topAnchor.constraint(
                     equalTo: headerView.bottomAnchor,
                     constant: 307
-            ),
+            )
         ])
     }
 
@@ -291,22 +292,28 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
         visibleNFTs.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let nft = visibleNFTs[indexPath.item]
         switch viewType {
         case .showNFTs:
             let isLiked = profile.likes.contains(nft.id)
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyNFTCell.identifier, for: indexPath) as! MyNFTCell
-            cell.configure(with: nft, isLiked: isLiked)
-            return cell
-        case .showFavoriteNFTs:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier, for: indexPath) as! FavoriteNFTCell
-            cell.configure(with: nft)
-            cell.likeButtonTapped = { [weak self] in
-                self?.handleLikeButtonTapped(nftId: nft.id)
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyNFTCell.identifier,
+                    for: indexPath) as? MyNFTCell {
+                cell.configure(with: nft, isLiked: isLiked)
+                return cell
             }
-            return cell
+        case .showFavoriteNFTs:
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteNFTCell.identifier,
+                    for: indexPath) as? FavoriteNFTCell {
+                cell.configure(with: nft)
+                cell.likeButtonTapped = { [weak self] in
+                    self?.handleLikeButtonTapped(nftId: nft.id)
+                }
+                return cell
+            }
         }
+        return UICollectionViewCell()
     }
 
     private func createFlowLayout() -> UICollectionViewFlowLayout {

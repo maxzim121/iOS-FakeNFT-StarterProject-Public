@@ -27,7 +27,7 @@ struct UpdateProfileRequest: NetworkRequest {
             URLQueryItem(name: "name", value: profileData.name),
             URLQueryItem(name: "avatar", value: profileData.avatar),
             URLQueryItem(name: "description", value: profileData.description),
-            URLQueryItem(name: "website", value: profileData.website),
+            URLQueryItem(name: "website", value: profileData.website)
         ] + profileData.likes.map {
             URLQueryItem(name: "likes", value: $0)
         }

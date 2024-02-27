@@ -22,7 +22,8 @@ final class ProfileServiceImpl: ProfileService {
         networkClient.send(request: request, type: Profile.self, onResponse: completion)
     }
 
-    func updateProfile(id: String, profileData: ProfileRequest, completion: @escaping (Result<Profile, Error>) -> Void) {
+    func updateProfile(id: String, profileData: ProfileRequest,
+                       completion: @escaping (Result<Profile, Error>) -> Void) {
         let request = UpdateProfileRequest(id: id, profileData: profileData)
         networkClient.send(request: request, type: Profile.self, onResponse: completion)
     }
@@ -32,4 +33,3 @@ final class ProfileServiceImpl: ProfileService {
         networkClient.send(request: request, type: Profile.self, onResponse: completion)
     }
 }
-
