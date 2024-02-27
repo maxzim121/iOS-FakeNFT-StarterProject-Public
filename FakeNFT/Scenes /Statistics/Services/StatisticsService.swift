@@ -151,10 +151,11 @@ final class StatisticsService {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
-        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        //application/x-www-form-urlencoded
+        request.setValue("raw", forHTTPHeaderField: "Content-Type")
         let data = "{ \"likes\": \(likesArray)}".data(using: String.Encoding.utf8)
         request.httpBody = data
-        //print(likesArray)
+        print(likesArray)
         
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else {return}

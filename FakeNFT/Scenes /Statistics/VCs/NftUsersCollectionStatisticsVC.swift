@@ -39,24 +39,28 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
         addHeader()
         
         if !userNfts.isEmpty {
-            UIBlockingProgressHUD.show()
-            statisticsService.fetchProfile { [weak self] result in
-                DispatchQueue.main.async  {
-                    guard let self = self else { return }
-                    switch result {
-                    case .success(let mainProfile):
-                        UIBlockingProgressHUD.dismiss()
-                        self.mainProfile = mainProfile
-                        self.setupUI()
-                        self.setupLayout()
-                        break
-                    case .failure:
-                        UIBlockingProgressHUD.dismiss()
-                        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле", preferredStyle: .alert)
-                        let action = UIAlertAction(title: "Ок", style: .default)
-                        alert.addAction(action)
-                        self.present(alert, animated: true)
-                    }
+            generalSetup()
+        }
+    }
+    
+    private func generalSetup() {
+        UIBlockingProgressHUD.show()
+        statisticsService.fetchProfile { [weak self] result in
+            DispatchQueue.main.async  {
+                guard let self = self else { return }
+                switch result {
+                case .success(let mainProfile):
+                    UIBlockingProgressHUD.dismiss()
+                    self.mainProfile = mainProfile
+                    self.setupUI()
+                    self.setupLayout()
+                    break
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Ок", style: .default)
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
                 }
             }
         }
@@ -172,6 +176,7 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
                 switch result {
                 case .success(let mainProfile):
                     UIBlockingProgressHUD.dismiss()
+                    print(mainProfile)
                     self.mainProfile = mainProfile
                     break
                 case .failure:
