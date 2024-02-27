@@ -156,28 +156,32 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDelegateFlowLayout {
 }
 
 extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDelegate {
-    func itemDidTapLike(_ item: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool) {
-        guard let index = nftUsersCollectionView.indexPath(for: item) else {
+    func cellDidTapLike(_ cell: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool) {
+        //determine the indexPath of the cell, on which the likeButton was tapped
+        guard let indexPath = nftUsersCollectionView.indexPath(for: cell) else {
             print("Can not get the indexPath of the tapped like")
             return
         }
-        
+        //change the likesArray after the last tap on the likeButton
         guard var likesArray = mainProfile?.likes else { return }
         if likeStatus == true {
             //user wants to dislike the tapped NFT
-            if let dislikedNftIndex = likesArray.firstIndex(of: "\(userNfts[index.row])") {
-                likesArray.remove(at: dislikedNftIndex)
+            if let dislikedNftIndexPath = likesArray.firstIndex(of: "\(userNfts[indexPath.row])") {
+                likesArray.remove(at: dislikedNftIndexPath)
             }
+        } else if likeStatus == false {
+            //user wants to like the tapped NFT
+            likesArray.append("\(userNfts[indexPath.row])")
         }
-        
+        //reload the cell according the changed mainProfile
         statisticsService.updateLikesArrayInMainProfile(likesArray) { [weak self] result in
             DispatchQueue.main.async  {
                 guard let self = self else { return }
                 switch result {
                 case .success(let mainProfile):
                     UIBlockingProgressHUD.dismiss()
-                    print(mainProfile)
                     self.mainProfile = mainProfile
+                    self.nftUsersCollectionView.reloadItems(at: [indexPath])
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NftUsersCollectionStatisticsViewCellDelegate: AnyObject {
-    func itemDidTapLike(_ item: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool)
+    func cellDidTapLike(_ cell: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool)
 }
 
 final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
@@ -144,9 +144,6 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
     @objc private func didTapNftLikeButton(){
         //TODO: Change the state of the like for the nft
         UIBlockingProgressHUD.show()
-        delegate?.itemDidTapLike(self, likeStatus)
-        //Обновить поле 'likes' в mainProfile
-        //Обновить рисунок сердечка в соответствии с полем 'likes' 
-        
+        delegate?.cellDidTapLike(self, likeStatus)
     }
 }

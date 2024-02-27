@@ -67,6 +67,7 @@ final class StatisticsService {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else {return}
             if let error = error {
@@ -147,15 +148,20 @@ final class StatisticsService {
         guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
             return
         }
-
         var request = URLRequest(url: url)
+        
         request.httpMethod = "PUT"
+        
         request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
-        //application/x-www-form-urlencoded
-        request.setValue("raw", forHTTPHeaderField: "Content-Type")
-        let data = "{ \"likes\": \(likesArray)}".data(using: String.Encoding.utf8)
+        
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        var dataString = ""
+        for like in likesArray {
+            dataString += "likes=" + "\(like)" + "&"
+        }
+        dataString.removeLast()
+        let data = "\(dataString)".data(using: String.Encoding.utf8)
         request.httpBody = data
-        print(likesArray)
         
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else {return}
