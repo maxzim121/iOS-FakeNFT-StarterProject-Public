@@ -15,6 +15,8 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
     
     private var mainProfile: MainProfile?
     
+    private var order: Order?
+    
     private lazy var nftUsersCollectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collection.register(NftUsersCollectionStatisticsViewCell.self, forCellWithReuseIdentifier: NftUsersCollectionStatisticsViewCell.reuseIdentifier)
@@ -47,23 +49,60 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
         UIBlockingProgressHUD.show()
         statisticsService.fetchProfile { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else { return }
+                guard let self = self else {
+                    return
+                }
                 switch result {
                 case .success(let mainProfile):
-                    UIBlockingProgressHUD.dismiss()
                     self.mainProfile = mainProfile
+                    self.innerPartOfGeneralSetup()
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    self.showAlertGetProfile()
+                }
+            }
+        }
+    }
+    
+    private func showAlertGetProfile() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле", preferredStyle: .alert)
+        let actionRepeat = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else {
+                return
+            }
+            self.generalSetup()
+        }
+        alert.addAction(actionRepeat)
+        present(alert, animated: true)
+    }
+    
+    private func innerPartOfGeneralSetup() {
+        statisticsService.fetchOrder { [weak self] result in
+            DispatchQueue.main.async  {
+                guard let self = self else { return }
+                switch result {
+                case .success(let order):
+                    UIBlockingProgressHUD.dismiss()
+                    self.order = order
                     self.setupUI()
                     self.setupLayout()
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле", preferredStyle: .alert)
-                    let action = UIAlertAction(title: "Ок", style: .default)
-                    alert.addAction(action)
-                    self.present(alert, animated: true)
+                    self.showAlertGetOrder()
                 }
             }
         }
+    }
+    
+    private func showAlertGetOrder() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о заказе в json-файле", preferredStyle: .alert)
+        let actionRepeat = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.innerPartOfGeneralSetup()
+        }
+        alert.addAction(actionRepeat)
+        present(alert, animated: true)
     }
     
     private func addHeader()  {
@@ -107,15 +146,18 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
         UIBlockingProgressHUD.show()
         statisticsService.fetchNftById(nftId: userNfts[indexPath.row]) { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else { return }
+                guard let self else {
+                    return
+                }
                 switch result {
                 case .success(let nftById):
                     UIBlockingProgressHUD.dismiss()
-                    guard let mainProfile = self.mainProfile else {
+                    guard let mainProfile = self.mainProfile,
+                          let order = self.order else {
                         return
                     }
                     cell.delegate = self
-                    cell.configure(infoOnNftById: nftById, mainProfile.likes)
+                    cell.configure(infoOnNftById: nftById, mainProfile.likes, order.nfts)
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
@@ -156,6 +198,56 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDelegateFlowLayout {
 }
 
 extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDelegate {
+    func cellDidTapBasket(_ cell: NftUsersCollectionStatisticsViewCell, _ inBasket: Bool) {
+        guard let indexPath = nftUsersCollectionView.indexPath(for: cell) else {
+            print("Can not get the indexPath of the tapped basket")
+            return
+        }
+        
+        guard var orderNftArray = order?.nfts else {
+            return
+        }
+        if inBasket == true {
+            //user wants to throw out the basket the tapped NFT
+            if let outOfBasketNftIndexPath = orderNftArray.firstIndex(of: "\(userNfts[indexPath.row])") {
+                orderNftArray.remove(at: outOfBasketNftIndexPath)
+            }
+        } else if inBasket == false {
+            //user wants to add to basket the tapped NFT
+            orderNftArray.append("\(userNfts[indexPath.row])")
+        }
+        
+        updateOrderNftArrayInOrderAndUsersCollectionItem(orderNftArray, indexPath)
+    }
+    
+    private func updateOrderNftArrayInOrderAndUsersCollectionItem(_ orderNftArray: [String], _ indexPath: IndexPath) {
+        statisticsService.updateOrderNftArrayInOrder(orderNftArray) { [weak self] result in
+            DispatchQueue.main.async  {
+                guard let self else {
+                    return
+                }
+                
+                switch result {
+                case .success(let order):
+                    UIBlockingProgressHUD.dismiss()
+                    self.order = order
+                    self.nftUsersCollectionView.reloadItems(at: [indexPath])
+                    break
+                case .failure:
+                    UIBlockingProgressHUD.dismiss()
+                    self.showAlertPutOrder()
+                }
+            }
+        }
+    }
+    
+    private func showAlertPutOrder() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о заказе в json-файле в результате PUT запроса", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ок", style: .default)
+        alert.addAction(action)
+        self.present(alert, animated: true)
+    }
+    
     func cellDidTapLike(_ cell: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool) {
         //determine the indexPath of the cell, on which the likeButton was tapped
         guard let indexPath = nftUsersCollectionView.indexPath(for: cell) else {
@@ -174,9 +266,14 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
             likesArray.append("\(userNfts[indexPath.row])")
         }
         //reload the cell according the changed mainProfile
+        updateLikesArrayInMainProfileAndUsersCollectionItem(likesArray, indexPath)
+    }
+    
+    private func updateLikesArrayInMainProfileAndUsersCollectionItem(_ likesArray: [String],
+                                                                     _ indexPath: IndexPath) {
         statisticsService.updateLikesArrayInMainProfile(likesArray) { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else { return }
+                guard let self else { return }
                 switch result {
                 case .success(let mainProfile):
                     UIBlockingProgressHUD.dismiss()
@@ -185,12 +282,16 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле в результате PUT запроса", preferredStyle: .alert)
-                    let action = UIAlertAction(title: "Ок", style: .default)
-                    alert.addAction(action)
-                    self.present(alert, animated: true)
+                    self.showAlertPutMainProfile()
                 }
             }
         }
+    }
+    
+    private func showAlertPutMainProfile() {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о главном профиле в json-файле в результате PUT запроса", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ок", style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }

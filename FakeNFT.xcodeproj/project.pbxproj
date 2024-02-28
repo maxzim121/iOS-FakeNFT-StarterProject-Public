@@ -27,6 +27,7 @@
 		1F34A19E2B8227E30005DB01 /* ModelUserProfileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F34A19D2B8227E30005DB01 /* ModelUserProfileServer.swift */; };
 		1F3A77D52B7B8C550082CC69 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3A77D42B7B8C550082CC69 /* StatisticsViewController.swift */; };
 		1F3A77D82B7B97250082CC69 /* StatisticsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3A77D72B7B97250082CC69 /* StatisticsCell.swift */; };
+		1F57ADF02B8F2C0F0092909C /* ModelOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F57ADEF2B8F2C0F0092909C /* ModelOrder.swift */; };
 		1F635C3C2B83F8FD00593A57 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F635C3B2B83F8FD00593A57 /* UIBlockingProgressHUD.swift */; };
 		1F635C3E2B851F0700593A57 /* ModelUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F635C3D2B851F0700593A57 /* ModelUserProfile.swift */; };
 		1FCE8FE22B8741970086E727 /* UserPageStatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCE8FE12B8741970086E727 /* UserPageStatisticsViewController.swift */; };
@@ -100,6 +101,7 @@
 		1F3A77D12B7B7ECD0082CC69 /* StatisticsDecomposition.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = StatisticsDecomposition.md; sourceTree = "<group>"; };
 		1F3A77D42B7B8C550082CC69 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		1F3A77D72B7B97250082CC69 /* StatisticsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCell.swift; sourceTree = "<group>"; };
+		1F57ADEF2B8F2C0F0092909C /* ModelOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelOrder.swift; sourceTree = "<group>"; };
 		1F635C3B2B83F8FD00593A57 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		1F635C3D2B851F0700593A57 /* ModelUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelUserProfile.swift; sourceTree = "<group>"; };
 		1FCE8FE12B8741970086E727 /* UserPageStatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPageStatisticsViewController.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				1F34A19D2B8227E30005DB01 /* ModelUserProfileServer.swift */,
 				1FCE8FEC2B8B58690086E727 /* ModelNFtByID.swift */,
 				1FCE8FF02B8C8E250086E727 /* ModelMainProfile.swift */,
+				1F57ADEF2B8F2C0F0092909C /* ModelOrder.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -619,6 +622,7 @@
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
+				1F57ADF02B8F2C0F0092909C /* ModelOrder.swift in Sources */,
 				1F3A77D52B7B8C550082CC69 /* StatisticsViewController.swift in Sources */,
 				1FCE8FED2B8B58690086E727 /* ModelNFtByID.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,

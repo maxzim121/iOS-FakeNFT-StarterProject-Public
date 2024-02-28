@@ -57,7 +57,7 @@ final class StatisticsViewController: UIViewController {
         let actionNo = UIAlertAction(title: "Не надо", style: .default)
         alert.addAction(actionNo)
         
-        self.present(alert, animated: true)
+        present(alert, animated: true)
     }
     
     private func setupUI() {

@@ -9,6 +9,7 @@ import UIKit
 
 protocol NftUsersCollectionStatisticsViewCellDelegate: AnyObject {
     func cellDidTapLike(_ cell: NftUsersCollectionStatisticsViewCell, _ likeStatus: Bool)
+    func cellDidTapBasket(_ cell: NftUsersCollectionStatisticsViewCell, _ inBasket: Bool)
 }
 
 final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
@@ -34,6 +35,8 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
         return button
     }()
     
+    private var likeStatus = false
+    
     private lazy var nftStarRating: UIImageView = {
         let ratingView = UIImageView()
         ratingView.contentMode = .scaleAspectFill
@@ -58,7 +61,15 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
         return label
     }()
     
-    private var likeStatus = false
+    private lazy var nftBasketButton: UIButton = {
+        let button = UIButton()
+        button.contentHorizontalAlignment = .center
+        button.contentVerticalAlignment = .center
+        button.addTarget(self, action: #selector(didTapNftBasketButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private var inBasket = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,7 +86,8 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
          nftLikeButton,
          nftStarRating,
          nftName,
-         nftPrice].forEach {
+         nftPrice,
+         nftBasketButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -106,10 +118,15 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
             nftPrice.widthAnchor.constraint(equalToConstant: 68),
             nftPrice.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: 4),
             nftPrice.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            
+            nftBasketButton.widthAnchor.constraint(equalToConstant: 40),
+            nftBasketButton.heightAnchor.constraint(equalToConstant: 40),
+            nftBasketButton.topAnchor.constraint(equalTo: nftStarRating.bottomAnchor, constant: 4),
+            nftBasketButton.leadingAnchor.constraint(equalTo: nftName.trailingAnchor)
         ])
     }
     
-    func configure(infoOnNftById: NftByIdServer, _ likeIds: [String]) {
+    func configure(infoOnNftById: NftByIdServer, _ likeIds: [String], _ orderedIds: [String]) {
         let url = URL(string: infoOnNftById.images[0])
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(with: url, placeholder: nftImageViewStub)
@@ -139,11 +156,23 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
         nftName.text = infoOnNftById.name
         
         nftPrice.text = "\(infoOnNftById.price) ETH"
+        
+        nftBasketButton.setImage(UIImage(named: "addToBasket"), for: .normal)
+        for orderId in orderedIds {
+            if infoOnNftById.id == orderId {
+                nftBasketButton.setImage(UIImage(named: "removeFromBasket"), for: .normal)
+                inBasket = true
+            }
+        }
     }
     
     @objc private func didTapNftLikeButton(){
-        //TODO: Change the state of the like for the nft
         UIBlockingProgressHUD.show()
         delegate?.cellDidTapLike(self, likeStatus)
+    }
+    
+    @objc private func didTapNftBasketButton() {        
+        UIBlockingProgressHUD.show()
+        delegate?.cellDidTapBasket(self, inBasket)
     }
 }
