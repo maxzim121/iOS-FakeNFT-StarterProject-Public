@@ -1,10 +1,23 @@
 import Foundation
+import Kingfisher
 import UIKit
+import ProgressHUD
+
+enum CatalogDetailState {
+    case initial, loading, failed(Error), data
+}
 
 final class CatalogViewController: UIViewController {
     
-    
     let servicesAssembly: ServicesAssembly
+    
+    private var collections: [CollectionsModel] = []
+    private var service: CollectionsService
+    private var state = CatalogDetailState.initial {
+        didSet {
+            stateDidChanged()
+        }
+    }
     
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -32,8 +45,9 @@ final class CatalogViewController: UIViewController {
     
     var presenter: CatalogViewPresenterProtocol?
     
-    init(servicesAssembly: ServicesAssembly) {
+    init(servicesAssembly: ServicesAssembly, service: CollectionsService) {
         self.servicesAssembly = servicesAssembly
+        self.service = service
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,9 +57,10 @@ final class CatalogViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = CatalogViewPresenter()
+        presenter = CatalogViewPresenter(servicesAssembly: servicesAssembly, service: service, state: state)
         configureSortButton()
         configureNftTable()
+        state = .loading
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -101,6 +116,34 @@ final class CatalogViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    private func stateDidChanged() {
+        switch state {
+        case .initial:
+            assertionFailure("can't move to initial state")
+        case .loading:
+            UIBlockingProgressHUD.show()
+            loadCollections()
+        case .data:
+            UIBlockingProgressHUD.dismiss()
+            nftTable.reloadData()
+        case .failed(let error):
+            print("ОШИБКА: \(error)")
+        }
+    }
+    
+    private func loadCollections() {
+        presenter?.loadCollections() { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let state):
+                self.state = state
+            case .failure(let error):
+                self.state = .failed(error)
+            }
+            
+        }
+    }
+    
     @objc private func didTapSortingButton() {
         showSortingAlert()
     }
@@ -123,17 +166,25 @@ extension CatalogViewController: UITableViewDelegate {
 
 extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        guard let number = presenter?.collectionCount() else { return 0 }
+        return number
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
-        cell.nftImageView.image = presenter?.cellImage()
-        cell.nftNameAndNumber.text = presenter?.cellName()
+        let url = presenter?.cellImage(indexPath: indexPath)
+        cell.nftImageView.kf.indicatorType = .activity
+        cell.nftImageView.kf.setImage(with: url) { [weak self] result in
+            switch result {
+            case .success(_):
+                self?.nftTable.reloadRows(at: [indexPath], with: .automatic)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        cell.nftNameAndNumber.text = presenter?.cellName(indexPath: indexPath)
         return cell
     }
-    
-    
 }
 
 

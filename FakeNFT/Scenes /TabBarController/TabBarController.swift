@@ -37,7 +37,8 @@ final class TabBarController: UITabBarController {
         )
 
         let catalogController = CatalogViewController(
-                servicesAssembly: servicesAssembly
+                servicesAssembly: servicesAssembly,
+                service: servicesAssembly.collectionsService
         )
         
         let catalogNavigationController = UINavigationController(rootViewController: catalogController)
