@@ -100,12 +100,26 @@ final class CatalogViewController: UIViewController {
         let sortName = UIAlertAction(
             title: "По названию",
             style: .default
-        )
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            UIBlockingProgressHUD.show()
+            self.presenter?.sortByName()
+            self.nftTable.reloadData()
+            self.dismiss(animated: true)
+            UIBlockingProgressHUD.dismiss()
+        }
         
         let sortQuantity = UIAlertAction(
             title: "По количеству NFT",
             style: .default
-        )
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            UIBlockingProgressHUD.show()
+            self.presenter?.sortByCount()
+            self.nftTable.reloadData()
+            self.dismiss(animated: true)
+            UIBlockingProgressHUD.dismiss()
+        }
         
         let cancelAction = UIAlertAction(title: "Закрыть", style: .cancel, handler: nil)
         

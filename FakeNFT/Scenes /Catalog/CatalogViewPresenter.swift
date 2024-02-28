@@ -8,6 +8,8 @@ protocol CatalogViewPresenterProtocol: AnyObject {
     func cellImage(indexPath: IndexPath) -> URL?
     func loadCollections(completion: @escaping PresenterCompletion)
     func collectionCount() -> Int
+    func sortByName()
+    func sortByCount()
 }
 
 final class CatalogViewPresenter {
@@ -26,6 +28,14 @@ final class CatalogViewPresenter {
 }
 
 extension CatalogViewPresenter: CatalogViewPresenterProtocol {
+    func sortByName() {
+        collections = self.collections.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+    }
+    
+    func sortByCount() {
+        collections.sort { $0.nfts.count > $1.nfts.count }
+    }
+    
     
     func cellName(indexPath: IndexPath) -> String {
         let collectionName = collections[indexPath.row].name
