@@ -143,7 +143,6 @@ final class MyNFTCell: UICollectionViewCell {
 
             aboutStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             aboutStack.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 20),
-            aboutStack.widthAnchor.constraint(equalToConstant: 117),
 
             ratingStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             ratingStack.heightAnchor.constraint(equalToConstant: 12),
@@ -152,6 +151,10 @@ final class MyNFTCell: UICollectionViewCell {
             priceStack.leadingAnchor.constraint(equalTo: aboutStack.trailingAnchor),
             priceStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23)
         ])
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        priceValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        priceValueLabel.setContentHuggingPriority(.required, for: .horizontal)
     }
 
     private func updateRatingStack(with rating: Int) {
