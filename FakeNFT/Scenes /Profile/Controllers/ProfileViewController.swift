@@ -127,6 +127,11 @@ final class ProfileViewController: UIViewController {
         presenter?.viewDidLoad()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
     private func setupViews() {
         setupEditButton(safeArea: view.safeAreaLayoutGuide)
         setupAvatarImage(safeArea: view.safeAreaLayoutGuide)
@@ -319,7 +324,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     servicesAssembly: servicesAssembly,
                     viewType: .showNFTs
             )
-            present(profileNFTViewController, animated: true)
+            navigationController?.pushViewController(profileNFTViewController, animated: true)
         case 1:
             let profileFavoritesViewController = ProfileNFTViewController(
                     profile: profile,
@@ -329,7 +334,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileFavoritesViewController.onClose = { [weak self] updatedLikes in
                 self?.updateProfileLikes(withUpdatedLikes: updatedLikes)
             }
-            present(profileFavoritesViewController, animated: true)
+            navigationController?.pushViewController(profileFavoritesViewController, animated: true)
         default:
             if let url = URL(string: Profile.standard.website.absoluteString) {
                 let urlInput = WebPresenterInput(url: url)

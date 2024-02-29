@@ -116,6 +116,11 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         reloadPlaceholders()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
     private func addElements() {
         [headerView, placeholderView, collectionView, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -253,7 +258,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
         }
 
         onClose?(updatedLikes)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc func showSortingOptions() {
