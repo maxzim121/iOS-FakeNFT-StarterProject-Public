@@ -342,9 +342,15 @@ extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionView
 
     private func createGridLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 168, height: 80)
+        let interItemSpacing: CGFloat = 7
+        let numberOfItemsPerRow: CGFloat = 2
         let sectionInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout.sectionInset = sectionInsets
+        let availableWidth = view.bounds.width - sectionInsets.left - sectionInsets.right - interItemSpacing
+        let itemWidth: CGFloat = availableWidth / numberOfItemsPerRow
+        layout.itemSize = CGSize(width: itemWidth, height: 80)
+        layout.minimumInteritemSpacing = interItemSpacing
+        layout.minimumLineSpacing = 20
         return layout
     }
 
