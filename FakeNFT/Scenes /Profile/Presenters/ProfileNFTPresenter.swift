@@ -16,10 +16,14 @@ enum ProfileNFTPresenterState {
     case initial, loading, failed(Error), succeeded
 }
 
-enum SortOption {
-    case price
-    case rating
-    case name
+enum SortOption: String {
+    case price = "price"
+    case rating = "rating"
+    case name = "name"
+}
+
+private enum Constants {
+    static let sortingPreferenceKey = "sortingPreference"
 }
 
 final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
@@ -109,6 +113,7 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
     }
 
     func sortNFTs(by option: SortOption) {
+        UserDefaults.standard.set(option.rawValue, forKey: Constants.sortingPreferenceKey)
         switch option {
         case .price:
             nfts.sort { $0.price < $1.price }
