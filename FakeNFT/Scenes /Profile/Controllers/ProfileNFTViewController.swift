@@ -14,7 +14,6 @@ protocol ProfileNFTViewControllerProtocol: AnyObject, ErrorView, LoadingView {
 
 private enum Constants {
     static let profileId = "1"
-    static let sortingPreferenceKey = "sortingPreference"
 }
 
 final class ProfileNFTViewController: UIViewController, ProfileNFTViewControllerProtocol {
@@ -120,12 +119,7 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        if let sortingRawValue = UserDefaults.standard.string(forKey: Constants.sortingPreferenceKey),
-           let sortingOption = SortOption(rawValue: sortingRawValue) {
-            presenter?.sortNFTs(by: sortingOption)
-        } else {
-            presenter?.sortNFTs(by: .rating)
-        }
+        presenter?.restoreSortingPreference()
     }
 
     private func addElements() {
@@ -283,7 +277,6 @@ final class ProfileNFTViewController: UIViewController, ProfileNFTViewController
 
         present(alert, animated: true)
     }
-
 }
 
 extension ProfileNFTViewController: UICollectionViewDataSource, UICollectionViewDelegate {

@@ -10,6 +10,7 @@ protocol ProfileNFTPresenterProtocol {
     func viewDidLoad()
     func sortNFTs(by option: SortOption)
     func updateLikes(id: String, likes: [String])
+    func restoreSortingPreference()
 }
 
 enum ProfileNFTPresenterState {
@@ -89,12 +90,26 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
         case .succeeded:
             view?.hideLoading()
             view?.visibleNFTs = nfts
+            restoreSortingPreference()
             view?.reloadPlaceholders()
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
             view?.showError(errorModel)
         }
+    }
+
+    func restoreSortingPreference() {
+        if let sortingRawValue = UserDefaults.standard.string(forKey: Constants.sortingPreferenceKey),
+           let sortingOption = SortOption(rawValue: sortingRawValue) {
+            sortNFTs(by: sortingOption)
+        } else {
+            sortNFTs(by: .rating)
+        }
+    }
+
+    func saveSortingPreference(_ option: SortOption) {
+        UserDefaults.standard.set(option.rawValue, forKey: Constants.sortingPreferenceKey)
     }
 
     private func makeErrorModel(_ error: Error) -> ErrorModel {
@@ -117,10 +132,13 @@ final class ProfileNFTPresenter: ProfileNFTPresenterProtocol {
         switch option {
         case .price:
             nfts.sort { $0.price < $1.price }
+            saveSortingPreference(.price)
         case .rating:
             nfts.sort { $0.rating > $1.rating }
+            saveSortingPreference(.rating)
         case .name:
             nfts.sort { $0.name < $1.name }
+            saveSortingPreference(.name)
         }
         view?.visibleNFTs = nfts
         view?.reloadCollectionView()
