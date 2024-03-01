@@ -4,9 +4,10 @@
 
 import UIKit
 
-public protocol ProfileViewControllerProtocol: AnyObject {
+protocol ProfileViewControllerProtocol: AnyObject, ErrorView {
     var presenter: ProfilePresenterProtocol? { get }
     func updateProfileDetails(profile: Profile)
+    func updateProfileDetails(profile: ProfileRequest)
     func updateProfileAvatar(avatar: UIImage)
     var avatarImageView: UIImageView { get }
     func updateProfileWebsite(_ url: String)
@@ -91,7 +92,7 @@ final class ProfileViewController: UIViewController {
         textView.delegate = self
         textView.isUserInteractionEnabled = true
         textView.linkTextAttributes = [
-            .foregroundColor: UIColor.yaBlueUniversal,
+            .foregroundColor: UIColor.yaBlueUniversal
         ]
 
         return textView
@@ -124,6 +125,11 @@ final class ProfileViewController: UIViewController {
 
         presenter?.view = self
         presenter?.viewDidLoad()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     private func setupViews() {
@@ -181,13 +187,25 @@ final class ProfileViewController: UIViewController {
     }
 
     @objc private func editButtonTapped() {
-        //TODO
-//        let editProfileViewController = EditProfileViewController(delegate: self)
-//        let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
-//        present(navigationViewController, animated: true)
+        guard let presenter = presenter as? ProfilePresenterProtocol else {
+            print("Presenter or profile is nil")
+            return
+        }
+        if !presenter.isProfileLoaded {
+            let errorModel = makeErrorModel()
+            showError(errorModel)
+        } else {
+            let defaultImage = UIImage(named: "ProfileImage") ?? UIImage()
+            let editProfileViewController: UIViewController = EditProfileViewController(
+                    presenter: presenter,
+                    profile: profile,
+                    avatar: avatarImageView.image ?? defaultImage
+            )
+            let navigationViewController = UINavigationController(rootViewController: editProfileViewController)
+            present(navigationViewController, animated: true)
+        }
     }
 }
-
 
 extension ProfileViewController: ProfileViewControllerProtocol {
     func updateProfileWebsite(_ url: String) {
@@ -219,21 +237,50 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         tableView.reloadData()
     }
 
+    func updateProfileDetails(profile: ProfileRequest) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.description
+        updateProfileWebsite(profile.website)
+    }
+
     func updateProfileAvatar(avatar: UIImage) {
         avatarImageView.image = avatar
     }
+
+    private func updateProfileLikes(withUpdatedLikes updatedLikes: [String]) {
+        let updatedProfile = Profile(
+                name: profile.name,
+                avatar: profile.avatar,
+                description: profile.description,
+                website: profile.website,
+                nfts: profile.nfts,
+                likes: updatedLikes,
+                id: profile.id
+        )
+        profile = updatedProfile
+        tableView.reloadData()
+    }
 }
 
+extension ProfileViewController: ErrorView {
+    private func makeErrorModel() -> ErrorModel {
+        ErrorModel(
+                message: "Пожалуйста, подождите, пока загрузится профиль.",
+                actionText: NSLocalizedString("Error.cancel", comment: ""),
+                action: {}
+        )
+    }
+}
 
 extension ProfileViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange,
+                  interaction: UITextItemInteraction) -> Bool {
         let webInput = WebPresenterInput(url: URL)
         let webViewController = build(with: webInput)
         present(webViewController, animated: true)
         return false
     }
 }
-
 
 extension ProfileViewController {
     func build(with input: WebPresenterInput) -> UIViewController {
@@ -245,7 +292,6 @@ extension ProfileViewController {
         return navigationController
     }
 }
-
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -273,15 +319,24 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
-            let profileNFTViewController = TestCatalogViewController( //TODO
-                    servicesAssembly: servicesAssembly
+            let profileNFTViewController = ProfileNFTViewController(
+                    profile: profile,
+                    servicesAssembly: servicesAssembly,
+                    viewType: .showNFTs
             )
-            present(profileNFTViewController, animated: true)
+            profileNFTViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(profileNFTViewController, animated: true)
         case 1:
-            let profileFavoritesViewController = TestCatalogViewController( //TODO
-                    servicesAssembly: servicesAssembly
+            let profileFavoritesViewController = ProfileNFTViewController(
+                    profile: profile,
+                    servicesAssembly: servicesAssembly,
+                    viewType: .showFavoriteNFTs
             )
-            present(profileFavoritesViewController, animated: true)
+            profileFavoritesViewController.onClose = { [weak self] updatedLikes in
+                self?.updateProfileLikes(withUpdatedLikes: updatedLikes)
+            }
+            profileFavoritesViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(profileFavoritesViewController, animated: true)
         default:
             if let url = URL(string: Profile.standard.website.absoluteString) {
                 let urlInput = WebPresenterInput(url: url)

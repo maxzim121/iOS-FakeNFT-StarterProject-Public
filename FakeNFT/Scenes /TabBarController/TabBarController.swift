@@ -28,14 +28,14 @@ final class TabBarController: UITabBarController {
             tag: 0
     )
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let profileViewController = ProfileViewController(
                 servicesAssembly: servicesAssembly
         )
-
+        let profileNavigationController = UINavigationController(rootViewController: profileViewController)
+        profileNavigationController.setNavigationBarHidden(true, animated: false)
         let catalogController = TestCatalogViewController(
                 servicesAssembly: servicesAssembly
         )
@@ -48,12 +48,12 @@ final class TabBarController: UITabBarController {
                 servicesAssembly: servicesAssembly
         )
 
-        profileViewController.tabBarItem = profileTabBarItem
+        profileNavigationController.tabBarItem = profileTabBarItem
         catalogController.tabBarItem = catalogTabBarItem
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
-        viewControllers = [profileViewController, catalogController, basketController, statisticsController]
+        viewControllers = [profileNavigationController, catalogController, basketController, statisticsController]
 
         view.backgroundColor = .systemBackground
     }
