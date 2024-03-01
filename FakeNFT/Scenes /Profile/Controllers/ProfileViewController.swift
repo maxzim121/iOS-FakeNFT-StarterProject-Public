@@ -324,6 +324,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     servicesAssembly: servicesAssembly,
                     viewType: .showNFTs
             )
+            profileNFTViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileNFTViewController, animated: true)
         case 1:
             let profileFavoritesViewController = ProfileNFTViewController(
@@ -334,6 +335,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileFavoritesViewController.onClose = { [weak self] updatedLikes in
                 self?.updateProfileLikes(withUpdatedLikes: updatedLikes)
             }
+            profileFavoritesViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileFavoritesViewController, animated: true)
         default:
             if let url = URL(string: Profile.standard.website.absoluteString) {
