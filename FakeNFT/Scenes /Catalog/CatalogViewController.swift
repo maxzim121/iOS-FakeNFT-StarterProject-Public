@@ -1,4 +1,3 @@
-import Foundation
 import Kingfisher
 import UIKit
 import ProgressHUD
