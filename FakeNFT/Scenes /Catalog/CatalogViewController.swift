@@ -198,7 +198,6 @@ extension CatalogViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
-        print("ГОВНО")
         let url = presenter?.cellImage(indexPath: indexPath)
         cell.nftImageView.kf.indicatorType = .activity
         cell.nftImageView.kf.setImage(with: url) { [weak self] result in
