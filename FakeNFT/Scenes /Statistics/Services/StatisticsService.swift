@@ -322,12 +322,12 @@ extension StatisticsService {
             //check this behaviour:
             //print(UserDefaults.standard.integer(forKey: "sortBy")) (checked, that it returns 0 on 21Feb2024)
             
-            //sort users according the rating in descending order
+            //sort users according the rating in increasing order (1, 2, 3, 4 ...)
             listOfUsers.sort {
-                $0.rating > $1.rating
+                $0.rating < $1.rating
             }
         } else if setSortBy == SortBy.name.rawValue {
-            //sort users according the name in increasing order
+            //sort users according the name in increasing order (A, B, C, D ...)
             listOfUsers.sort {
                 $0.name < $1.name
             }

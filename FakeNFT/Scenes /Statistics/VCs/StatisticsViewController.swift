@@ -1,6 +1,9 @@
 import UIKit
 
 final class StatisticsViewController: UIViewController {
+    
+    private var alertView: AlertPresenterProtocol?
+    
     private let servicesAssembly: ServicesAssembly
     
     private let statisticsService = StatisticsService.shared
@@ -33,31 +36,35 @@ final class StatisticsViewController: UIViewController {
                 guard let self = self else { return }
                 switch result {
                 case .success:
-                    UIBlockingProgressHUD.dismiss()
                     self.setupUI()
                     self.setupLayout()
+                    UIBlockingProgressHUD.dismiss()
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlert()
+                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
+                                                message: "Не удалось загрузить данные о пользователях в json-файле",
+                                                buttonText: "Повторить",
+                                                handler: { [weak self] _ in
+                                                    guard let self = self else { return }
+                                                    self.viewDidLoad()
+                    })
                 }
             }
         }
     }
     
-    private func showAlert() {
-        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить данные о пользователях в json-файле", preferredStyle: .alert)
-        
-        let actionRepeat = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            self.viewDidLoad()
-        }
-        alert.addAction(actionRepeat)
-        
-        let actionNo = UIAlertAction(title: "Не надо", style: .default)
-        alert.addAction(actionNo)
-        
-        present(alert, animated: true)
+    private func showAlertWithOneAction(generalTitle: String,
+                                           message: String,
+                                           buttonText: String,
+                                           handler: @escaping (UIAlertAction)->Void) {
+        let alert = AlertViewModel(title: generalTitle,
+                                      message: message,
+                                      buttonText: buttonText,
+                                      handler: handler
+        )
+        alertView = AlertPresenter(delegate: self, alertSome: alert)
+        alertView?.show()
     }
     
     private func setupUI() {
@@ -128,5 +135,11 @@ extension StatisticsViewController: UITableViewDelegate {
         viewController.modalPresentationStyle = .fullScreen
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+extension StatisticsViewController: AlertPresenterDelegate {
+    func showAlert(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }

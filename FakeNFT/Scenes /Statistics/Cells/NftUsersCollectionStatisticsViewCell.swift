@@ -126,7 +126,9 @@ final class NftUsersCollectionStatisticsViewCell: UICollectionViewCell {
         ])
     }
     
-    func configure(infoOnNftById: NftByIdServer, _ likeIds: [String], _ orderedIds: [String]) {
+    func configure(infoOnNftById: NftByIdServer, 
+                   _ likeIds: [String],
+                   _ orderedIds: [String]) {
         let url = URL(string: infoOnNftById.images[0])
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(with: url, placeholder: nftImageViewStub)
