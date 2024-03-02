@@ -1,14 +1,27 @@
 import Foundation
 import UIKit
+import Kingfisher
+
+
+enum NftDetailState {
+    case initial, loading, failed(Error), data
+}
 
 final class NFTCollectionViewController: UIViewController {
     
     let servicesAssembly: ServicesAssembly
+    let service: NftService
     
     private let topSpacing: CGFloat = 486.0
     private let cellHeight: CGFloat = 192.0
     private let numberOfCellsInRow: CGFloat = 3.0
-    private let numberOfNft = 11
+    private var collection: CollectionsModel
+    
+    private var state = NftDetailState.initial {
+        didSet {
+            stateDidChanged()
+        }
+    }
     
     var presenter: NFTCollectionViewPresenterProtocol?
     
@@ -21,7 +34,7 @@ final class NFTCollectionViewController: UIViewController {
         return scrollView
     }()
     
-    lazy var catalogImageView: UIImageView = {
+    private lazy var catalogImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
@@ -43,7 +56,7 @@ final class NFTCollectionViewController: UIViewController {
         return button
     }()
     
-    lazy var catalogLabel: UILabel = {
+    private lazy var catalogLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
@@ -58,7 +71,7 @@ final class NFTCollectionViewController: UIViewController {
         return label
     }()
     
-    lazy var authorNameButton: UIButton = {
+    private lazy var authorNameButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.setTitleColor(.systemBlue, for: .normal)
@@ -66,7 +79,7 @@ final class NFTCollectionViewController: UIViewController {
         return button
     }()
     
-    lazy var descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
@@ -94,8 +107,10 @@ final class NFTCollectionViewController: UIViewController {
     }()
     
     
-    init(servicesAssembly: ServicesAssembly) {
+    init(servicesAssembly: ServicesAssembly, service: NftService, collection: CollectionsModel) {
         self.servicesAssembly = servicesAssembly
+        self.service = service
+        self.collection = collection
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,7 +120,9 @@ final class NFTCollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = NFTCollectionViewPresenter()
+        
+        presenter = NFTCollectionViewPresenter(collection: self.collection, servicesAssembly: servicesAssembly, service: service)
+        state = .loading
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
         addSubViews()
@@ -182,18 +199,49 @@ final class NFTCollectionViewController: UIViewController {
     
     func configureScreen() {
         let screenModel = presenter?.getScreenModel()
-        catalogImageView.image = screenModel?.catalogImage
+        guard let url = screenModel?.catalogImageUrl else { return }
+        catalogImageView.kf.indicatorType = .activity
+        catalogImageView.kf.setImage(with: url)
         catalogLabel.text = screenModel?.labelText
         authorNameButton.setTitle(screenModel?.authorName, for: .normal)
         descriptionLabel.text = screenModel?.descriptionText
     }
     
     func updateScrollViewContentSize() {
-        let numberOfRows = ceil(CGFloat(numberOfNft) / numberOfCellsInRow)
+        let numberOfRows = ceil(CGFloat(collection.nfts.count) / numberOfCellsInRow)
         scrollView.contentSize = CGSize(
             width: view.frame.width,
             height: topSpacing + numberOfRows * (cellHeight)
         )
+    }
+    
+    private func stateDidChanged() {
+        switch state {
+        case .initial:
+            assertionFailure("can't move to initial state")
+        case .loading:
+            UIBlockingProgressHUD.show()
+            loadNft()
+        case .data:
+//            updateCollectionViewHeight()
+            collectionView.reloadData()
+            UIBlockingProgressHUD.dismiss()
+        case .failed(let error):
+            UIBlockingProgressHUD.dismiss()
+            print("ОШИБКА: \(error)")
+        }
+    }
+    
+    private func loadNft() {
+        presenter?.loadNft {  [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let state):
+                self.state = state
+            case .failure(let error):
+                self.state = .failed(error)
+            }
+        }
     }
     
 }
@@ -210,18 +258,29 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateScrollViewContentSize()
-        return numberOfNft
+        guard let count = presenter?.nftsCount() else { return 0}
+        return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
-        let cellModel = presenter?.getCellModel()
-        cell.nftImageView.image = cellModel?.nftImage
-        cell.nameLabel.text = cellModel?.nameLabel
-        cell.priceLabel.text = cellModel?.priceLabel
-        cell.likeButton.setImage(cellModel?.likeImage, for: .normal)
-        cell.starsImageView.image = cellModel?.starsImage
-        cell.cartButton.setImage(cellModel?.cartImage, for: .normal)
+        
+        guard let cellModel = presenter?.getCellModel(indexPath: indexPath) else { return UICollectionViewCell() }
+        let url = presenter?.cellImage(urlString: cellModel.images[0])
+        cell.nftImageView.kf.indicatorType = .activity
+        cell.nftImageView.kf.setImage(with: url) { [weak self] result in
+            switch result {
+            case .success(let value):
+                cell.nftImageView.image = value.image
+            case .failure(let error):
+                print("Error loading image: \(error)")
+            }
+        }
+        cell.nameLabel.text = cellModel.name
+        cell.priceLabel.text = "\(String(describing: cellModel.price)) ETH"
+        cell.likeButton.setImage(UIImage(named: "LikeOn"), for: .normal)
+        cell.starsImageView.image = UIImage(named: "\(cellModel.rating)Star")
+        cell.cartButton.setImage(UIImage(named: "CartEmpty"), for: .normal)
         return cell
     }
     

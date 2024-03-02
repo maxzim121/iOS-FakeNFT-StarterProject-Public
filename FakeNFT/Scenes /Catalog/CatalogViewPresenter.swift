@@ -1,15 +1,16 @@
 import UIKit
 import Foundation
 
-typealias PresenterCompletion = (Result<CatalogDetailState, Error>) -> Void
+typealias CatalogPresetnerCompletion = (Result<CatalogDetailState, Error>) -> Void
 
 protocol CatalogViewPresenterProtocol: AnyObject {
     func cellName(indexPath: IndexPath) -> String
     func cellImage(indexPath: IndexPath) -> URL?
-    func loadCollections(completion: @escaping PresenterCompletion)
+    func loadCollections(completion: @escaping CatalogPresetnerCompletion)
     func collectionCount() -> Int
     func sortByName()
     func sortByCount()
+    func collection(indexPath: IndexPath) -> CollectionsModel
 }
 
 final class CatalogViewPresenter {
@@ -17,12 +18,10 @@ final class CatalogViewPresenter {
     let servicesAssembly: ServicesAssembly
     private var service: CollectionsService
     private var collections: [CollectionsModel] = []
-    private var state: CatalogDetailState
     
-    init(servicesAssembly: ServicesAssembly, service: CollectionsService, state: CatalogDetailState) {
+    init(servicesAssembly: ServicesAssembly, service: CollectionsService) {
         self.servicesAssembly = servicesAssembly
         self.service = service
-        self.state = state
     }
     
 }
@@ -58,7 +57,7 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
 
     
     
-    func loadCollections(completion: @escaping PresenterCompletion) {
+    func loadCollections(completion: @escaping CatalogPresetnerCompletion) {
         service.loadCollections() { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -84,6 +83,11 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
     
     func collectionCount() -> Int {
         return collections.count
+    }
+    
+    func collection(indexPath: IndexPath) -> CollectionsModel {
+        let collection = collections[indexPath.row]
+        return collection
     }
     
     

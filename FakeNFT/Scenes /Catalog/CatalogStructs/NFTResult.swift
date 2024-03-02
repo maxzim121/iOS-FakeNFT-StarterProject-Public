@@ -1,8 +1,7 @@
 import Foundation
 
-
-public struct NftModel {
-    let createdAt: Date?
+public struct NftResult: Decodable {
+    let createdAt: String
     let name: String
     let images: [String]
     let rating: Int

@@ -57,7 +57,7 @@ final class CatalogViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = CatalogViewPresenter(servicesAssembly: servicesAssembly, service: service, state: state)
+        presenter = CatalogViewPresenter(servicesAssembly: servicesAssembly, service: service)
         configureSortButton()
         configureNftTable()
         state = .loading
@@ -138,8 +138,8 @@ final class CatalogViewController: UIViewController {
             UIBlockingProgressHUD.show()
             loadCollections()
         case .data:
-            UIBlockingProgressHUD.dismiss()
             nftTable.reloadData()
+            UIBlockingProgressHUD.dismiss()
         case .failed(let error):
             print("ОШИБКА: \(error)")
         }
@@ -166,7 +166,8 @@ final class CatalogViewController: UIViewController {
 extension CatalogViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let nftCollection = NFTCollectionViewController(servicesAssembly: servicesAssembly)
+        guard let collection = presenter?.collection(indexPath: indexPath) else { return }
+        let nftCollection = NFTCollectionViewController(servicesAssembly: servicesAssembly, service: servicesAssembly.nftService, collection: collection)
         nftCollection.hidesBottomBarWhenPushed = true
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(nftCollection, animated: true)
