@@ -7,17 +7,24 @@ enum CatalogDetailState {
     case initial, loading, failed(Error), data
 }
 
+enum SortingOption: Int {
+    case defaultSorting
+    case name
+    case quantity
+}
+
 final class CatalogViewController: UIViewController {
     
     let servicesAssembly: ServicesAssembly
     
-    private var collections: [CollectionsModel] = []
     private var service: CollectionsService
     private var state = CatalogDetailState.initial {
         didSet {
             stateDidChanged()
         }
     }
+    private var currentSortingOption: SortingOption = .defaultSorting
+    private let userDefaults = UserDefaultsManager.shared
     
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -57,6 +64,7 @@ final class CatalogViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        currentSortingOption = userDefaults.loadSortingOption()
         presenter = CatalogViewPresenter(servicesAssembly: servicesAssembly, service: service)
         configureSortButton()
         configureNftTable()
@@ -103,7 +111,8 @@ final class CatalogViewController: UIViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
-            self.presenter?.sortByName()
+            self.currentSortingOption = .name
+            self.presenter?.applySorting(currentSortingOption: .name)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
             UIBlockingProgressHUD.dismiss()
@@ -115,7 +124,8 @@ final class CatalogViewController: UIViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
-            self.presenter?.sortByCount()
+            self.currentSortingOption = .quantity
+            self.presenter?.applySorting(currentSortingOption: .quantity)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
             UIBlockingProgressHUD.dismiss()
@@ -138,6 +148,7 @@ final class CatalogViewController: UIViewController {
             UIBlockingProgressHUD.show()
             loadCollections()
         case .data:
+            presenter?.applySorting(currentSortingOption: currentSortingOption)
             nftTable.reloadData()
             UIBlockingProgressHUD.dismiss()
         case .failed(let error):
@@ -187,6 +198,7 @@ extension CatalogViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
+        print("ГОВНО")
         let url = presenter?.cellImage(indexPath: indexPath)
         cell.nftImageView.kf.indicatorType = .activity
         cell.nftImageView.kf.setImage(with: url) { [weak self] result in
