@@ -13,17 +13,17 @@ protocol ProfileViewControllerProtocol: AnyObject, ErrorView {
     func updateProfileWebsite(_ url: String)
 }
 
-private enum Constants {
-    static let profileId = "1"
-}
+// private enum Constants {
+//    static let profileId = "1"
+// }
 
 final class ProfileViewController: UIViewController {
     var presenter: ProfilePresenterProtocol?
     let servicesAssembly: ServicesAssembly
-    private let profileHelper = ProfileHelper()
     private var profile: Profile = .standard
 
-    init(servicesAssembly: ServicesAssembly) {
+    init(presenter: ProfilePresenterProtocol, servicesAssembly: ServicesAssembly) {
+        self.presenter = presenter
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
@@ -113,15 +113,6 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupViews()
-
-        if presenter == nil {
-            let profileInput = ProfileDetailInput(profileId: Constants.profileId)
-            presenter = ProfilePresenter(
-                    input: profileInput,
-                    service: servicesAssembly.profileService,
-                    helper: profileHelper
-            )
-        }
 
         presenter?.view = self
         presenter?.viewDidLoad()
