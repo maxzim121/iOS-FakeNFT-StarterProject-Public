@@ -13,10 +13,6 @@ protocol ProfileViewControllerProtocol: AnyObject, ErrorView {
     func updateProfileWebsite(_ url: String)
 }
 
-// private enum Constants {
-//    static let profileId = "1"
-// }
-
 final class ProfileViewController: UIViewController {
     var presenter: ProfilePresenterProtocol?
     let servicesAssembly: ServicesAssembly

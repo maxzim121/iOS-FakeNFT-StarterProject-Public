@@ -27,6 +27,7 @@
 		36D7D081F3B147754529DB10 /* UpdateLikesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D7E6E1201D00E02F5B24 /* UpdateLikesRequest.swift */; };
 		36D7D0AA00947F41A70DFEDC /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D7E7C2C5138A5921D9A2 /* Profile.swift */; };
 		36D7D11B30DDBFDCD16366B3 /* ProfileViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D514085CDE57DC1D008A /* ProfileViewTests.swift */; };
+		36D7D230DC1A381CFB8D84A3 /* MockProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D963DED8E3343A4BB550 /* MockProfileService.swift */; };
 		36D7D2C0E706FE202D955D94 /* WebPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D537C51D2DFBF68A7F26 /* WebPresenter.swift */; };
 		36D7D31C861F33EFAC0C06ED /* ProfileDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D3E4CF0E83A85A0224E4 /* ProfileDetailsTableViewCell.swift */; };
 		36D7D34AB3D1571A1ABC9326 /* ProfileNFTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D0416BE53649E6436FAC /* ProfileNFTPresenter.swift */; };
@@ -52,6 +53,7 @@
 		36D7DDCA96433C6C2BAE714B /* MockNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DACA75AF06236032E0C7 /* MockNetworkClient.swift */; };
 		36D7DDDA9F3251DDDF3B33A0 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D2509D25432B3B80DAC2 /* EditProfileViewController.swift */; };
 		36D7DE1CCFE332A0B4D0F224 /* ProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DF96149FC023FF0D36BE /* ProfileRequest.swift */; };
+		36D7DE551E2636FC59562C58 /* MockProfileImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DB98507C9322B1593043 /* MockProfileImageService.swift */; };
 		36D7DE6223B9DB14E06E027B /* ProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D3501B17C873E38ED15B /* ProfileResponse.swift */; };
 		36D7DE92ADBFA819620CD60C /* ProfilePresenterSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7D01D3ED4B10197BC4CB0 /* ProfilePresenterSpy.swift */; };
 		36D7DF6DA566424F0289C33C /* UpdateProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D7DDCF21FC0E1DA0B328E7 /* UpdateProfileRequest.swift */; };
@@ -136,7 +138,9 @@
 		36D7D7E7C2C5138A5921D9A2 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		36D7D7FDE0A1BF650B258471 /* WebPresenterInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebPresenterInput.swift; sourceTree = "<group>"; };
 		36D7D89D54A02EE80A8AE25F /* FavoriteNFTCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteNFTCell.swift; sourceTree = "<group>"; };
+		36D7D963DED8E3343A4BB550 /* MockProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockProfileService.swift; sourceTree = "<group>"; };
 		36D7DACA75AF06236032E0C7 /* MockNetworkClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkClient.swift; sourceTree = "<group>"; };
+		36D7DB98507C9322B1593043 /* MockProfileImageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockProfileImageService.swift; sourceTree = "<group>"; };
 		36D7DBAEBF4ED308FF317B99 /* ProfileDetailInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDetailInput.swift; sourceTree = "<group>"; };
 		36D7DC88BAFD65DD867FC2DB /* PlaceholderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
 		36D7DCD24779C44CA4871DDD /* PlaceholderTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTypes.swift; sourceTree = "<group>"; };
@@ -373,6 +377,8 @@
 				36D7D514085CDE57DC1D008A /* ProfileViewTests.swift */,
 				36D7DACA75AF06236032E0C7 /* MockNetworkClient.swift */,
 				36D7D54C9AB352C463A74CA3 /* MockNftStorage.swift */,
+				36D7D963DED8E3343A4BB550 /* MockProfileService.swift */,
+				36D7DB98507C9322B1593043 /* MockProfileImageService.swift */,
 			);
 			path = FakeNFTTests;
 			sourceTree = "<group>";
@@ -745,6 +751,8 @@
 				36D7D11B30DDBFDCD16366B3 /* ProfileViewTests.swift in Sources */,
 				36D7DDCA96433C6C2BAE714B /* MockNetworkClient.swift in Sources */,
 				36D7DD9C3776CBB16BA6CC76 /* MockNftStorage.swift in Sources */,
+				36D7D230DC1A381CFB8D84A3 /* MockProfileService.swift in Sources */,
+				36D7DE551E2636FC59562C58 /* MockProfileImageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
