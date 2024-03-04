@@ -9,6 +9,7 @@ protocol NFTCollectionViewPresenterProtocol {
     func loadNft(completion: @escaping NftCollectionPresenterCompletion)
     func nftsCount() -> Int
     func cellImage(urlString: String) -> URL?
+    func collectionCount() -> Int
 }
 
 final class NFTCollectionViewPresenter {
@@ -16,12 +17,10 @@ final class NFTCollectionViewPresenter {
     var collection: CollectionsModel
     var nfts: [NftModel] = []
     
-    let servicesAssembly: ServicesAssembly
-    private var service: NftService
+    var service: NftService
     
-    init(collection: CollectionsModel, servicesAssembly: ServicesAssembly, service: NftService) {
+    init(collection: CollectionsModel, service: NftService) {
         self.collection = collection
-        self.servicesAssembly = servicesAssembly
         self.service = service
     }
     
@@ -43,6 +42,10 @@ final class NFTCollectionViewPresenter {
 }
 
 extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
+    func collectionCount() -> Int {
+        return collection.nfts.count 
+    }
+    
     
     func getScreenModel() -> NFTScreenModel {
         

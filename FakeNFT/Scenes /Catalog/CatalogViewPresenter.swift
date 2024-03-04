@@ -12,24 +12,30 @@ protocol CatalogViewPresenterProtocol: AnyObject {
     func collectionCount() -> Int
     func collection(indexPath: IndexPath) -> CollectionsModel
     func applySorting(currentSortingOption: SortingOption)
+    func collectionAssembly(collection: CollectionsModel) -> UIViewController
 }
 
 final class CatalogViewPresenter {
     
-    let servicesAssembly: ServicesAssembly
     private var service: CollectionsService
+    private var nftCollectionAssembly: NFTCollectionModuleAssembly
     private var collections: [CollectionsModel] = []
     private var originalCollections: [CollectionsModel] = []
     private let userDefaults = UserDefaultsManager.shared
     
-    init(servicesAssembly: ServicesAssembly, service: CollectionsService) {
-        self.servicesAssembly = servicesAssembly
+    init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly) {
         self.service = service
+        self.nftCollectionAssembly = nftCollectionAssembly
     }
     
 }
 
 extension CatalogViewPresenter: CatalogViewPresenterProtocol {
+    
+    func collectionAssembly(collection: CollectionsModel) -> UIViewController {
+        nftCollectionAssembly.build(collection: collection)
+    }
+    
     
     
     func cellName(indexPath: IndexPath) -> String {

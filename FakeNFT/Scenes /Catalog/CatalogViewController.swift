@@ -14,9 +14,8 @@ enum SortingOption: Int {
 
 final class CatalogViewController: UIViewController {
     
-    let servicesAssembly: ServicesAssembly
-    
-    private var service: CollectionsService
+    var presenter: CatalogViewPresenterProtocol
+        
     private var state = CatalogDetailState.initial {
         didSet {
             stateDidChanged()
@@ -49,11 +48,8 @@ final class CatalogViewController: UIViewController {
         return tableView
     }()
     
-    var presenter: CatalogViewPresenterProtocol?
-    
-    init(servicesAssembly: ServicesAssembly, service: CollectionsService) {
-        self.servicesAssembly = servicesAssembly
-        self.service = service
+    init(presenter: CatalogViewPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -64,7 +60,6 @@ final class CatalogViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         currentSortingOption = userDefaults.loadSortingOption()
-        presenter = CatalogViewPresenter(servicesAssembly: servicesAssembly, service: service)
         configureSortButton()
         configureNftTable()
         state = .loading
@@ -111,7 +106,7 @@ final class CatalogViewController: UIViewController {
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
             self.currentSortingOption = .name
-            self.presenter?.applySorting(currentSortingOption: .name)
+            self.presenter.applySorting(currentSortingOption: .name)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
             UIBlockingProgressHUD.dismiss()
@@ -124,7 +119,7 @@ final class CatalogViewController: UIViewController {
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
             self.currentSortingOption = .quantity
-            self.presenter?.applySorting(currentSortingOption: .quantity)
+            self.presenter.applySorting(currentSortingOption: .quantity)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
             UIBlockingProgressHUD.dismiss()
@@ -147,7 +142,7 @@ final class CatalogViewController: UIViewController {
             UIBlockingProgressHUD.show()
             loadCollections()
         case .data:
-            presenter?.applySorting(currentSortingOption: currentSortingOption)
+            presenter.applySorting(currentSortingOption: currentSortingOption)
             nftTable.reloadData()
             UIBlockingProgressHUD.dismiss()
         case .failed(let error):
@@ -156,7 +151,7 @@ final class CatalogViewController: UIViewController {
     }
     
     private func loadCollections() {
-        presenter?.loadCollections() { [weak self] result in
+        presenter.loadCollections() { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let state):
@@ -176,8 +171,8 @@ final class CatalogViewController: UIViewController {
 extension CatalogViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let collection = presenter?.collection(indexPath: indexPath) else { return }
-        let nftCollection = NFTCollectionViewController(servicesAssembly: servicesAssembly, service: servicesAssembly.nftService, collection: collection)
+        let collection = presenter.collection(indexPath: indexPath)
+        let nftCollection = presenter.collectionAssembly(collection: collection)
         nftCollection.hidesBottomBarWhenPushed = true
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(nftCollection, animated: true)
@@ -191,13 +186,13 @@ extension CatalogViewController: UITableViewDelegate {
 
 extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let number = presenter?.collectionCount() else { return 0 }
+        let number = presenter.collectionCount()
         return number
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
-        let url = presenter?.cellImage(indexPath: indexPath)
+        let url = presenter.cellImage(indexPath: indexPath)
         cell.nftImageView.kf.indicatorType = .activity
         cell.nftImageView.kf.setImage(with: url) { [weak self] result in
             switch result {
@@ -207,7 +202,7 @@ extension CatalogViewController: UITableViewDataSource {
                 print(error)
             }
         }
-        cell.nftNameAndNumber.text = presenter?.cellName(indexPath: indexPath)
+        cell.nftNameAndNumber.text = presenter.cellName(indexPath: indexPath)
         return cell
     }
 }

@@ -49,6 +49,8 @@
 		5A5B9EC62B834B020096F7A9 /* CatalogStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5B9EC52B834B020096F7A9 /* CatalogStructs.swift */; };
 		5A676FC52B7BDC5900D85438 /* NFTCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A676FC42B7BDC5900D85438 /* NFTCollectionViewController.swift */; };
 		5A676FC72B7BF09000D85438 /* NFTCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A676FC62B7BF09000D85438 /* NFTCollectionViewCell.swift */; };
+		5A7868412B95C04E0030DB16 /* CatalogModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */; };
+		5A7868432B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */; };
 		5A8B528B2B7A9FF600645AA3 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */; };
 		5A8B528E2B7AB01D00645AA3 /* NFTTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */; };
 		5A8D6E752B878319007A17E5 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8D6E742B878319007A17E5 /* ProfileModel.swift */; };
@@ -131,6 +133,8 @@
 		5A5B9EC52B834B020096F7A9 /* CatalogStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogStructs.swift; sourceTree = "<group>"; };
 		5A676FC42B7BDC5900D85438 /* NFTCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionViewController.swift; sourceTree = "<group>"; };
 		5A676FC62B7BF09000D85438 /* NFTCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionViewCell.swift; sourceTree = "<group>"; };
+		5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogModuleAssembly.swift; sourceTree = "<group>"; };
+		5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionModuleAssembly.swift; sourceTree = "<group>"; };
 		5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
 		5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTableViewCell.swift; sourceTree = "<group>"; };
 		5A8D6E742B878319007A17E5 /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
@@ -232,6 +236,8 @@
 				5A8D6E7E2B879883007A17E5 /* CollectionsRequest.swift */,
 				5A03AE592B8F4CF6003CC8A2 /* UIBlockingProgressHUD.swift */,
 				5AF0DC272B93360C00533360 /* UserDefaultsManager.swift */,
+				5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */,
+				5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */,
 			);
 			path = Catalog;
 			sourceTree = "<group>";
@@ -610,6 +616,7 @@
 				3F478ECF29DB474E00F6D39E /* Colors.swift in Sources */,
 				5ADD6D082B909297008880A6 /* NFTRequest.swift in Sources */,
 				5A8D6E7D2B8797F6007A17E5 /* CollectionsService.swift in Sources */,
+				5A7868412B95C04E0030DB16 /* CatalogModuleAssembly.swift in Sources */,
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
@@ -624,6 +631,7 @@
 				3F68069B29CBBAF100B4F915 /* ProductDetailsTableViewController.swift in Sources */,
 				0CFCB7402A78002A0009A829 /* NftService.swift in Sources */,
 				3F6806D529CBBEC700B4F915 /* NetworkTask.swift in Sources */,
+				5A7868432B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift in Sources */,
 				0CF2C2DB2A783C1B00FDC837 /* LoadingView.swift in Sources */,
 				3F68069729CBBAF100B4F915 /* AppDelegate.swift in Sources */,
 				3F68069929CBBAF100B4F915 /* SceneDelegate.swift in Sources */,

@@ -9,13 +9,10 @@ enum NftDetailState {
 
 final class NFTCollectionViewController: UIViewController {
     
-    let servicesAssembly: ServicesAssembly
-    let service: NftService
     
     private let topSpacing: CGFloat = 486.0
     private let cellHeight: CGFloat = 192.0
     private let numberOfCellsInRow: CGFloat = 3.0
-    private var collection: CollectionsModel
     
     private var state = NftDetailState.initial {
         didSet {
@@ -23,7 +20,7 @@ final class NFTCollectionViewController: UIViewController {
         }
     }
     
-    var presenter: NFTCollectionViewPresenterProtocol?
+    var presenter: NFTCollectionViewPresenterProtocol
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -107,10 +104,8 @@ final class NFTCollectionViewController: UIViewController {
     }()
     
     
-    init(servicesAssembly: ServicesAssembly, service: NftService, collection: CollectionsModel) {
-        self.servicesAssembly = servicesAssembly
-        self.service = service
-        self.collection = collection
+    init(presenter: NFTCollectionViewPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -121,7 +116,6 @@ final class NFTCollectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter = NFTCollectionViewPresenter(collection: self.collection, servicesAssembly: servicesAssembly, service: service)
         state = .loading
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
@@ -198,17 +192,17 @@ final class NFTCollectionViewController: UIViewController {
     }
     
     func configureScreen() {
-        let screenModel = presenter?.getScreenModel()
-        guard let url = screenModel?.catalogImageUrl else { return }
+        let screenModel = presenter.getScreenModel()
+        guard let url = screenModel.catalogImageUrl else { return }
         catalogImageView.kf.indicatorType = .activity
         catalogImageView.kf.setImage(with: url)
-        catalogLabel.text = screenModel?.labelText
-        authorNameButton.setTitle(screenModel?.authorName, for: .normal)
-        descriptionLabel.text = screenModel?.descriptionText
+        catalogLabel.text = screenModel.labelText
+        authorNameButton.setTitle(screenModel.authorName, for: .normal)
+        descriptionLabel.text = screenModel.descriptionText
     }
     
     func updateScrollViewContentSize() {
-        let numberOfRows = ceil(CGFloat(collection.nfts.count) / numberOfCellsInRow)
+        let numberOfRows = ceil(CGFloat(presenter.collectionCount()) / numberOfCellsInRow)
         scrollView.contentSize = CGSize(
             width: view.frame.width,
             height: topSpacing + numberOfRows * (cellHeight)
@@ -233,7 +227,7 @@ final class NFTCollectionViewController: UIViewController {
     }
     
     private func loadNft() {
-        presenter?.loadNft {  [weak self] result in
+        presenter.loadNft {  [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let state):
@@ -258,15 +252,15 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateScrollViewContentSize()
-        guard let count = presenter?.nftsCount() else { return 0}
+        let count = presenter.nftsCount()
         return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
         
-        guard let cellModel = presenter?.getCellModel(indexPath: indexPath) else { return UICollectionViewCell() }
-        let url = presenter?.cellImage(urlString: cellModel.images[0])
+        let cellModel = presenter.getCellModel(indexPath: indexPath)
+        let url = presenter.cellImage(urlString: cellModel.images[0])
         cell.nftImageView.kf.indicatorType = .activity
         cell.nftImageView.kf.setImage(with: url) { [weak self] result in
             switch result {
