@@ -104,12 +104,10 @@ final class CatalogViewController: UIViewController {
             style: .default
         ) { [weak self] _ in
             guard let self = self else { return }
-            UIBlockingProgressHUD.show()
             self.currentSortingOption = .name
             self.presenter.applySorting(currentSortingOption: .name)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
-            UIBlockingProgressHUD.dismiss()
         }
         
         let sortQuantity = UIAlertAction(
@@ -117,12 +115,10 @@ final class CatalogViewController: UIViewController {
             style: .default
         ) { [weak self] _ in
             guard let self = self else { return }
-            UIBlockingProgressHUD.show()
             self.currentSortingOption = .quantity
             self.presenter.applySorting(currentSortingOption: .quantity)
             self.nftTable.reloadData()
             self.dismiss(animated: true)
-            UIBlockingProgressHUD.dismiss()
         }
         
         let cancelAction = UIAlertAction(title: "Закрыть", style: .cancel, handler: nil)
