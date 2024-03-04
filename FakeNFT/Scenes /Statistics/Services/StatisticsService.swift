@@ -67,6 +67,7 @@ final class StatisticsService {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else {return}
             if let error = error {
@@ -147,18 +148,25 @@ final class StatisticsService {
         guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
             return
         }
-
         var request = URLRequest(url: url)
+        
         request.httpMethod = "PUT"
+        
         request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
-        //application/x-www-form-urlencoded
-        request.setValue("raw", forHTTPHeaderField: "Content-Type")
-        let data = "{ \"likes\": \(likesArray)}".data(using: String.Encoding.utf8)
+        
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        var dataString = ""
+        for like in likesArray {
+            dataString += "likes=" + "\(like)" + "&"
+        }
+        if !dataString.isEmpty {
+            dataString.removeLast()
+        }
+        let data = "\(dataString)".data(using: String.Encoding.utf8)
         request.httpBody = data
-        print(likesArray)
         
         task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            guard let self = self else {return}
+            guard let self else {return}
             if let error = error {
                 print("get mainProfile error \(error)")
                 DispatchQueue.main.async {
@@ -190,8 +198,110 @@ final class StatisticsService {
         }
         task?.resume()
     }
+    
+    func fetchOrder(completion: @escaping (Result<Order, Error>) -> Void) {
+        guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1") else {
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {return}
+            if let error = error {
+                print("get order error \(error)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse,
+               response.statusCode < 200 || response.statusCode >= 300 {
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.codeError))
+                }
+                return
+            }
+            
+            guard let data = data else { return }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let initialOrder = try decoder.decode(Order.self, from: data)
+                DispatchQueue.main.async {
+                    self.task = nil
+                    completion(.success(initialOrder))
+                }
+            }  catch {
+                print("Failed to parse the downloaded file")
+            }
+        }
+        task?.resume()
+    }
+    
+    func updateOrderNftArrayInOrder(_ orderNftArray: [String], completion: @escaping (Result<Order, Error>) -> Void) {
+        guard let url = URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1") else {
+            return
+        }
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "PUT"
+        
+        request.setValue("\(RequestConstants.accessToken)", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        var dataString = ""
+        for orderNft in orderNftArray {
+            dataString += "nfts=" + "\(orderNft)" + "&"
+        }
+        if !dataString.isEmpty {
+            dataString.removeLast()
+        }
+        let data = "\(dataString)".data(using: String.Encoding.utf8)
+        request.httpBody = data
+        
+        task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {
+                return
+            }
+            
+            if let error = error {
+                print("put order error \(error)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse,
+               response.statusCode < 200 || response.statusCode >= 300 {
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.codeError))
+                }
+                return
+            }
+            
+            guard let data = data else { return }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let initialOrder = try decoder.decode(Order.self, from: data)
+                DispatchQueue.main.async {
+                    self.task = nil
+                    completion(.success(initialOrder))
+                }
+            }  catch {
+                print("Failed to parse the downloaded file")
+            }
+        }
+        task?.resume()
+    }
 }
+
 extension StatisticsService {
+    
     private func convert2UserProfile(from: [UserProfileServer]) {
         for i in 0..<from.count {
             let user_i = UserProfile(name: from[i].name,
@@ -212,12 +322,12 @@ extension StatisticsService {
             //check this behaviour:
             //print(UserDefaults.standard.integer(forKey: "sortBy")) (checked, that it returns 0 on 21Feb2024)
             
-            //sort users according the rating in descending order
+            //sort users according the rating in increasing order (1, 2, 3, 4 ...)
             listOfUsers.sort {
-                $0.rating > $1.rating
+                $0.rating < $1.rating
             }
         } else if setSortBy == SortBy.name.rawValue {
-            //sort users according the name in increasing order
+            //sort users according the name in increasing order (A, B, C, D ...)
             listOfUsers.sort {
                 $0.name < $1.name
             }
