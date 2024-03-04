@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AlertPresenter: AlertPresenterProtocol {
+final class AlertPresenter: AlertPresenterProtocol {
     
     weak var delegate: AlertPresenterDelegate?
     
@@ -32,7 +32,7 @@ class AlertPresenter: AlertPresenterProtocol {
                                    title: alertSome.buttonText,
                                    style: .default,
                                    handler: alertSome.handler
-                                   )
+        )
         alert.addAction(action)
         
         delegate?.showAlert(alert: alert)

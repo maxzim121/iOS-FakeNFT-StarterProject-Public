@@ -54,24 +54,19 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
     private func generalSetup() {
         statisticsService.fetchProfile { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else {
-                    return
-                }
+                guard let self else { return }
                 switch result {
                 case .success(let mainProfile):
                     self.mainProfile = mainProfile
                     self.innerPartOfGeneralSetup()
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                                                   message: "Не удалось загрузить данные о главном профиле",
-                                                   buttonText: "Повторить",
-                                                   handler: { [weak self] _ in
-                                                    guard let self else {
-                                                            return
-                                                    }
-                                                    self.generalSetup()
-                    })
+                    self.showAlertWithOneAction(
+                        generalTitle: "Что-то пошло не так(",
+                        message: "Не удалось загрузить данные о главном профиле",
+                        buttonText: "Повторить",
+                        handler: { _ in self.generalSetup() }
+                    )
                 }
             }
         }
@@ -93,7 +88,7 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
     private func innerPartOfGeneralSetup() {
         statisticsService.fetchOrder { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else { return }
+                guard let self else { return }
                 switch result {
                 case .success(let order):
                     self.order = order
@@ -101,13 +96,12 @@ final class NftUsersCollectionStatisticsVC: UIViewController {
                     self.setupLayout()
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                                                message: "Не удалось загрузить данные о заказе",
-                                                buttonText: "Повторить",
-                                                handler: { [weak self] _ in
-                                                    guard let self else { return }
-                                                    self.innerPartOfGeneralSetup()
-                    })
+                    self.showAlertWithOneAction(
+                        generalTitle: "Что-то пошло не так(",
+                        message: "Не удалось загрузить данные о заказе",
+                        buttonText: "Повторить",
+                        handler: { _ in self.innerPartOfGeneralSetup() }
+                    )
                 }
             }
         }
@@ -154,9 +148,7 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
         //Download the data on the current nft and configure the cell
         statisticsService.fetchNftById(nftId: userNfts[indexPath.row]) { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self else {
-                    return
-                }
+                guard let self else { return }
                 switch result {
                 case .success(let nftById):
                     guard let mainProfile = self.mainProfile,
@@ -179,13 +171,15 @@ extension NftUsersCollectionStatisticsVC: UICollectionViewDataSource {
     }
     
     private func showAlert(_ indexPath: IndexPath, _ cell: NftUsersCollectionStatisticsViewCell) {
-        showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                               message: "Не удалось загрузить данные о NFT",
-                               buttonText: "Повторить",
-                               handler: { [weak self] _ in
-                                    guard let self else { return }
-                                    self.downloadAndConfigureCell(indexPath, cell)
-        })
+        showAlertWithOneAction(
+            generalTitle: "Что-то пошло не так(",
+            message: "Не удалось загрузить данные о NFT",
+            buttonText: "Повторить",
+            handler: { [weak self] _ in
+                guard let self else { return }
+                self.downloadAndConfigureCell(indexPath, cell)
+            }
+        )
     }
 }
 
@@ -229,10 +223,7 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
     private func updateOrderNftArrayInOrderAndUsersCollectionItem(_ orderNftArray: [String], _ indexPath: IndexPath) {
         statisticsService.updateOrderNftArrayInOrder(orderNftArray) { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self else {
-                    return
-                }
-                
+                guard let self else { return }
                 switch result {
                 case .success(let order):
                     self.order = order
@@ -241,10 +232,12 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                                                message: "Не удалось загрузить данные о заказе в json-файле в результате PUT запроса",
-                                                buttonText: "Ок",
-                                                handler: { _ in })
+                    self.showAlertWithOneAction(
+                        generalTitle: "Что-то пошло не так(",
+                        message: "Не удалось загрузить данные о заказе в json-файле в результате PUT запроса",
+                        buttonText: "Ок",
+                        handler: { _ in }
+                    )
                 }
             }
         }
@@ -284,10 +277,12 @@ extension NftUsersCollectionStatisticsVC: NftUsersCollectionStatisticsViewCellDe
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                                                message: "Не удалось загрузить данные о главном профиле в json-файле в результате PUT запроса",
-                                                buttonText: "Ок",
-                                                handler: { _ in })
+                    self.showAlertWithOneAction(
+                        generalTitle: "Что-то пошло не так(",
+                        message: "Не удалось загрузить данные о главном профиле в json-файле в результате PUT запроса",
+                        buttonText: "Ок",
+                        handler: { _ in }
+                    )
                 }
             }
         }

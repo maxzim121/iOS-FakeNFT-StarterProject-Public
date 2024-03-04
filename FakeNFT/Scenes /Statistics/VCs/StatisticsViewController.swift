@@ -33,7 +33,7 @@ final class StatisticsViewController: UIViewController {
         UIBlockingProgressHUD.show()
         statisticsService.fetchUsers() { [weak self] result in
             DispatchQueue.main.async  {
-                guard let self = self else { return }
+                guard let self else { return }
                 switch result {
                 case .success:
                     self.setupUI()
@@ -42,26 +42,25 @@ final class StatisticsViewController: UIViewController {
                     break
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    self.showAlertWithOneAction(generalTitle: "Что-то пошло не так(",
-                                                message: "Не удалось загрузить данные о пользователях в json-файле",
-                                                buttonText: "Повторить",
-                                                handler: { [weak self] _ in
-                                                    guard let self = self else { return }
-                                                    self.viewDidLoad()
-                    })
+                    self.showAlertWithOneAction(
+                        generalTitle: "Что-то пошло не так(",
+                        message: "Не удалось загрузить данные о пользователях в json-файле",
+                        buttonText: "Повторить",
+                        handler: { _ in self.viewDidLoad() }
+                    )
                 }
             }
         }
     }
     
     private func showAlertWithOneAction(generalTitle: String,
-                                           message: String,
-                                           buttonText: String,
-                                           handler: @escaping (UIAlertAction)->Void) {
+                                        message: String,
+                                        buttonText: String,
+                                        handler: @escaping (UIAlertAction)->Void) {
         let alert = AlertViewModel(title: generalTitle,
-                                      message: message,
-                                      buttonText: buttonText,
-                                      handler: handler
+                                   message: message,
+                                   buttonText: buttonText,
+                                   handler: handler
         )
         alertView = AlertPresenter(delegate: self, alertSome: alert)
         alertView?.show()
