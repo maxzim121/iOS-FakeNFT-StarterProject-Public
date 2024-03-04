@@ -1,36 +1,77 @@
 import UIKit
 import Foundation
 
-
+enum CatalogDetailState {
+    case initial, loading, failed(Error), data
+}
 
 typealias CatalogPresetnerCompletion = (Result<CatalogDetailState, Error>) -> Void
 
 protocol CatalogViewPresenterProtocol: AnyObject {
     func cellName(indexPath: IndexPath) -> String
     func cellImage(indexPath: IndexPath) -> URL?
-    func loadCollections(completion: @escaping CatalogPresetnerCompletion)
     func collectionCount() -> Int
     func collection(indexPath: IndexPath) -> CollectionsModel
     func applySorting(currentSortingOption: SortingOption)
     func collectionAssembly(collection: CollectionsModel) -> UIViewController
+    func viewDidLoad()
+    func loadSortingOption() -> SortingOption
+    func viewController(view: CatalogViewProtocol)
 }
 
 final class CatalogViewPresenter {
     
+    weak var view: CatalogViewProtocol?
     private var service: CollectionsService
     private var nftCollectionAssembly: NFTCollectionModuleAssembly
+    private var currentSortingOption: SortingOption = .defaultSorting
     private var collections: [CollectionsModel] = []
     private var originalCollections: [CollectionsModel] = []
     private let userDefaults = UserDefaultsManager.shared
+    
+    private var state = CatalogDetailState.initial {
+        didSet {
+            stateDidChanged()
+        }
+    }
     
     init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly) {
         self.service = service
         self.nftCollectionAssembly = nftCollectionAssembly
     }
     
+    private func stateDidChanged() {
+        switch state {
+        case .initial:
+            assertionFailure("can't move to initial state")
+        case .loading:
+            view?.showIndicator()
+            loadCollections()
+        case .data:
+            applySorting(currentSortingOption: currentSortingOption)
+            view?.reloadData()
+            view?.hideIndicator()
+        case .failed(let error):
+            print("ОШИБКА: \(error)")
+        }
+    }
+    
 }
 
 extension CatalogViewPresenter: CatalogViewPresenterProtocol {
+    func viewController(view: CatalogViewProtocol) {
+        self.view = view
+    }
+    
+    
+    func loadSortingOption() -> SortingOption {
+        userDefaults.loadSortingOption()
+    }
+    
+    func viewDidLoad() {
+        state = .loading
+    }
+    
     
     func collectionAssembly(collection: CollectionsModel) -> UIViewController {
         nftCollectionAssembly.build(collection: collection)
@@ -59,7 +100,7 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
 
     
     
-    func loadCollections(completion: @escaping CatalogPresetnerCompletion) {
+    func loadCollections() {
         service.loadCollections() { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -77,9 +118,9 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
                 }
                 self.collections = collectionsModel
                 self.originalCollections = self.collections
-                completion(.success(CatalogDetailState.data))
+                self.state = .data
             case .failure(let error):
-                completion(.failure(error))
+                self.state = .failed(error)
             }
         }
     }

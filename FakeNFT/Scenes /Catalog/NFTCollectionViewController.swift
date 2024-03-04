@@ -2,9 +2,10 @@ import Foundation
 import UIKit
 import Kingfisher
 
-
-enum NftDetailState {
-    case initial, loading, failed(Error), data
+protocol NFTCollectionProtocol: AnyObject {
+    func reloadData()
+    func showIndicator()
+    func hideIndicator()
 }
 
 final class NFTCollectionViewController: UIViewController {
@@ -13,12 +14,6 @@ final class NFTCollectionViewController: UIViewController {
     private let topSpacing: CGFloat = 486.0
     private let cellHeight: CGFloat = 192.0
     private let numberOfCellsInRow: CGFloat = 3.0
-    
-    private var state = NftDetailState.initial {
-        didSet {
-            stateDidChanged()
-        }
-    }
     
     var presenter: NFTCollectionViewPresenterProtocol
     
@@ -115,8 +110,8 @@ final class NFTCollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        state = .loading
+        presenter.viewController(view: self)
+        presenter.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
         addSubViews()
@@ -209,35 +204,6 @@ final class NFTCollectionViewController: UIViewController {
         )
     }
     
-    private func stateDidChanged() {
-        switch state {
-        case .initial:
-            assertionFailure("can't move to initial state")
-        case .loading:
-            UIBlockingProgressHUD.show()
-            loadNft()
-        case .data:
-//            updateCollectionViewHeight()
-            collectionView.reloadData()
-            UIBlockingProgressHUD.dismiss()
-        case .failed(let error):
-            UIBlockingProgressHUD.dismiss()
-            print("ОШИБКА: \(error)")
-        }
-    }
-    
-    private func loadNft() {
-        presenter.loadNft {  [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let state):
-                self.state = state
-            case .failure(let error):
-                self.state = .failed(error)
-            }
-        }
-    }
-    
 }
 
 extension NFTCollectionViewController: UICollectionViewDelegate {
@@ -311,3 +277,16 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
+extension NFTCollectionViewController: NFTCollectionProtocol {
+    func showIndicator() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideIndicator() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    func reloadData() {
+        collectionView.reloadData()
+    }
+}

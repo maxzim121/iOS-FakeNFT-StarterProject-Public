@@ -2,8 +2,10 @@ import Kingfisher
 import UIKit
 import ProgressHUD
 
-enum CatalogDetailState {
-    case initial, loading, failed(Error), data
+protocol CatalogViewProtocol: AnyObject {
+    func reloadData()
+    func showIndicator()
+    func hideIndicator()
 }
 
 enum SortingOption: Int {
@@ -16,13 +18,7 @@ final class CatalogViewController: UIViewController {
     
     var presenter: CatalogViewPresenterProtocol
         
-    private var state = CatalogDetailState.initial {
-        didSet {
-            stateDidChanged()
-        }
-    }
     private var currentSortingOption: SortingOption = .defaultSorting
-    private let userDefaults = UserDefaultsManager.shared
     
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -59,10 +55,11 @@ final class CatalogViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        currentSortingOption = userDefaults.loadSortingOption()
+        presenter.viewController(view: self)
+        presenter.viewDidLoad()
+        currentSortingOption = presenter.loadSortingOption()
         configureSortButton()
         configureNftTable()
-        state = .loading
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -130,35 +127,6 @@ final class CatalogViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    private func stateDidChanged() {
-        switch state {
-        case .initial:
-            assertionFailure("can't move to initial state")
-        case .loading:
-            UIBlockingProgressHUD.show()
-            loadCollections()
-        case .data:
-            presenter.applySorting(currentSortingOption: currentSortingOption)
-            nftTable.reloadData()
-            UIBlockingProgressHUD.dismiss()
-        case .failed(let error):
-            print("ОШИБКА: \(error)")
-        }
-    }
-    
-    private func loadCollections() {
-        presenter.loadCollections() { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let state):
-                self.state = state
-            case .failure(let error):
-                self.state = .failed(error)
-            }
-            
-        }
-    }
-    
     @objc private func didTapSortingButton() {
         showSortingAlert()
     }
@@ -203,4 +171,19 @@ extension CatalogViewController: UITableViewDataSource {
     }
 }
 
+extension CatalogViewController: CatalogViewProtocol {
+    func reloadData() {
+        nftTable.reloadData()
+    }
+    
+    func showIndicator() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideIndicator() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    
+}
 

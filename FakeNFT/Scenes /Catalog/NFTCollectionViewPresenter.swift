@@ -1,27 +1,57 @@
 import UIKit
 import Foundation
 
+enum NftDetailState {
+    case initial, loading, failed(Error), data
+}
+
 typealias NftCollectionPresenterCompletion = (Result<NftDetailState, Error>) -> Void
 
 protocol NFTCollectionViewPresenterProtocol {
     func getScreenModel() -> NFTScreenModel
     func getCellModel(indexPath: IndexPath) -> NftModel
-    func loadNft(completion: @escaping NftCollectionPresenterCompletion)
+    
     func nftsCount() -> Int
     func cellImage(urlString: String) -> URL?
     func collectionCount() -> Int
+    func viewDidLoad()
+    func viewController(view: NFTCollectionProtocol)
 }
 
 final class NFTCollectionViewPresenter {
     
+    weak var view: NFTCollectionProtocol?
     var collection: CollectionsModel
     var nfts: [NftModel] = []
+    
+    private var state = NftDetailState.initial {
+        didSet {
+            stateDidChanged()
+        }
+    }
     
     var service: NftService
     
     init(collection: CollectionsModel, service: NftService) {
         self.collection = collection
         self.service = service
+    }
+    
+    private func stateDidChanged() {
+        switch state {
+        case .initial:
+            assertionFailure("can't move to initial state")
+        case .loading:
+            view?.showIndicator()
+            loadNft()
+        case .data:
+//            updateCollectionViewHeight()
+            view?.reloadData()
+            view?.hideIndicator()
+        case .failed(let error):
+            view?.hideIndicator()
+            print("ОШИБКА: \(error)")
+        }
     }
     
     func getImage(_ named: String) -> UIImage {
@@ -39,9 +69,41 @@ final class NFTCollectionViewPresenter {
             return nil
         }
     }
+    
+    func loadNft() {
+        for id in collection.nfts {
+            service.loadNft(id: id) { [weak self] result in
+                switch result {
+                case .success(let nftResult):
+                    let nftModel = NftModel(
+                        createdAt: DateFormatter.defaultDateFormatter.date(from: nftResult.createdAt),
+                        name: nftResult.name,
+                        images: nftResult.images,
+                        rating: nftResult.rating,
+                        description: nftResult.description,
+                        price: nftResult.price,
+                        author: nftResult.author,
+                        id: nftResult.id
+                    )
+                    self?.nfts.append(nftModel)
+                    self?.state = .data
+                case .failure(let error):
+                    self?.state = .failed(error)
+                }
+            }
+        }
+    }
 }
 
 extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
+    func viewController(view: NFTCollectionProtocol) {
+        self.view = view
+    }
+    
+    func viewDidLoad() {
+        state = .loading
+    }
+    
     func collectionCount() -> Int {
         return collection.nfts.count 
     }
@@ -62,36 +124,6 @@ extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
     
     func getCellModel(indexPath: IndexPath) -> NftModel {
         return nfts[indexPath.row]
-    }
-    
-    func loadNft(completion: @escaping NftCollectionPresenterCompletion) {
-        let dispatchGroup = DispatchGroup()
-        for id in collection.nfts {
-            dispatchGroup.enter()
-            service.loadNft(id: id) { [weak self] result in
-                defer {
-                    dispatchGroup.leave()
-                }
-                switch result {
-                case .success(let nftResult):
-                    let nftModel = NftModel(
-                        createdAt: DateFormatter.defaultDateFormatter.date(from: nftResult.createdAt),
-                        name: nftResult.name,
-                        images: nftResult.images,
-                        rating: nftResult.rating,
-                        description: nftResult.description,
-                        price: nftResult.price,
-                        author: nftResult.author,
-                        id: nftResult.id
-                    )
-                    self?.nfts.append(nftModel)
-                    completion(.success(.data))
-                    
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        }
     }
     
     func nftsCount() -> Int {
