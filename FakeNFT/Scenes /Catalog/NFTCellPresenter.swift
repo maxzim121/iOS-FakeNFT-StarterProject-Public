@@ -69,10 +69,8 @@ extension NFTCellPresenter: NFTCellPresenterProtocol {
     func addNftToOrder(nftId: String) {
         UIBlockingProgressHUD.show()
         let newNftsForOrder = order.nfts + [nftId]
-        print(order.id, "ГОВНО СУКА БЛЯТЬ ЧТО")
         let newOrder = OrderNetworkModel(nfts: newNftsForOrder, id: order.id)
-        print(newOrder, "ЧТО ЗА ГОВНО")
-        
+
         orderService.putOrder(order: newOrder) { result in
             switch result {
             case .success(_):

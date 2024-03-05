@@ -183,7 +183,6 @@ extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
     
         
     func nftCellPresenter() -> NFTCellPresenter {
-        print(order, "МЯУ")
         return nftCellModuleAssembly.build(likes: likes, order: order)
     }
     

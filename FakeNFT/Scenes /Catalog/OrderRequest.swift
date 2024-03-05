@@ -27,7 +27,6 @@ struct OrderPutRequest: NetworkRequest {
     
     init(id: String, nfts: [String]) {
         self.id = "1"
-        print("ГОВНО СУКА", id)
         self.nfts = nfts
 
         var components = URLComponents()

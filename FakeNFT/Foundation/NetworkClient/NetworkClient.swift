@@ -61,7 +61,6 @@ struct DefaultNetworkClient: NetworkClient {
             }
         }
         guard let urlRequest = create(request: request) else { return nil }
-        print(urlRequest, "ГОВНО ДЕРЬМО")
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
@@ -126,7 +125,6 @@ struct DefaultNetworkClient: NetworkClient {
             urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = queryString.data(using: .utf8)
         }
-        print(urlRequest.allHTTPHeaderFields, "ГОВНО СОБАЧЬЕ")
         return urlRequest
     }
 

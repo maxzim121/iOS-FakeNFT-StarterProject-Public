@@ -36,9 +36,7 @@ final class OrderServiceImpl: OrderServiceProtocol {
     }
 
     func putOrder(order: OrderNetworkModel, completion: @escaping OrderCompletion) {
-        print(order.id, "ЧТО ЗА ДЕРЬМО БЛЯТЬ")
         let request = OrderPutRequest(id: order.id, nfts: order.nfts)
-        print(request, "ГОВНО")
         networkClient.send(request: request, type: OrderNetworkModel.self) { result in
             switch result {
             case .success(let order):
