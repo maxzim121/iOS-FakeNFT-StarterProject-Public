@@ -51,7 +51,7 @@ final class TabBarController: UITabBarController {
                 servicesAssembly: servicesAssembly
         )
 
-        let statisticsController = TestCatalogViewController(
+        let statisticsController = StatisticsViewController(
                 servicesAssembly: servicesAssembly
         )
 
@@ -60,7 +60,8 @@ final class TabBarController: UITabBarController {
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
-        viewControllers = [profileNavigationController, catalogController, basketController, statisticsController]
+        let statisticsNavigationController = UINavigationController(rootViewController: statisticsController)
+        viewControllers = [profileNavigationController, catalogController, basketController, statisticsNavigationController]
 
         view.backgroundColor = .systemBackground
     }
