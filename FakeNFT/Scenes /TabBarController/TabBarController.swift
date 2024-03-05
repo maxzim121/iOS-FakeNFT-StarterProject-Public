@@ -28,14 +28,21 @@ final class TabBarController: UITabBarController {
             tag: 0
     )
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let profileViewController = TestCatalogViewController(
-                servicesAssembly: servicesAssembly
+        let profileInput = ProfileDetailInput(profileId: Constants.profileId)
+        let presenter = ProfilePresenter(
+                input: profileInput,
+                service: servicesAssembly.profileService
         )
 
+        let profileViewController = ProfileViewController(
+                presenter: presenter,
+                servicesAssembly: servicesAssembly
+        )
+        let profileNavigationController = UINavigationController(rootViewController: profileViewController)
+        profileNavigationController.setNavigationBarHidden(true, animated: false)
         let catalogController = TestCatalogViewController(
                 servicesAssembly: servicesAssembly
         )
@@ -48,14 +55,18 @@ final class TabBarController: UITabBarController {
                 servicesAssembly: servicesAssembly
         )
 
-        profileViewController.tabBarItem = profileTabBarItem
+        profileNavigationController.tabBarItem = profileTabBarItem
         catalogController.tabBarItem = catalogTabBarItem
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
         let statisticsNavigationController = UINavigationController(rootViewController: statisticsController)
-        viewControllers = [profileViewController, catalogController, basketController, statisticsNavigationController]
+        viewControllers = [profileNavigationController, catalogController, basketController, statisticsNavigationController]
 
         view.backgroundColor = .systemBackground
     }
+}
+
+private enum Constants {
+    static let profileId = "1"
 }

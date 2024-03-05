@@ -1,13 +1,13 @@
 import UIKit
 
 final class StatisticsViewController: UIViewController {
-    
+
     private var alertView: AlertPresenterProtocol?
-    
+
     private let servicesAssembly: ServicesAssembly
-    
+
     private let statisticsService = StatisticsService.shared
-    
+
     private lazy var statisticsTable: UITableView = {
         let table = UITableView()
         table.showsVerticalScrollIndicator = false
@@ -17,7 +17,7 @@ final class StatisticsViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
-    
+
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
@@ -26,13 +26,13 @@ final class StatisticsViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         view.backgroundColor = .figmaWhite
-        
+
         UIBlockingProgressHUD.show()
-        statisticsService.fetchUsers() { [weak self] result in
-            DispatchQueue.main.async  {
+        statisticsService.fetchUsers { [weak self] result in
+            DispatchQueue.main.async {
                 guard let self else { return }
                 switch result {
                 case .success:
@@ -52,11 +52,11 @@ final class StatisticsViewController: UIViewController {
             }
         }
     }
-    
+
     private func showAlertWithOneAction(generalTitle: String,
                                         message: String,
                                         buttonText: String,
-                                        handler: @escaping (UIAlertAction)->Void) {
+                                        handler: @escaping (UIAlertAction) -> Void) {
         let alert = AlertViewModel(title: generalTitle,
                                    message: message,
                                    buttonText: buttonText,
@@ -65,20 +65,20 @@ final class StatisticsViewController: UIViewController {
         alertView = AlertPresenter(delegate: self, alertSome: alert)
         alertView?.show()
     }
-    
+
     private func setupUI() {
         view.addSubview(statisticsTable)
-        //setting the navigation bar
+        // setting the navigation bar
         let backButton = UIBarButtonItem()
         backButton.tintColor = .yaBlackLight
         navigationItem.backBarButtonItem = backButton
-        
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "sortButton"), style: .done, target: self, action: #selector(didTapSort))
     }
-    
+
     @objc private func didTapSort() {
         let controller = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
-        controller.addAction(.init(title: "По имени" , style: .default) { _ in
+        controller.addAction(.init(title: "По имени", style: .default) { _ in
             UserDefaults.standard.set(SortBy.name.rawValue, forKey: "sortBy")
             self.sortAndReload()
         })
@@ -89,12 +89,12 @@ final class StatisticsViewController: UIViewController {
         controller.addAction(.init(title: "Закрыть", style: .cancel))
         present(controller, animated: true)
     }
-    
+
     private func sortAndReload() {
         statisticsService.doSort()
         statisticsTable.reloadData()
     }
-    
+
     private func setupLayout() {
         NSLayoutConstraint.activate([
             statisticsTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -106,11 +106,11 @@ final class StatisticsViewController: UIViewController {
 }
 
 extension StatisticsViewController: UITableViewDataSource {
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return statisticsService.listOfUsers.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: StatisticsCell.reuseIdentifier, for: indexPath)
         guard let cell = (cell as? StatisticsCell) else {
@@ -124,11 +124,11 @@ extension StatisticsViewController: UITableViewDataSource {
 }
 
 extension StatisticsViewController: UITableViewDelegate {
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         88
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewController = StatisticsUserPageViewController(user: statisticsService.listOfUsers[indexPath.row])
         viewController.modalPresentationStyle = .fullScreen
