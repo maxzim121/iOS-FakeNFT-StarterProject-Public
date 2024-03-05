@@ -14,8 +14,8 @@ public final class NFTCellModuleAssembly {
         self.servicesAssembler = servicesAssembler
     }
     
-    func build(likes: [String]) -> NFTCellPresenter {
-        let presenter = NFTCellPresenter(profileService: servicesAssembler.profileService, likes: likes)
+    func build(likes: [String], order: OrderResultModel) -> NFTCellPresenter {
+        let presenter = NFTCellPresenter(profileService: servicesAssembler.profileService, likes: likes, order: order)
         return presenter
     }
 }

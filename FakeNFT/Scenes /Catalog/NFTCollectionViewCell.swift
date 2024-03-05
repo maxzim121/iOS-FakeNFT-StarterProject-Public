@@ -52,7 +52,7 @@ final class NFTCollectionViewCell: UICollectionViewCell {
     lazy var cartButton: UIButton = {
         let button = UIButton(type: .custom)
         button.tintColor = .black
-        
+        button.addTarget(self, action: #selector(didTapCartButton), for: .touchUpInside)
         
         return button
     }()
@@ -116,6 +116,21 @@ final class NFTCollectionViewCell: UICollectionViewCell {
         let imageName = isCompleted ? "LikeOn" : "LikeOff"
         let image = UIImage(named: imageName)
         likeButton.setImage(image, for: .normal)
+    }
+    
+    @objc private func didTapCartButton() {
+        let currentImage = cartButton.image(for: .normal)
+        let emptyCartImage = UIImage(named: "CartEmpty")
+        
+        let isCompleted = currentImage?.pngData() == emptyCartImage?.pngData()
+        if isCompleted {
+            presenter?.addNftToOrder(nftId: nftId)
+        } else {
+            presenter?.removeNftFromOrder(nftId: nftId)
+        }
+        let imageName = isCompleted ? "CartFilled" : "CartEmpty"
+        let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
+        cartButton.setImage(image, for: .normal)
     }
     
 }

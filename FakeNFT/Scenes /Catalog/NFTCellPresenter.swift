@@ -14,17 +14,22 @@ protocol NFTCellPresenterProtocol: AnyObject {
     func addNftToLikes(nftId: String)
     func removeNftFromLikes(nftId: String)
     func isNftLiked(nftId: String, completion: @escaping LikeCompletion)
+    func addNftToOrder(nftId: String)
+    func removeNftFromOrder(nftId: String)
 }
 
 class NFTCellPresenter {
     weak var cell: NFTCollectionViewCellProtocol?
     var likes: [String]
+    var order: OrderResultModel
     var nftLiked = false
     private let profileService: ProfileService
+    private let orderService = OrderServiceImpl.shared
     
-    init(profileService: ProfileService, likes: [String]) {
+    init(profileService: ProfileService, likes: [String], order: OrderResultModel) {
         self.likes = likes
         self.profileService = profileService
+        self.order = order
     }
     
     private func removeNft(nftId: String) {
@@ -60,6 +65,45 @@ class NFTCellPresenter {
 }
 
 extension NFTCellPresenter: NFTCellPresenterProtocol {
+    
+    func addNftToOrder(nftId: String) {
+        UIBlockingProgressHUD.show()
+        let newNftsForOrder = order.nfts + [nftId]
+        print(order.id, "ГОВНО СУКА БЛЯТЬ ЧТО")
+        let newOrder = OrderNetworkModel(nfts: newNftsForOrder, id: order.id)
+        print(newOrder, "ЧТО ЗА ГОВНО")
+        
+        orderService.putOrder(order: newOrder) { result in
+            switch result {
+            case .success(_):
+                self.order = OrderResultModel(nfts: newNftsForOrder, id: self.order.id)
+                UIBlockingProgressHUD.dismiss()
+            case .failure(let error):
+                print("Error updating profile: \(error)")
+                assertionFailure("Error updating order: \(error)")
+                UIBlockingProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    func removeNftFromOrder(nftId: String) {
+        UIBlockingProgressHUD.show()
+        let newNftsForOrder = order.nfts.filter { $0 != nftId }
+        let newOrder = OrderNetworkModel(nfts: newNftsForOrder, id: order.id)
+        
+        orderService.putOrder(order: newOrder) { result in
+            switch result {
+            case .success(_):
+                self.order = OrderResultModel(nfts: newNftsForOrder, id: self.order.id)
+                UIBlockingProgressHUD.dismiss()
+            case .failure(let error):
+                UIBlockingProgressHUD.dismiss()
+                print("Error updating profile: \(error)")
+                assertionFailure("Error updating order: \(error)")
+            }
+        }
+    }
+    
     func isNftLiked(nftId: String, completion: @escaping LikeCompletion) {
         getProfile() { [weak self] result in
             switch result {

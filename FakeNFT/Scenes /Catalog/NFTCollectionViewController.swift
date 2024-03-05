@@ -236,10 +236,13 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
         let nftCellPresenter = presenter.nftCellPresenter()
         let cellModel = presenter.getCellModel(indexPath: indexPath)
         cell.presenter = nftCellPresenter
-        let imageName = presenter.isNftLiked(indexPath: indexPath) ? "LikeOn" : "LikeOff"
-        let image = UIImage(named: imageName)
-        cell.likeButton.setImage(image, for: .normal)
         cell.nftId = cellModel.id
+        let likeImageName = presenter.isNftLiked(indexPath: indexPath) ? "LikeOn" : "LikeOff"
+        let likeImage = UIImage(named: likeImageName)
+        cell.likeButton.setImage(likeImage, for: .normal)
+        let cartImageName = presenter.isNftInOrder(indexPath: indexPath) ? "CartFilled" : "CartEmpty"
+        let cartImage = UIImage(named: cartImageName)?.withRenderingMode(.alwaysTemplate)
+        cell.cartButton.setImage(cartImage, for: .normal)
         let url = presenter.cellImage(urlString: cellModel.images[0])
         cell.nftImageView.kf.indicatorType = .activity
         cell.nftImageView.kf.setImage(with: url) { [weak self] result in
@@ -253,7 +256,6 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
         cell.nameLabel.text = cellModel.name
         cell.priceLabel.text = "\(String(describing: cellModel.price)) ETH"
         cell.starsImageView.image = UIImage(named: "\(cellModel.rating)Star")
-        cell.cartButton.setImage(UIImage(named: "CartEmpty"), for: .normal)
         return cell
     }
     

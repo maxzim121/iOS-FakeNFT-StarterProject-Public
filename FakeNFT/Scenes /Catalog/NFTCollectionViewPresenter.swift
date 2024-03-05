@@ -18,6 +18,7 @@ protocol NFTCollectionViewPresenterProtocol {
     func viewController(view: NFTCollectionProtocol)
     func nftCellPresenter() -> NFTCellPresenter
     func isNftLiked(indexPath: IndexPath) -> Bool
+    func isNftInOrder(indexPath: IndexPath) -> Bool
     func likesArray() -> [String]
 }
 
@@ -25,10 +26,12 @@ final class NFTCollectionViewPresenter {
     
     weak var view: NFTCollectionProtocol?
     private var nftCellModuleAssembly: NFTCellModuleAssembly
+    private var orderService = OrderServiceImpl.shared
 
     var collection: CollectionsModel
     var nfts: [NftModel] = []
     var likes: [String] = []
+    var order: OrderResultModel = OrderResultModel(nfts: [], id: "")
     var website = URL(string: "")
     
     private var state = NftDetailState.initial {
@@ -55,6 +58,7 @@ final class NFTCollectionViewPresenter {
             view?.showIndicator()
             getProfile()
             loadNft()
+            loadOrder(id: "1")
         case .data:
 //            updateCollectionViewHeight()
             view?.reloadData()
@@ -81,7 +85,7 @@ final class NFTCollectionViewPresenter {
         }
     }
     
-    func loadNft() {
+    private func loadNft() {
         for id in collection.nfts {
             service.loadNft(id: id) { [weak self] result in
                 switch result {
@@ -105,7 +109,7 @@ final class NFTCollectionViewPresenter {
         }
     }
     
-    func getProfile() {
+    private func getProfile() {
         profileService.fetchProfile(id: "1") { [weak self] result in
             switch result {
             case .success(let profile):
@@ -123,9 +127,41 @@ final class NFTCollectionViewPresenter {
             }
         }
     }
+    
+    private func loadOrder(id: String) {
+        orderService.loadOrder(id: id) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let order):
+                self.order = OrderResultModel(
+                    nfts: order.nfts,
+                    id: order.id
+                )
+                self.view?.reloadData()
+                UIBlockingProgressHUD.dismiss()
+            case .failure(let error):
+                UIBlockingProgressHUD.dismiss()
+                assertionFailure("Error: \(error)")
+            }
+        }
+    }
+
 }
 
 extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
+    
+    func isNftInOrder(indexPath: IndexPath) -> Bool {
+        var result = false
+        let nftId = nfts[indexPath.row].id
+        for nft in order.nfts {
+            if nftId == nft {
+                result = true
+                break
+            } else { result = false }
+        }
+        return result
+    }
+    
     
     func likesArray() -> [String] {
         return likes
@@ -147,7 +183,8 @@ extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
     
         
     func nftCellPresenter() -> NFTCellPresenter {
-        nftCellModuleAssembly.build(likes: likes)
+        print(order, "МЯУ")
+        return nftCellModuleAssembly.build(likes: likes, order: order)
     }
     
     func viewController(view: NFTCollectionProtocol) {

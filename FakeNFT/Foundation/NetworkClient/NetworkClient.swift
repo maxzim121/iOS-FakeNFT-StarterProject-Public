@@ -61,6 +61,7 @@ struct DefaultNetworkClient: NetworkClient {
             }
         }
         guard let urlRequest = create(request: request) else { return nil }
+        print(urlRequest, "ГОВНО ДЕРЬМО")
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
@@ -111,20 +112,23 @@ struct DefaultNetworkClient: NetworkClient {
 
     private func create(request: NetworkRequest) -> URLRequest? {
         guard let endpoint = request.endpoint else {
-          assertionFailure("Empty endpoint")
-          return nil
+            assertionFailure("Empty endpoint")
+            return nil
         }
         
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue(RequestConstants.accessToken, forHTTPHeaderField: "X-Practicum-Mobile-Token")
         
-        if let dtoString = request.dto as? String {
-          urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-          urlRequest.httpBody = Data(dtoString.utf8)
+        if let dto = request.dto,
+           let queryString = request.dto as? String {
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = queryString.data(using: .utf8)
         }
+        print(urlRequest.allHTTPHeaderFields, "ГОВНО СОБАЧЬЕ")
         return urlRequest
-      }
+    }
 
     private func parse<T: Decodable>(data: Data, type _: T.Type, onResponse: @escaping (Result<T, Error>) -> Void) {
         do {
