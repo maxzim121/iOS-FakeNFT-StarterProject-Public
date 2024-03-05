@@ -68,6 +68,7 @@ final class NFTCollectionViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.setTitleColor(.systemBlue, for: .normal)
         button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(didTapAuthorNameButton), for: .touchUpInside)
         return button
     }()
     
@@ -130,6 +131,12 @@ final class NFTCollectionViewController: UIViewController {
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func didTapAuthorNameButton() {
+        let webViewViewController = WebViewViewController()
+        webViewViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(webViewViewController, animated: true)
     }
     
     func addSubViews() {

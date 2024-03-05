@@ -59,6 +59,7 @@
 		5A7868512B97410F0030DB16 /* UpdateLikesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868502B97410F0030DB16 /* UpdateLikesRequest.swift */; };
 		5A7868532B9742710030DB16 /* NFTCellPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868522B9742710030DB16 /* NFTCellPresenter.swift */; };
 		5A7868552B9746950030DB16 /* NFTCellModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868542B9746950030DB16 /* NFTCellModuleAssembly.swift */; };
+		5A7868572B97826E0030DB16 /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868562B97826D0030DB16 /* WebViewViewController.swift */; };
 		5A8B528B2B7A9FF600645AA3 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */; };
 		5A8B528E2B7AB01D00645AA3 /* NFTTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */; };
 		5A8D6E752B878319007A17E5 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8D6E742B878319007A17E5 /* ProfileModel.swift */; };
@@ -151,6 +152,7 @@
 		5A7868502B97410F0030DB16 /* UpdateLikesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateLikesRequest.swift; sourceTree = "<group>"; };
 		5A7868522B9742710030DB16 /* NFTCellPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCellPresenter.swift; sourceTree = "<group>"; };
 		5A7868542B9746950030DB16 /* NFTCellModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCellModuleAssembly.swift; sourceTree = "<group>"; };
+		5A7868562B97826D0030DB16 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
 		5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
 		5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTableViewCell.swift; sourceTree = "<group>"; };
 		5A8D6E742B878319007A17E5 /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 				5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */,
 				5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */,
 				5A7868542B9746950030DB16 /* NFTCellModuleAssembly.swift */,
+				5A7868562B97826D0030DB16 /* WebViewViewController.swift */,
 			);
 			path = Catalog;
 			sourceTree = "<group>";
@@ -684,6 +687,7 @@
 				0CF2C2E12A784C7000FDC837 /* LinePageControl.swift in Sources */,
 				5A8D6E7B2B87960D007A17E5 /* CollectionsModel.swift in Sources */,
 				5A8D6E7F2B879883007A17E5 /* CollectionsRequest.swift in Sources */,
+				5A7868572B97826E0030DB16 /* WebViewViewController.swift in Sources */,
 				3F6806D329CBBE9600B4F915 /* NetworkRequest.swift in Sources */,
 				5A78684D2B9740CE0030DB16 /* FetchProfileRequest.swift in Sources */,
 				0CFCB7492A7808900009A829 /* TestCatalogController.swift in Sources */,
