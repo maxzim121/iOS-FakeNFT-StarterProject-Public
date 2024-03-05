@@ -1,10 +1,25 @@
 import Foundation
 import UIKit
+import Kingfisher
 
 final class NFTTableViewCell: UITableViewCell {
     
-    var nftImageView: UIImageView = UIImageView()
-    var nftNameAndNumber: UILabel = UILabel()
+    lazy var nftImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 12
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+
+        return imageView
+    }()
+    
+    lazy var nftNameAndNumber: UILabel = {
+        let label = UILabel()
+        label.textColor = .textPrimary
+        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+
+        return label
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -23,9 +38,6 @@ extension NFTTableViewCell {
     func configureNftImageView() {
         contentView.addSubview(nftImageView)
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
-        nftImageView.contentMode = .scaleAspectFill
-        nftImageView.layer.cornerRadius = 12
-        nftImageView.clipsToBounds = true
         NSLayoutConstraint.activate([
             nftImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -44,9 +56,7 @@ extension NFTTableViewCell {
             nftNameAndNumber.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             nftNameAndNumber.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         ])
-        nftNameAndNumber.textAlignment = .left
-        nftNameAndNumber.font = .systemFont(ofSize: 17, weight: .bold)
-        nftNameAndNumber.textColor = .black
+        
     }
     
 }

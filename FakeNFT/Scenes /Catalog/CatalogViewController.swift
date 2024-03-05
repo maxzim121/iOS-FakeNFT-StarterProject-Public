@@ -1,10 +1,24 @@
-import Foundation
+import Kingfisher
 import UIKit
+import ProgressHUD
+
+protocol CatalogViewProtocol: AnyObject {
+    func reloadData()
+    func showIndicator()
+    func hideIndicator()
+}
+
+enum SortingOption: Int {
+    case defaultSorting
+    case name
+    case quantity
+}
 
 final class CatalogViewController: UIViewController {
     
-    
-    let servicesAssembly: ServicesAssembly
+    var presenter: CatalogViewPresenterProtocol
+        
+    private var currentSortingOption: SortingOption = .defaultSorting
     
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -30,10 +44,8 @@ final class CatalogViewController: UIViewController {
         return tableView
     }()
     
-    var presenter: CatalogViewPresenterProtocol?
-    
-    init(servicesAssembly: ServicesAssembly) {
-        self.servicesAssembly = servicesAssembly
+    init(presenter: CatalogViewPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,7 +55,9 @@ final class CatalogViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = CatalogViewPresenter()
+        presenter.viewController(view: self)
+        presenter.viewDidLoad()
+        currentSortingOption = presenter.loadSortingOption()
         configureSortButton()
         configureNftTable()
     }
@@ -85,12 +99,24 @@ final class CatalogViewController: UIViewController {
         let sortName = UIAlertAction(
             title: "По названию",
             style: .default
-        )
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.currentSortingOption = .name
+            self.presenter.applySorting(currentSortingOption: .name)
+            self.nftTable.reloadData()
+            self.dismiss(animated: true)
+        }
         
         let sortQuantity = UIAlertAction(
             title: "По количеству NFT",
             style: .default
-        )
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.currentSortingOption = .quantity
+            self.presenter.applySorting(currentSortingOption: .quantity)
+            self.nftTable.reloadData()
+            self.dismiss(animated: true)
+        }
         
         let cancelAction = UIAlertAction(title: "Закрыть", style: .cancel, handler: nil)
         
@@ -109,7 +135,8 @@ final class CatalogViewController: UIViewController {
 extension CatalogViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let nftCollection = NFTCollectionViewController(servicesAssembly: servicesAssembly)
+        let collection = presenter.collection(indexPath: indexPath)
+        let nftCollection = presenter.collectionAssembly(collection: collection)
         nftCollection.hidesBottomBarWhenPushed = true
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(nftCollection, animated: true)
@@ -123,17 +150,40 @@ extension CatalogViewController: UITableViewDelegate {
 
 extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        let number = presenter.collectionCount()
+        return number
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = nftTable.dequeueReusableCell(withIdentifier: "NFTTableViewCell") as? NFTTableViewCell else { return UITableViewCell()}
-        cell.nftImageView.image = presenter?.cellImage()
-        cell.nftNameAndNumber.text = presenter?.cellName()
+        let url = presenter.cellImage(indexPath: indexPath)
+        cell.nftImageView.kf.indicatorType = .activity
+        cell.nftImageView.kf.setImage(with: url) { [weak self] result in
+            switch result {
+            case .success(_):
+                self?.nftTable.reloadRows(at: [indexPath], with: .automatic)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        cell.nftNameAndNumber.text = presenter.cellName(indexPath: indexPath)
         return cell
+    }
+}
+
+extension CatalogViewController: CatalogViewProtocol {
+    func reloadData() {
+        nftTable.reloadData()
+    }
+    
+    func showIndicator() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideIndicator() {
+        UIBlockingProgressHUD.dismiss()
     }
     
     
 }
-
 

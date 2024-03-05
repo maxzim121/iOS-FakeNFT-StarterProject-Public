@@ -1,16 +1,21 @@
 import Foundation
 import UIKit
+import Kingfisher
+
+protocol NFTCollectionProtocol: AnyObject {
+    func reloadData()
+    func showIndicator()
+    func hideIndicator()
+}
 
 final class NFTCollectionViewController: UIViewController {
     
-    let servicesAssembly: ServicesAssembly
     
     private let topSpacing: CGFloat = 486.0
     private let cellHeight: CGFloat = 192.0
     private let numberOfCellsInRow: CGFloat = 3.0
-    private let numberOfNft = 11
     
-    var presenter: NFTCollectionViewPresenterProtocol?
+    var presenter: NFTCollectionViewPresenterProtocol
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -21,7 +26,7 @@ final class NFTCollectionViewController: UIViewController {
         return scrollView
     }()
     
-    lazy var catalogImageView: UIImageView = {
+    private lazy var catalogImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
@@ -43,7 +48,7 @@ final class NFTCollectionViewController: UIViewController {
         return button
     }()
     
-    lazy var catalogLabel: UILabel = {
+    private lazy var catalogLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
@@ -58,7 +63,7 @@ final class NFTCollectionViewController: UIViewController {
         return label
     }()
     
-    lazy var authorNameButton: UIButton = {
+    private lazy var authorNameButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.setTitleColor(.systemBlue, for: .normal)
@@ -66,7 +71,7 @@ final class NFTCollectionViewController: UIViewController {
         return button
     }()
     
-    lazy var descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
@@ -94,8 +99,8 @@ final class NFTCollectionViewController: UIViewController {
     }()
     
     
-    init(servicesAssembly: ServicesAssembly) {
-        self.servicesAssembly = servicesAssembly
+    init(presenter: NFTCollectionViewPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,7 +110,8 @@ final class NFTCollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = NFTCollectionViewPresenter()
+        presenter.viewController(view: self)
+        presenter.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
         addSubViews()
@@ -181,15 +187,17 @@ final class NFTCollectionViewController: UIViewController {
     }
     
     func configureScreen() {
-        let screenModel = presenter?.getScreenModel()
-        catalogImageView.image = screenModel?.catalogImage
-        catalogLabel.text = screenModel?.labelText
-        authorNameButton.setTitle(screenModel?.authorName, for: .normal)
-        descriptionLabel.text = screenModel?.descriptionText
+        let screenModel = presenter.getScreenModel()
+        guard let url = screenModel.catalogImageUrl else { return }
+        catalogImageView.kf.indicatorType = .activity
+        catalogImageView.kf.setImage(with: url)
+        catalogLabel.text = screenModel.labelText
+        authorNameButton.setTitle(screenModel.authorName, for: .normal)
+        descriptionLabel.text = screenModel.descriptionText
     }
     
     func updateScrollViewContentSize() {
-        let numberOfRows = ceil(CGFloat(numberOfNft) / numberOfCellsInRow)
+        let numberOfRows = ceil(CGFloat(presenter.collectionCount()) / numberOfCellsInRow)
         scrollView.contentSize = CGSize(
             width: view.frame.width,
             height: topSpacing + numberOfRows * (cellHeight)
@@ -210,18 +218,29 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateScrollViewContentSize()
-        return numberOfNft
+        let count = presenter.nftsCount()
+        return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
-        let cellModel = presenter?.getCellModel()
-        cell.nftImageView.image = cellModel?.nftImage
-        cell.nameLabel.text = cellModel?.nameLabel
-        cell.priceLabel.text = cellModel?.priceLabel
-        cell.likeButton.setImage(cellModel?.likeImage, for: .normal)
-        cell.starsImageView.image = cellModel?.starsImage
-        cell.cartButton.setImage(cellModel?.cartImage, for: .normal)
+        
+        let cellModel = presenter.getCellModel(indexPath: indexPath)
+        let url = presenter.cellImage(urlString: cellModel.images[0])
+        cell.nftImageView.kf.indicatorType = .activity
+        cell.nftImageView.kf.setImage(with: url) { [weak self] result in
+            switch result {
+            case .success(let value):
+                cell.nftImageView.image = value.image
+            case .failure(let error):
+                print("Error loading image: \(error)")
+            }
+        }
+        cell.nameLabel.text = cellModel.name
+        cell.priceLabel.text = "\(String(describing: cellModel.price)) ETH"
+        cell.likeButton.setImage(UIImage(named: "LikeOn"), for: .normal)
+        cell.starsImageView.image = UIImage(named: "\(cellModel.rating)Star")
+        cell.cartButton.setImage(UIImage(named: "CartEmpty"), for: .normal)
         return cell
     }
     
@@ -258,3 +277,16 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
+extension NFTCollectionViewController: NFTCollectionProtocol {
+    func showIndicator() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideIndicator() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    func reloadData() {
+        collectionView.reloadData()
+    }
+}

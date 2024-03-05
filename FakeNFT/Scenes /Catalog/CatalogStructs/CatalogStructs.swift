@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 struct NFTScreenModel {
-    var catalogImage: UIImage
+    var catalogImageUrl: URL?
     var labelText: String
     var authorName: String
     var descriptionText: String

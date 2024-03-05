@@ -12,36 +12,36 @@
 ## Module 1:
 
 #### Верстка Экран каталога
-- Кнопка сортировки (est: 10 min; fact: x min).
-- TableView (est: 90 min; fact: x min).
-- Ячейки TableView (est: 90 min; fact: x min).
-- Аction sheets (est: 15 min; fact: x min).
+- Кнопка сортировки (est: 10 min; fact: 10 min).
+- TableView (est: 90 min; fact: 90 min).
+- Ячейки TableView (est: 90 min; fact: 80 min).
+- Аction sheets (est: 15 min; fact: 15 min).
 
 #### Верстка Экран коллекции NFT
-- ImageView обложка коллекции (est: 10 min; fact: x min).
+- ImageView обложка коллекции (est: 10 min; fact: 10 min).
 - Название коллекции (est: 10 min; fact: x min).
-- Имя автора коллекции (est: 10 min; fact: x min).
-- Текстовое описание коллекции NFT (est: 10 min; fact: x min).
-- CollectionView (est: 90 min; fact: x min).
-- Ячейки CollectionView (est: 90 min; fact: x min).
+- Имя автора коллекции (est: 10 min; fact: 10 min).
+- Текстовое описание коллекции NFT (est: 10 min; fact: 10 min).
+- CollectionView (est: 90 min; fact: 100 min).
+- Ячейки CollectionView (est: 90 min; fact: 90 min).
 
-`Total:` est: 515 min; fact: x min.
+`Total:` est: 515 min; fact: 515 min.
 
 
 ## Module 2:
 
 #### Логика загрузки с сервера
-- Добавить загрузку из сервера на Экран каталога (est: 90 min; fact: x min).
-- Добавить индикатор загрузки на Экран каталога (est: 30 min; fact: x min).
-- Добавить загрузку из сервера на Экран коллекции NFT (est: 90 min; fact: x min).
-- Добавить индикатор загрузки на Экран коллекции NFT (est: 10 min; fact: x min).
+- Добавить загрузку из сервера на Экран каталога (est: 90 min; fact: 120 min).
+- Добавить индикатор загрузки на Экран каталога (est: 30 min; fact: 40 min).
+- Добавить загрузку из сервера на Экран коллекции NFT (est: 90 min; fact: 100 min).
+- Добавить индикатор загрузки на Экран коллекции NFT (est: 10 min; fact: 10 min).
 
 #### Логика сортировки экрана каталога
-- Реализовать сортировку экрана каталога (est: 90 min; fact: x min).
-- Сохранение сортировки в одной сессии (est: 60 min; fact: x min).
-- Добавить индикатор загрузки после сортировки (est: 10 min; fact: x min).
+- Реализовать сортировку экрана каталога (est: 90 min; fact: 70 min).
+- Сохранение сортировки в одной сессии (est: 60 min; fact: 90 min).
+- Добавить индикатор загрузки после сортировки (est: 10 min; fact: 10 min).
 
-`Total:` est: 380 min; fact: x min.
+`Total:` est: 380 min; fact: 440 min.
 
 
 ## Module 3:
