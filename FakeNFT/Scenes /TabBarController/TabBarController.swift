@@ -31,7 +31,14 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let profileInput = ProfileDetailInput(profileId: Constants.profileId)
+        let presenter = ProfilePresenter(
+                input: profileInput,
+                service: servicesAssembly.profileService
+        )
+
         let profileViewController = ProfileViewController(
+                presenter: presenter,
                 servicesAssembly: servicesAssembly
         )
         let profileNavigationController = UINavigationController(rootViewController: profileViewController)
@@ -57,4 +64,8 @@ final class TabBarController: UITabBarController {
 
         view.backgroundColor = .systemBackground
     }
+}
+
+private enum Constants {
+    static let profileId = "1"
 }
