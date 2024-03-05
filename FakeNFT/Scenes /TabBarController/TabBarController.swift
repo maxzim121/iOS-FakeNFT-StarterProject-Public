@@ -36,9 +36,10 @@ final class TabBarController: UITabBarController {
                 servicesAssembly: servicesAssembly
         )
 
+        let nftCellModuleAssembly = NFTCellModuleAssembly(servicesAssembler: servicesAssembly)
         let catalogModuleAssembly = CatalogModuleAssembly(servicesAssembler: servicesAssembly)
         let nftCollectionAssembly = NFTCollectionModuleAssembly(servicesAssembler: servicesAssembly)
-        let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly)
+        let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly, nftCellModuleAssembly: nftCellModuleAssembly)
         
         let catalogNavigationController = UINavigationController(rootViewController: catalogController)
 

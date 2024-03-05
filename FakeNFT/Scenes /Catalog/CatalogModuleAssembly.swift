@@ -7,8 +7,8 @@ public final class CatalogModuleAssembly {
         self.servicesAssembler = servicesAssembler
     }
     
-    public func build(nftCollectionAssembly: NFTCollectionModuleAssembly) -> UIViewController {
-        let presenter = CatalogViewPresenter(service: servicesAssembler.collectionsService, nftCollectionAssembly: nftCollectionAssembly)
+    public func build(nftCollectionAssembly: NFTCollectionModuleAssembly, nftCellModuleAssembly: NFTCellModuleAssembly) -> UIViewController {
+        let presenter = CatalogViewPresenter(service: servicesAssembler.collectionsService, nftCollectionAssembly: nftCollectionAssembly, nftCellModuleAssembly: nftCellModuleAssembly)
         let viewController = CatalogViewController(presenter: presenter)
         return viewController
     }

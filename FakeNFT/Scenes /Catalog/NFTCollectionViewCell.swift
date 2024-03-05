@@ -1,7 +1,14 @@
 import Foundation
 import UIKit
 
+protocol NFTCollectionViewCellProtocol: AnyObject {
+    
+}
+
 final class NFTCollectionViewCell: UICollectionViewCell {
+    
+    
+    var nftId = ""
     
     lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
@@ -15,8 +22,7 @@ final class NFTCollectionViewCell: UICollectionViewCell {
     
     lazy var likeButton: UIButton = {
         let button = UIButton(type: .custom)
-        
-        
+        button.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
         return button
     }()
     
@@ -51,12 +57,15 @@ final class NFTCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    var presenter: NFTCellPresenterProtocol?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubViews()
         applyConstraints()
-        
     }
+    
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -95,6 +104,18 @@ final class NFTCollectionViewCell: UICollectionViewCell {
             cartButton.topAnchor.constraint(equalTo: starsImageView.bottomAnchor, constant: 4),
             cartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
+    }
+    
+    @objc private func didTapLikeButton() {
+        let isCompleted = likeButton.currentImage == UIImage(named: "LikeOff")
+        if isCompleted {
+            presenter?.addNftToLikes(nftId: nftId)
+        } else {
+            presenter?.removeNftFromLikes(nftId: nftId)
+        }
+        let imageName = isCompleted ? "LikeOn" : "LikeOff"
+        let image = UIImage(named: imageName)
+        likeButton.setImage(image, for: .normal)
     }
     
 }

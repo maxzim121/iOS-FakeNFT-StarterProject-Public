@@ -16,13 +16,20 @@ protocol NFTCollectionViewPresenterProtocol {
     func collectionCount() -> Int
     func viewDidLoad()
     func viewController(view: NFTCollectionProtocol)
+    func nftCellPresenter() -> NFTCellPresenter
+    func isNftLiked(indexPath: IndexPath) -> Bool
+    func likesArray() -> [String]
 }
 
 final class NFTCollectionViewPresenter {
     
     weak var view: NFTCollectionProtocol?
+    private var nftCellModuleAssembly: NFTCellModuleAssembly
+
     var collection: CollectionsModel
     var nfts: [NftModel] = []
+    var likes: [String] = []
+    var website = URL(string: "")
     
     private var state = NftDetailState.initial {
         didSet {
@@ -31,10 +38,13 @@ final class NFTCollectionViewPresenter {
     }
     
     var service: NftService
+    var profileService: ProfileService
     
-    init(collection: CollectionsModel, service: NftService) {
+    init(collection: CollectionsModel, service: NftService, nftCellModuleAssembly: NFTCellModuleAssembly, profileService: ProfileService) {
         self.collection = collection
         self.service = service
+        self.nftCellModuleAssembly = nftCellModuleAssembly
+        self.profileService = profileService
     }
     
     private func stateDidChanged() {
@@ -43,6 +53,7 @@ final class NFTCollectionViewPresenter {
             assertionFailure("can't move to initial state")
         case .loading:
             view?.showIndicator()
+            getProfile()
             loadNft()
         case .data:
 //            updateCollectionViewHeight()
@@ -93,9 +104,52 @@ final class NFTCollectionViewPresenter {
             }
         }
     }
+    
+    func getProfile() {
+        profileService.fetchProfile(id: "1") { [weak self] result in
+            switch result {
+            case .success(let profile):
+                let fetchedProfile = Profile(name: profile.name,
+                                             avatar: profile.avatar,
+                                             description: profile.description,
+                                             website: profile.website,
+                                             nfts: profile.nfts,
+                                             likes: profile.likes,
+                                             id: profile.id)
+                self?.likes = profile.likes
+                self?.website = profile.website
+            case .failure(let error):
+                assertionFailure("\(error)")
+            }
+        }
+    }
 }
 
 extension NFTCollectionViewPresenter: NFTCollectionViewPresenterProtocol {
+    
+    func likesArray() -> [String] {
+        return likes
+    }
+    
+    
+    func isNftLiked(indexPath: IndexPath) -> Bool {
+        var result = false
+        let nftId = nfts[indexPath.row].id
+        for like in likes {
+            if nftId == like {
+                result = true
+                break
+            } else { result = false }
+        }
+        return result
+    }
+
+    
+        
+    func nftCellPresenter() -> NFTCellPresenter {
+        nftCellModuleAssembly.build(likes: likes)
+    }
+    
     func viewController(view: NFTCollectionProtocol) {
         self.view = view
     }

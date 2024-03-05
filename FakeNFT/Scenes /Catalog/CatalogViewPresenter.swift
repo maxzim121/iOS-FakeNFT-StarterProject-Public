@@ -22,8 +22,9 @@ protocol CatalogViewPresenterProtocol: AnyObject {
 final class CatalogViewPresenter {
     
     weak var view: CatalogViewProtocol?
-    private var service: CollectionsService
+    private var collectionsService: CollectionsService
     private var nftCollectionAssembly: NFTCollectionModuleAssembly
+    private var nftCellModuleAssembly: NFTCellModuleAssembly
     private var currentSortingOption: SortingOption = .defaultSorting
     private var collections: [CollectionsModel] = []
     private var originalCollections: [CollectionsModel] = []
@@ -35,9 +36,10 @@ final class CatalogViewPresenter {
         }
     }
     
-    init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly) {
-        self.service = service
+    init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly, nftCellModuleAssembly: NFTCellModuleAssembly) {
+        self.collectionsService = service
         self.nftCollectionAssembly = nftCollectionAssembly
+        self.nftCellModuleAssembly = nftCellModuleAssembly
     }
     
     private func stateDidChanged() {
@@ -55,7 +57,6 @@ final class CatalogViewPresenter {
             print("ОШИБКА: \(error)")
         }
     }
-    
 }
 
 extension CatalogViewPresenter: CatalogViewPresenterProtocol {
@@ -74,7 +75,7 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
     
     
     func collectionAssembly(collection: CollectionsModel) -> UIViewController {
-        nftCollectionAssembly.build(collection: collection)
+        nftCollectionAssembly.build(collection: collection, nftCellModuleAssembly: nftCellModuleAssembly)
     }
     
     
@@ -101,7 +102,7 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
     
     
     func loadCollections() {
-        service.loadCollections() { [weak self] result in
+        collectionsService.loadCollections() { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let collectionsResult):

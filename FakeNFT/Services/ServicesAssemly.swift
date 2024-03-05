@@ -34,4 +34,10 @@ final class ServicesAssembly {
         )
     }
     
+    var profileService: ProfileService {
+        ProfileServiceImpl(
+            networkClient: networkClient
+        )
+    }
+    
 }
