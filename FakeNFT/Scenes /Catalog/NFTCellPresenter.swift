@@ -18,7 +18,7 @@ protocol NFTCellPresenterProtocol: AnyObject {
     func removeNftFromOrder(nftId: String)
 }
 
-class NFTCellPresenter {
+final class NFTCellPresenter {
     weak var cell: NFTCollectionViewCellProtocol?
     var likes: [String]
     var order: OrderResultModel
@@ -120,7 +120,6 @@ extension NFTCellPresenter: NFTCellPresenterProtocol {
     func addNftToLikes(nftId: String) {
         UIBlockingProgressHUD.show()
         likes.append(nftId)
-        print(likes)
         profileService.updateLikes(id: "1", likes: []) { [weak self] result in
             switch result {
             case .success(let updatedProfile):

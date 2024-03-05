@@ -69,7 +69,7 @@ extension WebViewViewController {
     }
     
     @objc
-    func back() {
+    private func back() {
         navigationController?.popViewController(animated: true)
     }
 }
