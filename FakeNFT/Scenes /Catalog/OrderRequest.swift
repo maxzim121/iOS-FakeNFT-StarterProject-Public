@@ -24,7 +24,6 @@ struct OrderPutRequest: NetworkRequest {
 
     var httpMethod = HttpMethod.put
     var dto: Encodable?
-    
     init(id: String, nfts: [String]) {
         self.id = "1"
         self.nfts = nfts

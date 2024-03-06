@@ -9,14 +9,10 @@ protocol NFTCollectionProtocol: AnyObject {
 }
 
 final class NFTCollectionViewController: UIViewController {
-    
-    
     private let topSpacing: CGFloat = 486.0
     private let cellHeight: CGFloat = 192.0
     private let numberOfCellsInRow: CGFloat = 3.0
-    
     var presenter: NFTCollectionViewPresenterProtocol
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = true
@@ -25,7 +21,6 @@ final class NFTCollectionViewController: UIViewController {
         scrollView.alwaysBounceVertical = true
         return scrollView
     }()
-    
     private lazy var catalogImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -34,7 +29,6 @@ final class NFTCollectionViewController: UIViewController {
         imageView.layer.masksToBounds = true
         return imageView
     }()
-    
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         let image = UIImage(named: "Backward")
@@ -47,14 +41,12 @@ final class NFTCollectionViewController: UIViewController {
         )
         return button
     }()
-    
     private lazy var catalogLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         return label
     }()
-    
     private lazy var authorLabel: UILabel = {
         let label = UILabel()
         label.text = "Автор коллекции:"
@@ -62,7 +54,6 @@ final class NFTCollectionViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         return label
     }()
-    
     private lazy var authorNameButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -71,7 +62,6 @@ final class NFTCollectionViewController: UIViewController {
         button.addTarget(self, action: #selector(didTapAuthorNameButton), for: .touchUpInside)
         return button
     }()
-    
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
@@ -81,7 +71,6 @@ final class NFTCollectionViewController: UIViewController {
         label.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 32
         return label
     }()
-    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -98,17 +87,13 @@ final class NFTCollectionViewController: UIViewController {
         collectionView.backgroundColor = .clear
         return collectionView
     }()
-    
-    
     init(presenter: NFTCollectionViewPresenterProtocol) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.viewController(view: self)
@@ -118,27 +103,22 @@ final class NFTCollectionViewController: UIViewController {
         addSubViews()
         configureScreen()
         applyConstraints()
-        
         collectionView.delegate = self
         collectionView.dataSource = self
-        
         if #available(iOS 11, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         } else {
             automaticallyAdjustsScrollViewInsets = false
         }
     }
-    
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
-    
     @objc private func didTapAuthorNameButton() {
         let webViewViewController = WebViewViewController()
         webViewViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(webViewViewController, animated: true)
     }
-    
     func addSubViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(catalogImageView)
@@ -153,46 +133,37 @@ final class NFTCollectionViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
     func applyConstraints() {
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
             catalogImageView.heightAnchor.constraint(equalToConstant: 310),
             catalogImageView.widthAnchor.constraint(equalToConstant: view.bounds.width),
             catalogImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             catalogImageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             catalogImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            
             backButton.heightAnchor.constraint(equalToConstant: 24),
             backButton.widthAnchor.constraint(equalToConstant: 24),
             backButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 9),
             backButton.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 55),
-            
             catalogLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             catalogLabel.topAnchor.constraint(equalTo: catalogImageView.bottomAnchor, constant: 16),
             catalogLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
-            
             authorLabel.leadingAnchor.constraint(equalTo: catalogLabel.leadingAnchor),
             authorLabel.topAnchor.constraint(equalTo: catalogLabel.bottomAnchor, constant: 13),
-            
             authorNameButton.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 4),
             authorNameButton.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
-            
             descriptionLabel.leadingAnchor.constraint(equalTo: catalogLabel.leadingAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 5),
             descriptionLabel.trailingAnchor.constraint(equalTo: catalogLabel.trailingAnchor),
-            
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    
     func configureScreen() {
         let screenModel = presenter.getScreenModel()
         guard let url = screenModel.catalogImageUrl else { return }
@@ -202,7 +173,6 @@ final class NFTCollectionViewController: UIViewController {
         authorNameButton.setTitle(screenModel.authorName, for: .normal)
         descriptionLabel.text = screenModel.descriptionText
     }
-    
     func updateScrollViewContentSize() {
         let numberOfRows = ceil(CGFloat(presenter.collectionCount()) / numberOfCellsInRow)
         scrollView.contentSize = CGSize(
@@ -210,32 +180,25 @@ final class NFTCollectionViewController: UIViewController {
             height: topSpacing + numberOfRows * (cellHeight)
         )
     }
-    
-    
-    
 }
 
 extension NFTCollectionViewController: UICollectionViewDelegate {
-    
 }
 
 extension NFTCollectionViewController: UICollectionViewDataSource {
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateScrollViewContentSize()
         let count = presenter.nftsCount()
         return count
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NFTCollectionViewCell", for: indexPath) as? NFTCollectionViewCell else { return UICollectionViewCell() }
-        let nftCellPresenter = presenter.nftCellPresenter()
+        cell.delegate = self
         let cellModel = presenter.getCellModel(indexPath: indexPath)
-        cell.presenter = nftCellPresenter
         cell.nftId = cellModel.id
         let likeImageName = presenter.isNftLiked(indexPath: indexPath) ? "LikeOn" : "LikeOff"
         let likeImage = UIImage(named: likeImageName)
@@ -258,12 +221,9 @@ extension NFTCollectionViewController: UICollectionViewDataSource {
         cell.starsImageView.image = UIImage(named: "\(cellModel.rating)Star")
         return cell
     }
-    
-    
 }
 
 extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
-    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -273,7 +233,6 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
         let widthCell = (collectionView.bounds.width - indentation) / 3
         return CGSize(width: widthCell, height: 192)
     }
-    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -281,7 +240,6 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 10
     }
-    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -289,19 +247,34 @@ extension NFTCollectionViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 8
     }
-    
 }
 
 extension NFTCollectionViewController: NFTCollectionProtocol {
     func showIndicator() {
         UIBlockingProgressHUD.show()
     }
-    
     func hideIndicator() {
         UIBlockingProgressHUD.dismiss()
     }
-    
     func reloadData() {
         collectionView.reloadData()
     }
+}
+
+extension NFTCollectionViewController: NFTCollectionControllerProtocol {
+    func likeButtonTapped(liked: Bool, nftId: String) {
+        if liked {
+            presenter.removeNftFromLikes(nftId: nftId)
+        } else {
+            presenter.addNftToLikes(nftId: nftId)
+        }
+    }
+    func cartButtonTapped(isEmpty: Bool, nftId: String) {
+        if isEmpty {
+            presenter.addNftToOrder(nftId: nftId)
+        } else {
+            presenter.removeNftFromOrder(nftId: nftId)
+        }
+    }
+
 }

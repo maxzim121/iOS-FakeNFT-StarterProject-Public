@@ -20,28 +20,22 @@ protocol CatalogViewPresenterProtocol: AnyObject {
 }
 
 final class CatalogViewPresenter {
-    
     weak var view: CatalogViewProtocol?
     private var collectionsService: CollectionsService
     private var nftCollectionAssembly: NFTCollectionModuleAssembly
-    private var nftCellModuleAssembly: NFTCellModuleAssembly
     private var currentSortingOption: SortingOption = .defaultSorting
     private var collections: [CollectionsModel] = []
     private var originalCollections: [CollectionsModel] = []
     private let userDefaults = UserDefaultsManager.shared
-    
     private var state = CatalogDetailState.initial {
         didSet {
             stateDidChanged()
         }
     }
-    
-    init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly, nftCellModuleAssembly: NFTCellModuleAssembly) {
+    init(service: CollectionsService, nftCollectionAssembly: NFTCollectionModuleAssembly) {
         self.collectionsService = service
         self.nftCollectionAssembly = nftCollectionAssembly
-        self.nftCellModuleAssembly = nftCellModuleAssembly
     }
-    
     private func stateDidChanged() {
         switch state {
         case .initial:
@@ -63,30 +57,21 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
     func viewController(view: CatalogViewProtocol) {
         self.view = view
     }
-    
-    
     func loadSortingOption() -> SortingOption {
         userDefaults.loadSortingOption()
     }
-    
     func viewDidLoad() {
         state = .loading
     }
-    
-    
     func collectionAssembly(collection: CollectionsModel) -> UIViewController {
-        nftCollectionAssembly.build(collection: collection, nftCellModuleAssembly: nftCellModuleAssembly)
+        nftCollectionAssembly.build(collection: collection)
     }
-    
-    
-    
     func cellName(indexPath: IndexPath) -> String {
         let collectionName = collections[indexPath.row].name
         let nftCount = collections[indexPath.row].nfts.count
         let cellName = "\(collectionName) (\(nftCount))"
         return cellName
     }
-    
     func cellImage(indexPath: IndexPath) -> URL? {
         let urlString = collections[indexPath.row].cover
         if let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
@@ -98,9 +83,6 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
         }
 
     }
-
-    
-    
     func loadCollections() {
         collectionsService.loadCollections() { [weak self] result in
             guard let self = self else { return }
@@ -125,16 +107,13 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
             }
         }
     }
-    
     func collectionCount() -> Int {
         return collections.count
     }
-    
     func collection(indexPath: IndexPath) -> CollectionsModel {
         let collection = collections[indexPath.row]
         return collection
     }
-    
     func applySorting(currentSortingOption: SortingOption) {
         switch currentSortingOption {
         case .name:
@@ -146,7 +125,4 @@ extension CatalogViewPresenter: CatalogViewPresenterProtocol {
         }
         userDefaults.saveSortingOption(currentSortingOption)
     }
-    
-    
-    
 }

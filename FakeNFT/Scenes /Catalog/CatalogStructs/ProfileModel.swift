@@ -12,7 +12,6 @@ public struct Profile: Codable, Equatable {
     let nfts: [String]
     let likes: [String]
     let id: String
-    
     init(from responseModel: ProfileResponse) {
         name = responseModel.name
         avatar = responseModel.avatar
@@ -22,7 +21,6 @@ public struct Profile: Codable, Equatable {
         likes = responseModel.likes
         id = responseModel.id
     }
-    
     init(name: String, avatar: URL, description: String, website: URL, nfts: [String], likes: [String], id: String) {
         self.name = name
         self.avatar = avatar
