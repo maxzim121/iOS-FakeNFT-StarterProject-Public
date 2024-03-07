@@ -31,30 +31,51 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let profileViewController = TestCatalogViewController(
-                servicesAssembly: servicesAssembly
+        let profileInput = ProfileDetailInput(profileId: Constants.profileId)
+        let presenter = ProfilePresenter(
+                input: profileInput,
+                service: servicesAssembly.profileService
         )
+
 
         let catalogModuleAssembly = CatalogModuleAssembly(servicesAssembler: servicesAssembly)
         let nftCollectionAssembly = NFTCollectionModuleAssembly(servicesAssembler: servicesAssembly)
         let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly)        
         let catalogNavigationController = UINavigationController(rootViewController: catalogController)
+      
+        let profileViewController = ProfileViewController(
+                presenter: presenter,
+                servicesAssembly: servicesAssembly
+        )
+        let profileNavigationController = UINavigationController(rootViewController: profileViewController)
+        profileNavigationController.setNavigationBarHidden(true, animated: false)
+
 
         let basketController = TestCatalogViewController(
                 servicesAssembly: servicesAssembly
         )
 
-        let statisticsController = TestCatalogViewController(
+        let statisticsController = StatisticsViewController(
                 servicesAssembly: servicesAssembly
         )
 
-        profileViewController.tabBarItem = profileTabBarItem
+
+
+        viewControllers = [profileViewController, catalogNavigationController, basketController, statisticsController]
+
+        profileNavigationController.tabBarItem = profileTabBarItem
         catalogNavigationController.tabBarItem = catalogTabBarItem
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
-        viewControllers = [profileViewController, catalogNavigationController, basketController, statisticsController]
+        let statisticsNavigationController = UINavigationController(rootViewController: statisticsController)
+        viewControllers = [profileNavigationController, catalogNavigationController,basketController, statisticsNavigationController]
+
 
         view.backgroundColor = .systemBackground
     }
+}
+
+private enum Constants {
+    static let profileId = "1"
 }
