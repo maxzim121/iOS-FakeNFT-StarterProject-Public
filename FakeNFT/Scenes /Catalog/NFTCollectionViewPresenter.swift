@@ -1,7 +1,7 @@
 import UIKit
 import Foundation
 
-enum NftDetailState {
+enum NftDetailStateCatalog {
     case initial, loading, failed(Error), data
 }
 typealias ProfileCompletion = (Result<Profile, Error>) -> Void
@@ -32,14 +32,14 @@ final class NFTCollectionViewPresenter {
     var likes: [String] = []
     var order: OrderResultModel = OrderResultModel(nfts: [], id: "")
     var website = URL(string: "")
-    private var state = NftDetailState.initial {
+    private var state = NftDetailStateCatalog.initial {
         didSet {
             stateDidChanged()
         }
     }
-    var service: NftService
+    var service: NftServiceCatalog
     var profileService: ProfileService
-    init(collection: CollectionsModel, service: NftService, profileService: ProfileService) {
+    init(collection: CollectionsModel, service: NftServiceCatalog, profileService: ProfileService) {
         self.collection = collection
         self.service = service
         self.profileService = profileService
@@ -78,7 +78,7 @@ final class NFTCollectionViewPresenter {
     }
     private func loadNft() {
         for id in collection.nfts {
-            service.loadNft(id: id) { [weak self] result in
+            service.loadNftCatalog(id: id) { [weak self] result in
                 switch result {
                 case .success(let nftResult):
                     let nftModel = NftModel(

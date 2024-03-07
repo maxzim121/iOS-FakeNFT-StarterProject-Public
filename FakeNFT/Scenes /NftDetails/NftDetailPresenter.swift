@@ -8,7 +8,7 @@ protocol NftDetailPresenter {
 
 // MARK: - State
 
-enum NftDetailStateTest {
+enum NftDetailState {
     case initial, loading, failed(Error), data(Nft)
 }
 
@@ -18,8 +18,8 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
 
     weak var view: NftDetailView?
     private let input: NftDetailInput
-    private let service: NftServiceTest
-    private var state = NftDetailStateTest.initial {
+    private let service: NftService
+    private var state = NftDetailState.initial {
         didSet {
             stateDidChanged()
         }
@@ -27,7 +27,7 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
 
     // MARK: - Init
 
-    init(input: NftDetailInput, service: NftServiceTest) {
+    init(input: NftDetailInput, service: NftService) {
         self.input = input
         self.service = service
     }
@@ -57,7 +57,7 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
     }
 
     private func loadNft() {
-        service.loadNftTest(id: input.id) { [weak self] result in
+        service.loadNft(id: input.id) { [weak self] result in
             switch result {
             case .success(let nft):
                 self?.state = .data(nft)
