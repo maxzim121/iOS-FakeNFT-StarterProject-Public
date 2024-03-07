@@ -5,7 +5,7 @@
 [Дизайн Figma](https://www.figma.com/file/k1LcgXHGTHIeiCv4XuPbND/FakeNFT-(YP)?node-id=96-5542&t=YdNbOI8EcqdYmDeg-0)
 [Скринкаст экрана Профиля](https://disk.yandex.ru/i/4hp8emXCByai4A)
 [Скринкаст экрана Статистики](https://disk.yandex.ru/i/7ajpR_1RyijduA)
-[Скринкаст экрана Статистики](https://disk.yandex.ru/i/nl-2ckEF8zeeDA)
+[Скринкаст экрана Каталога](https://disk.yandex.ru/i/nl-2ckEF8zeeDA)
 
 # Назначение и цели приложения
 
