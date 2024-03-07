@@ -9,7 +9,6 @@ protocol CollectionsService {
 final class CollectionsServiceImpl: CollectionsService {
 
     private let networkClient: NetworkClient
-    
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }

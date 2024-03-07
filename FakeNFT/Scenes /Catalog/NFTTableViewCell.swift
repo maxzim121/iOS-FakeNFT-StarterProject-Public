@@ -3,7 +3,6 @@ import UIKit
 import Kingfisher
 
 final class NFTTableViewCell: UITableViewCell {
-    
     lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 12
@@ -12,7 +11,6 @@ final class NFTTableViewCell: UITableViewCell {
 
         return imageView
     }()
-    
     lazy var nftNameAndNumber: UILabel = {
         let label = UILabel()
         label.textColor = .textPrimary
@@ -20,21 +18,17 @@ final class NFTTableViewCell: UITableViewCell {
 
         return label
     }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureNftImageView()
         configureNftNameAndNumber()
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 extension NFTTableViewCell {
-    
     func configureNftImageView() {
         contentView.addSubview(nftImageView)
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -44,9 +38,7 @@ extension NFTTableViewCell {
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -39)
         ])
-        
     }
-    
     func configureNftNameAndNumber() {
         contentView.addSubview(nftNameAndNumber)
         nftNameAndNumber.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +48,5 @@ extension NFTTableViewCell {
             nftNameAndNumber.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             nftNameAndNumber.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         ])
-        
     }
-    
 }

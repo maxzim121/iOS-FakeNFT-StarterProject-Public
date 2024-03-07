@@ -51,6 +51,16 @@
 		5A676FC72B7BF09000D85438 /* NFTCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A676FC62B7BF09000D85438 /* NFTCollectionViewCell.swift */; };
 		5A7868412B95C04E0030DB16 /* CatalogModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */; };
 		5A7868432B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */; };
+		5A7868472B973FD40030DB16 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868462B973FD40030DB16 /* ProfileService.swift */; };
+		5A7868492B9740490030DB16 /* ProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868482B9740490030DB16 /* ProfileResponse.swift */; };
+		5A78684B2B9740650030DB16 /* ProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A78684A2B9740650030DB16 /* ProfileRequest.swift */; };
+		5A78684D2B9740CE0030DB16 /* FetchProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A78684C2B9740CE0030DB16 /* FetchProfileRequest.swift */; };
+		5A78684F2B9740F90030DB16 /* UpdateProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A78684E2B9740F90030DB16 /* UpdateProfileRequest.swift */; };
+		5A7868512B97410F0030DB16 /* UpdateLikesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868502B97410F0030DB16 /* UpdateLikesRequest.swift */; };
+		5A7868572B97826E0030DB16 /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868562B97826D0030DB16 /* WebViewViewController.swift */; };
+		5A7868592B97A1000030DB16 /* OrderStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7868582B97A1000030DB16 /* OrderStructs.swift */; };
+		5A78685B2B97A17E0030DB16 /* OrderRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A78685A2B97A17E0030DB16 /* OrderRequest.swift */; };
+		5A78685D2B97A18E0030DB16 /* OrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A78685C2B97A18E0030DB16 /* OrderService.swift */; };
 		5A8B528B2B7A9FF600645AA3 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */; };
 		5A8B528E2B7AB01D00645AA3 /* NFTTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */; };
 		5A8D6E752B878319007A17E5 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8D6E742B878319007A17E5 /* ProfileModel.swift */; };
@@ -135,6 +145,16 @@
 		5A676FC62B7BF09000D85438 /* NFTCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionViewCell.swift; sourceTree = "<group>"; };
 		5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogModuleAssembly.swift; sourceTree = "<group>"; };
 		5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionModuleAssembly.swift; sourceTree = "<group>"; };
+		5A7868462B973FD40030DB16 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
+		5A7868482B9740490030DB16 /* ProfileResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileResponse.swift; sourceTree = "<group>"; };
+		5A78684A2B9740650030DB16 /* ProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRequest.swift; sourceTree = "<group>"; };
+		5A78684C2B9740CE0030DB16 /* FetchProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchProfileRequest.swift; sourceTree = "<group>"; };
+		5A78684E2B9740F90030DB16 /* UpdateProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateProfileRequest.swift; sourceTree = "<group>"; };
+		5A7868502B97410F0030DB16 /* UpdateLikesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateLikesRequest.swift; sourceTree = "<group>"; };
+		5A7868562B97826D0030DB16 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
+		5A7868582B97A1000030DB16 /* OrderStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderStructs.swift; sourceTree = "<group>"; };
+		5A78685A2B97A17E0030DB16 /* OrderRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderRequest.swift; sourceTree = "<group>"; };
+		5A78685C2B97A18E0030DB16 /* OrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderService.swift; sourceTree = "<group>"; };
 		5A8B528A2B7A9FF600645AA3 /* CatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
 		5A8B528D2B7AB01D00645AA3 /* NFTTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTTableViewCell.swift; sourceTree = "<group>"; };
 		5A8D6E742B878319007A17E5 /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
@@ -238,6 +258,9 @@
 				5AF0DC272B93360C00533360 /* UserDefaultsManager.swift */,
 				5A7868402B95C04E0030DB16 /* CatalogModuleAssembly.swift */,
 				5A7868422B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift */,
+				5A7868562B97826D0030DB16 /* WebViewViewController.swift */,
+				5A78685A2B97A17E0030DB16 /* OrderRequest.swift */,
+				5A78685C2B97A18E0030DB16 /* OrderService.swift */,
 			);
 			path = Catalog;
 			sourceTree = "<group>";
@@ -330,6 +353,7 @@
 				0C79EE6B2A76DE2E00EE90EA /* ServicesAssemly.swift */,
 				0CFCB73F2A78002A0009A829 /* NftService.swift */,
 				5ADD6D052B90922C008880A6 /* NFTServiceTest.swift */,
+				5A7868462B973FD40030DB16 /* ProfileService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -413,6 +437,12 @@
 				5A8D6E782B8795CD007A17E5 /* CollectionsResult.swift */,
 				5A8D6E7A2B87960D007A17E5 /* CollectionsModel.swift */,
 				5A03AE5B2B8F5794003CC8A2 /* NFTResult.swift */,
+				5A7868482B9740490030DB16 /* ProfileResponse.swift */,
+				5A78684A2B9740650030DB16 /* ProfileRequest.swift */,
+				5A78684C2B9740CE0030DB16 /* FetchProfileRequest.swift */,
+				5A78684E2B9740F90030DB16 /* UpdateProfileRequest.swift */,
+				5A7868502B97410F0030DB16 /* UpdateLikesRequest.swift */,
+				5A7868582B97A1000030DB16 /* OrderStructs.swift */,
 			);
 			path = CatalogStructs;
 			sourceTree = "<group>";
@@ -622,15 +652,20 @@
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
 				5A03AE5A2B8F4CF6003CC8A2 /* UIBlockingProgressHUD.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
+				5A7868592B97A1000030DB16 /* OrderStructs.swift in Sources */,
 				3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */,
 				0CFCB7422A78013E0009A829 /* Nft.swift in Sources */,
 				5ADD6D062B90922C008880A6 /* NFTServiceTest.swift in Sources */,
 				0CF2C2DD2A783CE600FDC837 /* ErrorView.swift in Sources */,
+				5A7868512B97410F0030DB16 /* UpdateLikesRequest.swift in Sources */,
 				0C79EE682A76DE0900EE90EA /* NftDetailPresenter.swift in Sources */,
+				5A78684B2B9740650030DB16 /* ProfileRequest.swift in Sources */,
 				5A8B528E2B7AB01D00645AA3 /* NFTTableViewCell.swift in Sources */,
 				3F68069B29CBBAF100B4F915 /* ProductDetailsTableViewController.swift in Sources */,
+				5A7868492B9740490030DB16 /* ProfileResponse.swift in Sources */,
 				0CFCB7402A78002A0009A829 /* NftService.swift in Sources */,
 				3F6806D529CBBEC700B4F915 /* NetworkTask.swift in Sources */,
+				5A78685B2B97A17E0030DB16 /* OrderRequest.swift in Sources */,
 				5A7868432B95C4F10030DB16 /* NFTCollectionModuleAssembly.swift in Sources */,
 				0CF2C2DB2A783C1B00FDC837 /* LoadingView.swift in Sources */,
 				3F68069729CBBAF100B4F915 /* AppDelegate.swift in Sources */,
@@ -639,12 +674,14 @@
 				5A8B528B2B7A9FF600645AA3 /* CatalogViewController.swift in Sources */,
 				0C79EE6C2A76DE2E00EE90EA /* ServicesAssemly.swift in Sources */,
 				0CFCB74E2A7817DC0009A829 /* NftStorage.swift in Sources */,
+				5A78684F2B9740F90030DB16 /* UpdateProfileRequest.swift in Sources */,
 				5A5B9EC62B834B020096F7A9 /* CatalogStructs.swift in Sources */,
 				5AD8B34B2B7DF660002D6894 /* NFTCollectionViewPresenter.swift in Sources */,
 				3FC8C39129D2453B0081F015 /* ExampleRequest.swift in Sources */,
 				0CFCB7462A78064B0009A829 /* NftDetailCellModel.swift in Sources */,
 				5A676FC72B7BF09000D85438 /* NFTCollectionViewCell.swift in Sources */,
 				0CFCB74B2A780EA80009A829 /* UIView+Constraints.swift in Sources */,
+				5A7868472B973FD40030DB16 /* ProfileService.swift in Sources */,
 				5A03AE5C2B8F5794003CC8A2 /* NFTResult.swift in Sources */,
 				3F6806D729CBC50A00B4F915 /* CellsReusingUtils.swift in Sources */,
 				5AF0DC282B93360C00533360 /* UserDefaultsManager.swift in Sources */,
@@ -653,9 +690,12 @@
 				0CF2C2E12A784C7000FDC837 /* LinePageControl.swift in Sources */,
 				5A8D6E7B2B87960D007A17E5 /* CollectionsModel.swift in Sources */,
 				5A8D6E7F2B879883007A17E5 /* CollectionsRequest.swift in Sources */,
+				5A7868572B97826E0030DB16 /* WebViewViewController.swift in Sources */,
 				3F6806D329CBBE9600B4F915 /* NetworkRequest.swift in Sources */,
+				5A78684D2B9740CE0030DB16 /* FetchProfileRequest.swift in Sources */,
 				0CFCB7492A7808900009A829 /* TestCatalogController.swift in Sources */,
 				3F6806D129CBBE6B00B4F915 /* NetworkClient.swift in Sources */,
+				5A78685D2B97A18E0030DB16 /* OrderService.swift in Sources */,
 				5AD8B3492B7DF21F002D6894 /* CatalogViewPresenter.swift in Sources */,
 				0CFCB7442A7802440009A829 /* NftDetailInput.swift in Sources */,
 				5A676FC52B7BDC5900D85438 /* NFTCollectionViewController.swift in Sources */,

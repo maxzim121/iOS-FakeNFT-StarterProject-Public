@@ -1,6 +1,5 @@
 import Foundation
 
-
 public struct NftModel {
     let createdAt: Date?
     let name: String

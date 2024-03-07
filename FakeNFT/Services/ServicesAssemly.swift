@@ -20,18 +20,20 @@ final class ServicesAssembly {
             storage: nftStorageTest
         )
     }
-    
     var collectionsService: CollectionsService {
         CollectionsServiceImpl(
             networkClient: networkClient
         )
     }
-    
     var nftService: NftService {
         NftServiceImpl(
             networkClient: networkClient,
             storage: nftStorage
         )
     }
-    
+    var profileService: ProfileService {
+        ProfileServiceImpl(
+            networkClient: networkClient
+        )
+    }
 }

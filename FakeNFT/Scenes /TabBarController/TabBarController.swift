@@ -28,7 +28,6 @@ final class TabBarController: UITabBarController {
             tag: 0
     )
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,8 +37,7 @@ final class TabBarController: UITabBarController {
 
         let catalogModuleAssembly = CatalogModuleAssembly(servicesAssembler: servicesAssembly)
         let nftCollectionAssembly = NFTCollectionModuleAssembly(servicesAssembler: servicesAssembly)
-        let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly)
-        
+        let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly)        
         let catalogNavigationController = UINavigationController(rootViewController: catalogController)
 
         let basketController = TestCatalogViewController(
