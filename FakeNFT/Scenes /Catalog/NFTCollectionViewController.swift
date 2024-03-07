@@ -115,7 +115,7 @@ final class NFTCollectionViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     @objc private func didTapAuthorNameButton() {
-        let webViewViewController = WebViewViewController()
+        let webViewViewController = CatalogWebViewViewController()
         webViewViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(webViewViewController, animated: true)
     }

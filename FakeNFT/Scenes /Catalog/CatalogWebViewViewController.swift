@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class WebViewViewController: UIViewController {
+final class CatalogWebViewViewController: UIViewController {
     // MARK: - Layout variables
     private lazy var backButton: UIButton = {
         let imageButton = UIImage(named: "Backward")?.withRenderingMode(.alwaysTemplate)
@@ -36,7 +36,7 @@ final class WebViewViewController: UIViewController {
 }
 
 // MARK: - Privtae functions
-extension WebViewViewController {
+extension CatalogWebViewViewController {
     func setupView() {
         view.backgroundColor = .white
         addSubViews()
@@ -63,7 +63,7 @@ extension WebViewViewController {
 }
 
 // MARK: - WKNavigationDelegate
-extension WebViewViewController: WKNavigationDelegate {
+extension CatalogWebViewViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         UIBlockingProgressHUD.show()
     }
