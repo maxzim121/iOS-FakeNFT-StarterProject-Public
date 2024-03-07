@@ -37,15 +37,16 @@ final class TabBarController: UITabBarController {
                 service: servicesAssembly.profileService
         )
 
+        let catalogModuleAssembly = CatalogModuleAssembly(servicesAssembler: servicesAssembly)
+        let nftCollectionAssembly = NFTCollectionModuleAssembly(servicesAssembler: servicesAssembly)
+        let catalogController = catalogModuleAssembly.build(nftCollectionAssembly: nftCollectionAssembly)        
+        let catalogNavigationController = UINavigationController(rootViewController: catalogController)
         let profileViewController = ProfileViewController(
                 presenter: presenter,
                 servicesAssembly: servicesAssembly
         )
         let profileNavigationController = UINavigationController(rootViewController: profileViewController)
         profileNavigationController.setNavigationBarHidden(true, animated: false)
-        let catalogController = TestCatalogViewController(
-                servicesAssembly: servicesAssembly
-        )
 
         let basketController = TestCatalogViewController(
                 servicesAssembly: servicesAssembly
@@ -56,13 +57,12 @@ final class TabBarController: UITabBarController {
         )
 
         profileNavigationController.tabBarItem = profileTabBarItem
-        catalogController.tabBarItem = catalogTabBarItem
+        catalogNavigationController.tabBarItem = catalogTabBarItem
         basketController.tabBarItem = basketTabBarItem
         statisticsController.tabBarItem = statisticsTabBarItem
 
         let statisticsNavigationController = UINavigationController(rootViewController: statisticsController)
-        viewControllers = [profileNavigationController, catalogController, basketController, statisticsNavigationController]
-
+        viewControllers = [profileNavigationController, catalogNavigationController, basketController, statisticsNavigationController]
         view.backgroundColor = .systemBackground
     }
 }

@@ -114,18 +114,15 @@ struct DefaultNetworkClient: NetworkClient {
             assertionFailure("Empty endpoint")
             return nil
         }
-
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue(RequestConstants.accessToken, forHTTPHeaderField: "X-Practicum-Mobile-Token")
-
         if let dto = request.dto,
            let queryString = request.dto as? String {
             urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = queryString.data(using: .utf8)
         }
-
         return urlRequest
     }
 
