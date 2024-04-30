@@ -56,7 +56,7 @@ struct TextLabels {
         static let userAgreementTitle = "Пользовательского соглашения"
     }
     
-    struct PaymentConfirmationViewController {
+    struct PaymentConViewController {
         static let paymentConfirmed = "Успех! Оплата прошла, поздравляем с покупкой!"
         static let paymentFailed = "Упс! Что-то пошло не так 🙁 Попробуйте еще раз!"
         static let returnButton = "Вернуться в каталог"

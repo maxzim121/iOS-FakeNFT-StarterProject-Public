@@ -16,12 +16,12 @@ struct CartItemsRequest: NetworkRequest {
 }
 
 struct CartPutRequest: NetworkRequest {
-    let requestId = "CartPutRequest2"
+    let requestId = "CartPutRequest"
     let id: String
     let nfts: [String]
     
     var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/\(id)")
+        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
     }
     
     var httpMethod: HttpMethod {

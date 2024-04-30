@@ -118,7 +118,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
             message: message,
             actionText: actionText,
             action: { [weak self] in
-                self?.currentState = .loading 
+                self?.currentState = .loading
             }
         )
     }
@@ -184,11 +184,48 @@ extension PaymentPresenter {
         static let termsOfUseURL = "https://yandex.ru/legal/practicum_termsofuse/"
     }
 }
+// MARK: - PaymentManagerDelegate
+extension PaymentPresenter: PaymentManagerDelegate {
+    func paymentFinishedWithError(_ error: Error) {
+        DispatchQueue.main.async { [weak self] in
+            let presenter = PaymentConPresenter(configuration: .failure)
+            presenter.delegate = self!
+            let confirmationViewController = PaymentConViewController(presenter: presenter)
+            confirmationViewController.modalPresentationStyle = .fullScreen
+            self?.viewController?.presentView(confirmationViewController)
+            self?.payButtonState = .enabled
+           self?.paymentIsSucceeded = false
+        }
+    }
+
+    func paymentFinishedWithSuccess() {
+        DispatchQueue.main.async { [weak self] in
+            let presenter = PaymentConPresenter(configuration: .success)
+            presenter.delegate = self!
+           let confirmationViewController = PaymentConViewController(presenter: presenter)
+            confirmationViewController.modalPresentationStyle = .fullScreen
+            self?.viewController?.presentView(confirmationViewController)
+            self?.payButtonState = .enabled
+            self?.paymentIsSucceeded = true
+        }
+    }
+}
 // MARK: - PayButtonState
 extension PaymentPresenter {
     enum PayButtonState {
         case disabled
         case enabled
         case loading
+    }
+}
+
+extension PaymentPresenter: PaymentConPresenterDelegate {
+   func didTapDismissButton() {
+        viewController?.dismiss()
+        guard let paymentIsSucceeded,
+        paymentIsSucceeded else { return }
+       cartService.removeAll { [weak self] in
+            self?.viewController?.popToRootViewController(animated: true)
+        }
     }
 }
