@@ -9,8 +9,6 @@ import Foundation
 
 final class CartServiceStub: CartServiceProtocol {
     
-    weak var delegate: CartServiceDelegate?
-    
     private(set) var cartItems = [NFT]()
     
     private let networkManager: NetworkManagerProtocol
@@ -65,7 +63,7 @@ final class CartServiceStub: CartServiceProtocol {
         guard let index = cartItems.firstIndex(where: { $0.id == id }) else { return }
         let nftsString = self.cartItems.map{ $0.id }
         
-        let request = CartPutRequest(id: id, nfts: nftsString)
+        let request = CartPutRequest(id: 1, nfts: nftsString)
         
         networkManager.send(request: request,
                             type: OrderResponse.self,
@@ -79,13 +77,6 @@ final class CartServiceStub: CartServiceProtocol {
                 completion(.failure(error))
             }
         }
-    }
-    
-    
-    func removeAll(completion: (() -> Void)?) {
-        cartItems.removeAll()
-        delegate?.cartCountDidChanged(cartItems.count)
-        completion?()
     }
 }
 

@@ -7,17 +7,17 @@
 
 import Foundation
 
-struct Currency {
+struct CurrencyDto {
     let title: String
     let image: String
     let id: String
     let ticker: String
 }
 
-extension Currency: Codable {
+extension CurrencyDto: Codable {
     enum CodingKeys: String, CodingKey {
         case title
-        case image 
+        case image
         case id
         case ticker = "name"
     }

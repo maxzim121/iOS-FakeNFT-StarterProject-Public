@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct OrderPaymentResponse: Decodable {
+struct OrderPaymentDto: Decodable {
     let success: Bool
     let orderId: String
     let id: String

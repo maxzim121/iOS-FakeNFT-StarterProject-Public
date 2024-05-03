@@ -8,43 +8,28 @@
 import UIKit
 import SafariServices
 
+enum PaymentError: Error {
+    case failedPayment
+}
+
 protocol PaymentPresenterProtocol {
     var currenciesCellModel: [CurrencyCellModel] { get }
-    var viewController: PaymentViewControllerProtocol? { get set }
-    
-    func viewDidLoad()
-    func didSelectItemAt(_ indexPath: IndexPath)
-    func userAgreementButtonTapped()
+    func viewWillAppear()
     func payButtonTapped()
+    func userAgreementButtonTapped()
+    func didSelectItemAt(_ indexPath: IndexPath)
 }
 
 final class PaymentPresenter: PaymentPresenterProtocol {
+    
     // MARK: - Public Properties
     weak var viewController: PaymentViewControllerProtocol?
-    var currenciesCellModel: [CurrencyCellModel] = []
     
     // MARK: - Private Properties
     private let networkManager: NetworkManagerProtocol
     private var paymentManager: PaymentManagerProtocol
     private let paymentRouter: PaymentRouterProtocol
     private let cartService: CartServiceProtocol
-    private var currentState: PaymentViewState? {
-        didSet {
-            viewControllerShouldChangeView()
-        }
-    }
-    private var currencies: [Currency] = []
-    private var seletedItemIndexPath: IndexPath?
-    private var currencyId: Int? {
-        guard let seletedItemIndexPath else { return nil }
-        return Int(currencies[seletedItemIndexPath.row].id)
-    }
-    private var payButtonState: PayButtonState? {
-        didSet {
-            viewControllerShouldChnangeButtonAppearance()
-        }
-    }
-    private var paymentIsSucceeded: Bool?
     
     // MARK: - Initializers
     init(networkManager: NetworkManagerProtocol,
@@ -54,178 +39,157 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     ) {
         self.networkManager = networkManager
         self.paymentManager = paymentManager
-        self.cartService = cartService
-        self.paymentRouter = paymentRouter
+        self.cartService    = cartService
+        self.paymentRouter  = paymentRouter
     }
     
-    // MARK: - Public Methods
-    func viewDidLoad() {
-        checkState()
-        payButtonState = .disabled
-        fetchCurrencies()
+    private var currencies = [CurrencyDto]() {
+        didSet {
+            self.changeState(with: .loaded)
+        }
+    }
+    
+    private(set) var currenciesCellModel = [CurrencyCellModel]()
+    
+    private var selectedCurrencyId: Int?
+    
+    func viewWillAppear() {
+        self.fetchCurrencies()
     }
     
     func didSelectItemAt(_ indexPath: IndexPath) {
-        seletedItemIndexPath = indexPath
-        makeCurrenciesCellModel()
-        viewController?.reloadCollectionView()
-        payButtonState = .enabled
+        guard let currencyId = Int(self.currencies[indexPath.row].id) else { return }
+        self.selectedCurrencyId = currencyId
+        self.changePayButtonState(with: .enabled)
+        self.updateListCells()
     }
     
     func userAgreementButtonTapped() {
-        guard let url = URL(string: Constants.termsOfUseURL) else { return }
+        guard let url = Constants.termsOfUseURL else { return }
         let safariViewController = SFSafariViewController(url: url)
         viewController?.presentView(safariViewController)
     }
     
     func payButtonTapped() {
-        guard let currencyId else { return }
-        let nfts = getNFTSIds()
-        payButtonState = .loading
-        paymentManager.performPayment(nfts: nfts, currencyId: currencyId)
-    }
-    // MARK: - Private Methods
-    private func fetchCurrencies() {
-        let request = CurrenciesRequest()
-        networkManager.send(request: request, type: [Currency].self, id: request.requestId) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let currencies):
-                DispatchQueue.main.async {
-                    self.currencies = currencies
-                    self.makeCurrenciesCellModel()
-                    self.checkState()
-                    self.viewController?.reloadCollectionView()
-                }
-            case .failure(let error):
-                let errorModel = errorModel(error)
-                self.viewController?.showError(with: errorModel)
-            }
-        }
-    }
-    
-    private func errorModel(_ error: Error) -> ErrorModel {
-        let message: String
-        switch error {
-        case is NetworkClientError:
-            message = NSLocalizedString("Error.network", comment: "") // или "Произошла ошибка сети"
-        default:
-            message = NSLocalizedString("Error.unknown", comment: "") // или "Произошла неизвестная ошибка"
-        }
-        
-        let actionText = NSLocalizedString("Error.repeat", comment: "") // или "Повторить"
-        return ErrorModel(
-            message: message,
-            actionText: actionText,
-            action: { [weak self] in
-                self?.currentState = .loading
-            }
-        )
-    }
-    
-    private func checkState() {
-        currentState = currencies.isEmpty ? .loading : .loaded
-    }
-    
-    private func viewControllerShouldChangeView() {
-        guard let currentState else { return }
-        
-        switch currentState {
-        case .loading:
-            viewController?.displayLoadingIndicator()
-        case .loaded:
-            viewController?.removeLoadingIndicator()
-        }
-    }
-    
-    private func makeCurrenciesCellModel() {
-        currenciesCellModel.removeAll()
-        for (index, currency) in currencies.enumerated() {
-            let isSelected = index == seletedItemIndexPath?.row
-            let model = CurrencyCellModel(
-                imageURL: currency.image,
-                title: currency.title,
-                ticker: currency.ticker,
-                isSelected: isSelected)
-            currenciesCellModel.append(model)
-        }
-    }
-    
-    private func getNFTSIds() -> [String] {
-        var ids: [String] = []
-        for nft in cartService.cartItems {
-            ids.append(nft.id)
-        }
-        return ids
-    }
-    
-    private func viewControllerShouldChnangeButtonAppearance() {
-        guard let payButtonState else { return }
-        switch payButtonState {
-        case .disabled:
-            viewController?.changeButtonState(color: .yaWhiteDayNight, isEnabled: false, isLoading: false)
-        case .enabled:
-            viewController?.changeButtonState(color: .yaBlackDayNight, isEnabled: true, isLoading: false)
-        case .loading:
-            viewController?.changeButtonState(color: .yaBlackDayNight, isEnabled: false, isLoading: true)
-        }
+        guard let currencyId = self.selectedCurrencyId else { return }
+        self.changeState(with: .loading)
+        self.performPayment(with: currencyId)
     }
 }
-// MARK: - PaymentViewState
-extension PaymentPresenter {
+
+// MARK: - Private Methods
+private extension PaymentPresenter {
+    
+    func fetchCurrencies() {
+        self.changeState(with: .loading)
+        self.paymentManager.fetchCurrencies { [weak self] result in
+            switch result {
+            case .success(let currencies):
+                self?.currencies = currencies
+            case .failure(let error):
+                self?.changeState(with: .error)
+                guard let errorModel = self?.viewController?.errorModel(error, action: { [weak self] in
+                    self?.fetchCurrencies()
+                }) else { return }
+                self?.viewController?.showError(with: errorModel)
+            }
+        }
+    }
+    
+    func performPayment(with currencyId: Int) {
+        self.paymentManager
+            .performPayment(with: currencyId) { [weak self] result in
+                switch result {
+                case .success(let model):
+                    if model.success {
+                        self?.changeState(with: .loaded)
+                        self?.viewController?.showPaymentSuccesfulView()
+                    } else {
+                        self?.changeState(with: .error)
+                        guard let errorModel = self?.viewController?
+                            .errorModel(PaymentError.failedPayment,
+                                        action: { [weak self] in
+                                self?.payButtonTapped()
+                            }) else { return }
+                        self?.viewController?.showError(with: errorModel)
+                    }
+                case .failure(let error):
+                    self?.changeState(with: .error)
+                    guard let errorModel = self?.viewController?.errorModel(PaymentError.failedPayment, action: { [weak self] in
+                        self?.payButtonTapped()
+                    }) else { return }
+                    self?.viewController?.showError(with: errorModel)
+                }
+            }
+    }
+    
+    func changeState(with state: PaymentViewState) {
+        switch state {
+        case .error:
+            self.viewController?.removeLoadingIndicator()
+            self.changePayButtonState(with: .disabled)
+        case .loading:
+            self.viewController?.displayLoadingIndicator()
+            self.changePayButtonState(with: .loading)
+        case .loaded:
+            self.viewController?.removeLoadingIndicator()
+            self.changePayButtonState(with: .enabled)
+            self.updateListCells()
+        }
+    }
+    
+    func updateListCells() {
+        
+        self.currenciesCellModel = currencies
+            .map { element in
+                let isSelected = (Int(element.id) == selectedCurrencyId)
+                return CurrencyCellModel(
+                    imageURL: element.image,
+                    title: element.title,
+                    ticker: element.ticker,
+                    isSelected: isSelected)
+            }
+        
+        self.viewController?.refreshList()
+    }
+    
+    func changePayButtonState(with state: PayButtonState) {
+        switch state {
+        case .disabled:
+            viewController?
+                .changeButtonState(color: .yaWhiteDayNight,
+                                   isEnabled: false,
+                                   isLoading: false)
+        case .enabled:
+            viewController?
+                .changeButtonState(color: .yaBlackDayNight,
+                                   isEnabled: true,
+                                   isLoading: false)
+        case .loading:
+            viewController?
+                .changeButtonState(color: .yaBlackDayNight,
+                                   isEnabled: false,
+                                   isLoading: true)
+        }
+    }
+    
+    // MARK: - Enums
+    
     enum PaymentViewState {
         case loading
         case loaded
+        case error
     }
-}
-// MARK: - Constants
-extension PaymentPresenter {
-    private enum Constants {
-        static let termsOfUseURL = "https://yandex.ru/legal/practicum_termsofuse/"
-    }
-}
-// MARK: - PaymentManagerDelegate
-extension PaymentPresenter: PaymentManagerDelegate {
-    func paymentFinishedWithError(_ error: Error) {
-        DispatchQueue.main.async { [weak self] in
-            let presenter = PaymentConPresenter(configuration: .failure)
-            presenter.delegate = self!
-            let confirmationViewController = PaymentConViewController(presenter: presenter)
-            confirmationViewController.modalPresentationStyle = .fullScreen
-            self?.viewController?.presentView(confirmationViewController)
-            self?.payButtonState = .enabled
-           self?.paymentIsSucceeded = false
+    
+    enum Constants {
+        static var termsOfUseURL: URL? {
+            URL(string: "https://yandex.ru/legal/practicum_termsofuse/")
         }
     }
-
-    func paymentFinishedWithSuccess() {
-        DispatchQueue.main.async { [weak self] in
-            let presenter = PaymentConPresenter(configuration: .success)
-            presenter.delegate = self!
-           let confirmationViewController = PaymentConViewController(presenter: presenter)
-            confirmationViewController.modalPresentationStyle = .fullScreen
-            self?.viewController?.presentView(confirmationViewController)
-            self?.payButtonState = .enabled
-            self?.paymentIsSucceeded = true
-        }
-    }
-}
-// MARK: - PayButtonState
-extension PaymentPresenter {
+    
     enum PayButtonState {
         case disabled
         case enabled
         case loading
-    }
-}
-
-extension PaymentPresenter: PaymentConPresenterDelegate {
-   func didTapDismissButton() {
-        viewController?.dismiss()
-        guard let paymentIsSucceeded,
-        paymentIsSucceeded else { return }
-       cartService.removeAll { [weak self] in
-            self?.viewController?.popToRootViewController(animated: true)
-        }
     }
 }

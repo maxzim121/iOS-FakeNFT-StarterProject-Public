@@ -292,7 +292,10 @@ extension CartViewController: CartViewProtocol {
     }
     
     func switchToCatalogVC() {
-        self.tabBarController?.selectedIndex = 1
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.tabBarController?.selectedIndex = 1
+        }
     }
 }
 
@@ -347,30 +350,32 @@ extension CartViewController: CartNFTCellDelegate {
                                   imageURL: String,
                                   returnHandler: ((Bool) -> Void)?) {
         self.presenter.didSelectCellToDelete(id: id)
-        self.showDeleteDialogView(with: id,
-                                  imageURL: imageURL,
-                                  returnHandler: returnHandler)
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.showDeleteDialogView(with: id,
+                                      imageURL: imageURL,
+                                      returnHandler: returnHandler)
+        }
     }
     
     private func showDeleteDialogView(with id: String,
                                       imageURL: String,
                                       returnHandler: ((Bool) -> Void)?) {
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self else { return }
-            self.deleteNFTView.setImage(imageURL)
-            self.deleteNFTView.setReturnHandler(returnHandler)
-            self.enableBlurEffect()
-            self.blurredView.contentView.addSubview(deleteNFTView)
-            NSLayoutConstraint.activate([
-                self.deleteNFTView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                self.deleteNFTView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-            ])
-        }
+        self.deleteNFTView.setImage(imageURL)
+        self.deleteNFTView.setReturnHandler(returnHandler)
+        self.enableBlurEffect()
+        self.blurredView.contentView.addSubview(deleteNFTView)
+        NSLayoutConstraint.activate([
+            self.deleteNFTView.centerXAnchor.constraint(equalTo: blurredView.centerXAnchor),
+            self.deleteNFTView.centerYAnchor.constraint(equalTo: blurredView.centerYAnchor)
+        ])
     }
     
     private func enableBlurEffect() {
         blurredView.frame = view.bounds
-        view.addSubview(blurredView)
+        let window = UIApplication.shared.windows.last!
+        blurredView.frame = window.bounds
+        window.addSubview(blurredView)
     }
     
     private func disableBlurEffect() {

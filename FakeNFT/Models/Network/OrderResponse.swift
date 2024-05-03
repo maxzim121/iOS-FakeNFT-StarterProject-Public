@@ -7,9 +7,13 @@
 
 import Foundation
 
-struct OrderResponse: Codable {
+struct OrderResponse: Decodable {
     let nfts: [String]
     let id: String
+}
+
+struct OrderChangeListDto: Encodable {
+    let nfts: [String]
 }
 
 struct CartResponse: Codable {

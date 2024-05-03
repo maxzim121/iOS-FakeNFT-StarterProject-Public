@@ -17,11 +17,11 @@ struct CartItemsRequest: NetworkRequest {
 
 struct CartPutRequest: NetworkRequest {
     let requestId = "CartPutRequest"
-    let id: String
+    let id: Int
     let nfts: [String]
     
     var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
+        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/\(id)")
     }
     
     var httpMethod: HttpMethod {
@@ -29,6 +29,6 @@ struct CartPutRequest: NetworkRequest {
     }
     
     var dto: Encodable? {
-        OrderResponse(nfts: nfts, id: id)
+        OrderChangeListDto(nfts: nfts)
     }
 }

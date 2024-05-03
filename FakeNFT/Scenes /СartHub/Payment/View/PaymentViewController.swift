@@ -9,16 +9,18 @@ import UIKit
 import ProgressHUD
 
 protocol PaymentViewControllerProtocol: AnyObject, ErrorView {
-    func reloadCollectionView()
+    func refreshList()
     func displayLoadingIndicator()
     func removeLoadingIndicator()
     func presentView(_ viewController: UIViewController)
     func changeButtonState(color: UIColor, isEnabled: Bool, isLoading: Bool)
-    func dismiss()
-    func popToRootViewController(animated: Bool)
+    func showPaymentSuccesfulView()
+    //    func dismiss()
+    //    func popToRootViewController(animated: Bool)
 }
 
 final class PaymentViewController: UIViewController {
+    
     // MARK: - Private Properties
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
@@ -94,17 +96,18 @@ final class PaymentViewController: UIViewController {
         super.viewDidLoad()
         configureCollectionView()
         configureNavigationBar()
-        presenter.viewController = self
-        presenter.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        showPayView()
+//        self.tabBarController?.tabBar.isHidden = true
+        self.presenter.viewWillAppear()
+        self.showPayView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+//        self.tabBarController?.tabBar.isHidden = false
         hidePayView()
     }
     
@@ -152,77 +155,77 @@ final class PaymentViewController: UIViewController {
     }
     
     private func setupPayView() {
+        
+        userAgreementButton.addTarget(self, action: #selector(userAgreementButtonTapped), for: .touchUpInside)
+        payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
+        
+        view.addSubview(payView)
+        payViewIsAddedToWindow = true
+        [payDescription, userAgreementButton, payButton].forEach { payView.addSubview($0) }
+        
+        payButton.addSubview(loadingIndicator)
+        
+        let safeAreaHeight = view.safeAreaInsets.bottom
+        
+        NSLayoutConstraint.activate([
+            payView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            payView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            userAgreementButton.addTarget(self, action: #selector(userAgreementButtonTapped), for: .touchUpInside)
-            payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
+            payDescription.topAnchor.constraint(
+                equalTo: payView.topAnchor, constant: Constants.defaultOffset),
+            payDescription.leadingAnchor.constraint(
+                equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
+            payDescription.trailingAnchor.constraint(
+                equalTo: payView.trailingAnchor, constant: -Constants.defaultOffset),
             
-            view.addSubview(payView)
-            payViewIsAddedToWindow = true
-            [payDescription, userAgreementButton, payButton].forEach { payView.addSubview($0) }
+            userAgreementButton.topAnchor.constraint(
+                equalTo: payDescription.bottomAnchor, constant: Constants.defaultOffset / 4),
+            userAgreementButton.leadingAnchor.constraint(
+                equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
             
-            payButton.addSubview(loadingIndicator)
+            payButton.topAnchor.constraint(
+                equalTo: userAgreementButton.bottomAnchor, constant: Constants.defaultOffset),
+            payButton.leadingAnchor.constraint(
+                equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
+            payButton.trailingAnchor.constraint(
+                equalTo: payView.trailingAnchor, constant: -Constants.defaultOffset),
+            payButton.bottomAnchor.constraint(
+                equalTo: payView.bottomAnchor, constant: -(Constants.bottomOffset+safeAreaHeight)),
+            payButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
             
-            let safeAreaHeight = view.safeAreaInsets.bottom
-            
-            NSLayoutConstraint.activate([
-                payView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                payView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                
-                payDescription.topAnchor.constraint(
-                    equalTo: payView.topAnchor, constant: Constants.defaultOffset),
-                payDescription.leadingAnchor.constraint(
-                    equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
-                payDescription.trailingAnchor.constraint(
-                    equalTo: payView.trailingAnchor, constant: -Constants.defaultOffset),
-                
-                userAgreementButton.topAnchor.constraint(
-                    equalTo: payDescription.bottomAnchor, constant: Constants.defaultOffset / 4),
-                userAgreementButton.leadingAnchor.constraint(
-                    equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
-                
-                payButton.topAnchor.constraint(
-                    equalTo: userAgreementButton.bottomAnchor, constant: Constants.defaultOffset),
-                payButton.leadingAnchor.constraint(
-                    equalTo: payView.leadingAnchor, constant: Constants.defaultOffset),
-                payButton.trailingAnchor.constraint(
-                    equalTo: payView.trailingAnchor, constant: -Constants.defaultOffset),
-                payButton.bottomAnchor.constraint(
-                    equalTo: payView.bottomAnchor, constant: -(Constants.bottomOffset+safeAreaHeight)),
-                payButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
-                
-                loadingIndicator.centerXAnchor.constraint(equalTo: payButton.centerXAnchor),
-                loadingIndicator.centerYAnchor.constraint(equalTo: payButton.centerYAnchor)
-            ])
-            payViewInitialBottomConstraint = payView.topAnchor.constraint(equalTo: view.bottomAnchor)
-            payViewFinalBottomConstraint = payView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        }
+            loadingIndicator.centerXAnchor.constraint(equalTo: payButton.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: payButton.centerYAnchor)
+        ])
+        payViewInitialBottomConstraint = payView.topAnchor.constraint(equalTo: view.bottomAnchor)
+        payViewFinalBottomConstraint = payView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+    }
     
     private func showPayView() {
         if !payViewIsAddedToWindow {
             setupPayView()
         }
-            
-            payViewFinalBottomConstraint?.isActive = false
-            payViewInitialBottomConstraint?.isActive = true
-            
-            view.layoutIfNeeded()
-            
-            payViewInitialBottomConstraint?.isActive = false
-            payViewFinalBottomConstraint?.isActive = true
-            
-            UIView.animate(withDuration: 0.2) {
+        
+        payViewFinalBottomConstraint?.isActive = false
+        payViewInitialBottomConstraint?.isActive = true
+        
+        view.layoutIfNeeded()
+        
+        payViewInitialBottomConstraint?.isActive = false
+        payViewFinalBottomConstraint?.isActive = true
+        
+        UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
-            }
         }
+    }
     
     private func hidePayView() {
-            payViewFinalBottomConstraint?.isActive = false
-            payViewInitialBottomConstraint?.isActive = true
-            
-            UIView.animate(withDuration: 0.2) {
+        payViewFinalBottomConstraint?.isActive = false
+        payViewInitialBottomConstraint?.isActive = true
+        
+        UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
-            }
         }
+    }
     
     private func makeCollectionViewLayout() -> UICollectionViewCompositionalLayout {
         let spacing = Constants.collectionViewSpacing
@@ -256,7 +259,7 @@ final class PaymentViewController: UIViewController {
         webView.modalPresentationStyle = .fullScreen
         present(webView, animated: true)
     }
-
+    
     @objc private func userAgreementButtonTapped() {
         presenter.userAgreementButtonTapped()
     }
@@ -276,31 +279,38 @@ extension PaymentViewController {
 
 // MARK: - UICollectionViewDataSource
 extension PaymentViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         presenter.currenciesCellModel.count
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell: CurrencyCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-            let model = presenter.currenciesCellModel[indexPath.row]
-            cell.configureCell(cellModel: model)
-            return cell
-        }
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell: CurrencyCell = collectionView.dequeueReusableCell(indexPath: indexPath)
+        let model = presenter.currenciesCellModel[indexPath.row]
+        cell.configureCell(cellModel: model)
+        return cell
+    }
 }
 
 // MARK: - UICollectionViewDelegate
 extension PaymentViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         presenter.didSelectItemAt(indexPath)
     }
 }
 
 // MARK: - PaymentViewControllerProtocol
 extension PaymentViewController: PaymentViewControllerProtocol {
-    func reloadCollectionView() {
-        collectionView.reloadData()
+    
+    func refreshList() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.collectionView.reloadData()
+        }
     }
     
     func displayLoadingIndicator() {
@@ -315,19 +325,34 @@ extension PaymentViewController: PaymentViewControllerProtocol {
         present(viewController, animated: true)
     }
     
-    func changeButtonState(color: UIColor, isEnabled: Bool, isLoading: Bool) {
-        payButton.backgroundColor = .yaWhiteDayNight
-        payButton.isEnabled = isEnabled
-        
-        isLoading ? payButton.setTitle("", for: .normal) : payButton.setTitle(TextLabels.PaymentViewController.payButtonTitle, for: .normal)
-        isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
+    func changeButtonState(color: UIColor,
+                           isEnabled: Bool,
+                           isLoading: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            payButton.backgroundColor = .yaWhiteDayNight
+            payButton.isEnabled = isEnabled
+            isLoading ? payButton.setTitle("", for: .normal) : payButton.setTitle(TextLabels.PaymentViewController.payButtonTitle, for: .normal)
+            isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
+        }
     }
     
-    func dismiss() {
-        dismiss(animated: true)
+    func showPaymentSuccesfulView(){
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let paymentResult = PaymentSuccesfulVC()
+            paymentResult.set(delegate: self)
+            paymentResult.modalPresentationStyle = .fullScreen
+            present(paymentResult, animated: true)
+        }
     }
+}
+
+// MARK: PaymentSuccesfulDelegate
+extension PaymentViewController: PaymentSuccesfulDelegate {
     
-    func popToRootViewController(animated: Bool) {
-        navigationController?.popToRootViewController(animated: true)
+    func closeView() {
+        self.tabBarController?.selectedIndex = 1
+        self.navigationController?.popToRootViewController(animated: false)
     }
 }
