@@ -13,7 +13,7 @@ protocol PaymentRouterProtocol {
 
 final class PaymentRouter {
     weak var rootController: UIViewController?
-    let servicesAssembly = ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()
+        let servicesAssembly = ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()
     )
 }
 

@@ -9,7 +9,7 @@ import UIKit
 
 final class CartFactory {
     func create(with context: Context) -> UIViewController {
-        // TODO: - Перевести на реальную реализацию CartService после теста
+       
         let networkClient   = DefaultNetworkClient()
         let networkManager  = NetworkManager(networkClient: networkClient)
         let cartService     = CartServiceStub(networkManager: networkManager)

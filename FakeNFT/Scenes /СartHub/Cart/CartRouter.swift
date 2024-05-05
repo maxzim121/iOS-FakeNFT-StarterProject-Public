@@ -12,7 +12,9 @@ protocol CartRouterProtocol {
 }
 
 final class CartRouter {
+    
     weak var rootController: UINavigationController?
+    
     let servicesAssembly = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
         nftStorage: NftStorageImpl()
@@ -26,6 +28,7 @@ extension CartRouter: CartRouterProtocol{
                 servicesAssembly: servicesAssembly
             )
         )
+        paymentController.hidesBottomBarWhenPushed = true
         rootController?.pushViewController(
                 paymentController,
                 animated: true

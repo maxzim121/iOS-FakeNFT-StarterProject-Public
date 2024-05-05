@@ -8,43 +8,35 @@
 import Foundation
 
 protocol PaymentManagerProtocol {
-    var delegate: PaymentManagerDelegate? { get set }
-    func performPayment(nfts: [String], currencyId: Int)
-}
-
-protocol PaymentManagerDelegate: AnyObject {
-    func paymentFinishedWithError(_ error: Error)
-    func paymentFinishedWithSuccess()
+    
+    func fetchCurrencies(completion: @escaping (Result<[CurrencyDto], Error>) -> Void)
+    func performPayment(with currencyId: Int,
+                        completion: @escaping (Result<OrderPaymentDto, Error>) -> Void)
 }
 
 final class PaymentManager: PaymentManagerProtocol {
-    weak var delegate: PaymentManagerDelegate?
+    
     private let networkManager: NetworkManagerProtocol
     
     init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
     
-    func performPayment(nfts: [String], currencyId: Int) {
-        putOrder(nfts: nfts) {[weak self] result in
-            switch result {
-            case .success:
-                self?.delegate?.paymentFinishedWithSuccess()
-            case .failure(let error):
-                self?.delegate?.paymentFinishedWithError(error)
-            }
-        }
+    func fetchCurrencies(completion: @escaping (Result<[CurrencyDto], Error>) -> Void) {
+        let currenciesRequest = CurrenciesRequest()
+        self.networkManager
+            .send(request: currenciesRequest,
+                  type: [CurrencyDto].self,
+                  id: currenciesRequest.requestId,
+                  completion: completion)
     }
     
-    private func putOrder(nfts: [String], completion: @escaping (Result<Bool, Error>) -> Void) {
-        let request = OrderPut(nfts: ["nfts": nfts])
-        networkManager.send(request: request, type: OrderResponse.self, id: request.requestId) { result in
-            switch result {
-            case .success:
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+    func performPayment(with currencyId: Int,
+                        completion: @escaping (Result<OrderPaymentDto, Error>) -> Void) {
+        let paymentRequest = MakePaymentRequest(currencyId: currencyId)
+        self.networkManager
+            .send(request: paymentRequest,
+                  type: OrderPaymentDto.self,
+                  id: paymentRequest.requestId, completion: completion)
     }
 }

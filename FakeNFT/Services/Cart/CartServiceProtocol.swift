@@ -8,15 +8,14 @@
 import Foundation
 
 protocol CartServiceProtocol {
-    var delegate: CartServiceDelegate? { get set }
+    
     var cartItems: [NFT] { get }
     
-    func fetchData(with id: String, completion: @escaping (Result<[NFT], Error>) -> Void)
+    func fetchData(with id: String,
+                   completion: @escaping (Result<[NFT], Error>) -> Void)
+    
     func addToCart(_ nft: NFT, completion: (() -> Void)?)
-    func removeFromCart(with id: String, completion: @escaping (Result<OrderResponse, Error>) -> Void)
-    func removeAll(completion: (() -> Void)?)
-}
-
-protocol CartServiceDelegate: AnyObject {
-    func cartCountDidChanged(_ newCount: Int)
+    
+    func removeFromCart(with nftId: String,
+                        completion: @escaping (Result<OrderResponse, Error>) -> Void)
 }

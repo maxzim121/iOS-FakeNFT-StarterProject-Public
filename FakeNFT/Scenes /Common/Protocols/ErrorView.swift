@@ -4,13 +4,17 @@ typealias ActionHandler = () -> Void
 
 struct ErrorModel {
     let message: String
+    var cancelText: String? = nil
     let actionText: String
     let action: ActionHandler?
 }
 
 protocol ErrorView {
+    
     func showError(with model: ErrorModel)
-    func errorModel(_ error: Error, action: ActionHandler?) -> ErrorModel
+    
+    func errorModel(_ error: Error,
+                    action: ActionHandler?) -> ErrorModel
 }
 
 extension ErrorView where Self: UIViewController {
@@ -23,11 +27,17 @@ extension ErrorView where Self: UIViewController {
             preferredStyle: .alert
         )
         
-        if let action = model.action {
+        if let cancelText = model.cancelText {
+            let cancelAction = UIAlertAction(title: cancelText,
+                                            style: UIAlertAction.Style.cancel, handler: nil)
+            alert.addAction(cancelAction)
+        }
+        
+        if let doneAction = model.action {
             
             let alertAction = UIAlertAction(title: model.actionText,
                                       style: UIAlertAction.Style.default) {_ in
-                action()
+                doneAction()
             }
             
             alert.addAction(alertAction)
@@ -37,10 +47,16 @@ extension ErrorView where Self: UIViewController {
     }
     
     func errorModel(_ error: Error, action: ActionHandler? = nil) -> ErrorModel {
+        
         let message: String
+        var cancelText: String?
+        
         switch error {
         case is NetworkClientError:
             message = NSLocalizedString("Error.network", comment: "") // или "Произошла ошибка сети"
+        case is PaymentError:
+            message = NSLocalizedString("Error.payment", comment: "") // Не удалось произвести оплату
+            cancelText = "Отмена"
         default:
             message = NSLocalizedString("Error.unknown", comment: "") // или "Произошла неизвестная ошибка"
         }
@@ -49,6 +65,7 @@ extension ErrorView where Self: UIViewController {
         
         return ErrorModel(
             message: message,
+            cancelText: cancelText,
             actionText: actionText,
             action: action
         )

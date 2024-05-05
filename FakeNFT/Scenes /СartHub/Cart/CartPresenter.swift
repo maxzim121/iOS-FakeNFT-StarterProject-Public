@@ -90,8 +90,6 @@ final class CartPresenter: CartPresenterProtocol {
         let totalPrice = calculateTotalPrice()
         view?.updatePayView(count: count, price: totalPrice)
         
-//         checkViewState()
-        
         if let savedSortState = userDefaults.string(forKey: Constants.cartSortStateKey) {
             currentCartSortState = savedSortState
         }
@@ -101,18 +99,20 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func deleteNFT() {
-        guard let choosedNFTId,
-              let index = cellsModels.firstIndex(where: { $0.id == choosedNFTId }) else { return }
+        guard let choosedNFTId = self.choosedNFTId,
+              let index = cellsModels
+            .firstIndex(where: { $0.id == choosedNFTId }) else { return }
         
         self.cartService.removeFromCart(with: choosedNFTId) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let success):
+            case .success(_):
                 self.view?.didDeleteNFT(for: IndexPath(row: index, section: 0))
                 self.view?.updatePayView(count: nfts.count, price: calculateTotalPrice())
                 self.cellsModels.remove(at: index)
                 self.choosedNFTId = nil
                 self.checkViewState()
+                self.cartCountDidChanged(self.nfts.count)
             case .failure(let error):
                 self.deleteItemRequestError(with: error)
             }
@@ -124,6 +124,7 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func toPaymentButtonTapped() {
+        self.currentState = .empty
         router.showPaymentTypeScreen()
         paymentFlowStarted = true
     }
@@ -156,9 +157,12 @@ final class CartPresenter: CartPresenterProtocol {
     func refreshTableViewCalled() {
         self.currentState = .loading
     }
+}
+
+// MARK: - Private Methods
+private extension CartPresenter {
     
-    // MARK: - Private Methods
-    private func loadItems(){
+    func loadItems(){
         self.cartService.fetchData(with: "1") { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -170,7 +174,7 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func loadingRequestError(with error: Error) {
+    func loadingRequestError(with error: Error) {
         self.currentState = .error
         
         guard let errorModel = self.view?.errorModel(error, action: { [weak self] in
@@ -181,7 +185,7 @@ final class CartPresenter: CartPresenterProtocol {
         self.view?.showError(with: errorModel)
     }
     
-    private func deleteItemRequestError(with error: Error) {
+    func deleteItemRequestError(with error: Error) {
         self.currentState = .error
         
         guard let errorModel = self.view?.errorModel(error, action: { [weak self] in
@@ -192,7 +196,7 @@ final class CartPresenter: CartPresenterProtocol {
         self.view?.showError(with: errorModel)
     }
     
-    private func calculateTotalPrice() -> String {
+    func calculateTotalPrice() -> String {
         let price = nfts.reduce(into: 0) { partialResult, nft in
             partialResult += nft.price
         }
@@ -201,7 +205,7 @@ final class CartPresenter: CartPresenterProtocol {
         return formatted
     }
     
-    private func viewControllerShouldChangeView() {
+    func viewControllerShouldChangeView() {
         switch currentState {
         case .error:
             self.view?.removeLoadingIndicator()
@@ -218,7 +222,7 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func checkViewState() {
+    func checkViewState() {
         if nfts.isEmpty {
             currentState = .empty
         } else {
@@ -226,7 +230,7 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func createCellsModels() {
+    func createCellsModels() {
         cellsModels.removeAll()
         for nft in nfts {
             let priceString = numberFormatter.string(from: NSNumber(value: nft.price)) ?? ""
@@ -236,7 +240,7 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func applySorting() {
+    func applySorting() {
         switch currentCartSortState {
         case CartSortState.name.rawValue:
             sortByNames()
@@ -249,25 +253,25 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func sortByNames() {
+    func sortByNames() {
         cellsModels.sort { $0.title < $1.title }
         currentCartSortState = CartSortState.name.rawValue
         didFinishSortCellsModels()
     }
     
-    private func sortByRating() {
+    func sortByRating() {
         cellsModels.sort { $0.rating > $1.rating }
         currentCartSortState = CartSortState.rating.rawValue
         didFinishSortCellsModels()
     }
     
-    private func sortByPrice() {
+    func sortByPrice() {
         cellsModels.sort { $0.price < $1.price }
         currentCartSortState = CartSortState.price.rawValue
         didFinishSortCellsModels()
     }
     
-    private func didFinishSortCellsModels() {
+    func didFinishSortCellsModels() {
         view?.reloadTableView()
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let self else { return }
@@ -275,17 +279,12 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
-    private func checkNeedSwitchToCatalogVC() {
+    func checkNeedSwitchToCatalogVC() {
         if paymentFlowStarted && cartService.cartItems.isEmpty {
             paymentFlowStarted = false
             view?.switchToCatalogVC()
         }
     }
-}
-
-// MARK: - CartServiceDelegate
-
-extension CartPresenter: CartServiceDelegate {
     
     func cartCountDidChanged(_ newCount: Int) {
         let badgeValue = newCount > 0 ? String(newCount) : nil
