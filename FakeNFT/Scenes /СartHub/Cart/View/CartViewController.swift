@@ -322,23 +322,25 @@ extension CartViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension CartViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 140
     }
+    
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: TextLabels.CartViewController.deleteButton) { [weak self] _, _, completionHandler in
-                guard let self else { return }
-                
-                let cellModel = presenter.cellsModels[indexPath.row]
-                deleteNFTButtonDidTapped(
-                    with: cellModel.id,
-                    imageURL: cellModel.imageURL?.absoluteString ?? "",
-                    returnHandler: completionHandler)
+                guard let self = self else { return }
+                let cellModel = self.presenter.cellsModels[indexPath.row]
+                self.deleteNFTButtonDidTapped(with: cellModel.id,
+                                              imageURL: cellModel.imageURL?.absoluteString ?? "",
+                                              returnHandler: completionHandler)
             }
+        
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        
         return configuration
     }
 }
@@ -350,12 +352,9 @@ extension CartViewController: CartNFTCellDelegate {
                                   imageURL: String,
                                   returnHandler: ((Bool) -> Void)?) {
         self.presenter.didSelectCellToDelete(id: id)
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self else { return }
-            self.showDeleteDialogView(with: id,
-                                      imageURL: imageURL,
-                                      returnHandler: returnHandler)
-        }
+        self.showDeleteDialogView(with: id,
+                                  imageURL: imageURL,
+                                  returnHandler: returnHandler)
     }
     
     private func showDeleteDialogView(with id: String,

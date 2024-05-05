@@ -113,7 +113,7 @@ private extension PaymentPresenter {
                             }) else { return }
                         self?.viewController?.showError(with: errorModel)
                     }
-                case .failure(let error):
+                case .failure(_):
                     self?.changeState(with: .error)
                     guard let errorModel = self?.viewController?.errorModel(PaymentError.failedPayment, action: { [weak self] in
                         self?.payButtonTapped()

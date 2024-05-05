@@ -90,8 +90,6 @@ final class CartPresenter: CartPresenterProtocol {
         let totalPrice = calculateTotalPrice()
         view?.updatePayView(count: count, price: totalPrice)
         
-        //         checkViewState()
-        
         if let savedSortState = userDefaults.string(forKey: Constants.cartSortStateKey) {
             currentCartSortState = savedSortState
         }
@@ -101,13 +99,14 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func deleteNFT() {
-        guard let choosedNFTId,
-              let index = cellsModels.firstIndex(where: { $0.id == choosedNFTId }) else { return }
+        guard let choosedNFTId = self.choosedNFTId,
+              let index = cellsModels
+            .firstIndex(where: { $0.id == choosedNFTId }) else { return }
         
         self.cartService.removeFromCart(with: choosedNFTId) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let success):
+            case .success(_):
                 self.view?.didDeleteNFT(for: IndexPath(row: index, section: 0))
                 self.view?.updatePayView(count: nfts.count, price: calculateTotalPrice())
                 self.cellsModels.remove(at: index)

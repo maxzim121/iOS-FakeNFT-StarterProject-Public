@@ -16,19 +16,33 @@ struct CartItemsRequest: NetworkRequest {
 }
 
 struct CartPutRequest: NetworkRequest {
+
     let requestId = "CartPutRequest"
+    
     let id: Int
     let nfts: [String]
     
     var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/\(id)")
+        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
     }
     
     var httpMethod: HttpMethod {
         .put
     }
     
-    var dto: Encodable? {
-        OrderChangeListDto(nfts: nfts)
+    var body: Data? {
+        encodeNFTSList().data(using: .utf8)
+    }
+    
+    private func encodeNFTSList() -> String {
+        
+        var nftsString = "id=\(self.id)"
+    
+        if !self.nfts.isEmpty {
+            nftsString += "&nfts="
+            nftsString += self.nfts.joined(separator: "&nfts=")
+        }
+
+        return nftsString
     }
 }

@@ -128,7 +128,7 @@ final class CartNFTCell: UITableViewCell, ReuseIdentifying {
         guard let cartCellModel else { return }
         self.delegate?.deleteNFTButtonDidTapped(
             with: cartCellModel.id,
-            imageURL: cartCellModel.imageURL?.absoluteString ?? "",
+            imageURL: cartCellModel.imageURL?.absoluteString ?? "", 
             returnHandler: nil
         )
     }
